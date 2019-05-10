@@ -90,8 +90,14 @@ public class Table implements ActionListener {
 	JComboBox member_info4;
 	JComboBox member_info5;
 	JComboBox member_info6;
-	// 멤버 선택 박스
-
+	
+	int [] count1 = new int [100];
+	int [] count2 = new int [100];
+	int [] count3 = new int [100];
+	int [] count4 = new int [100];
+	int [] count5 = new int [100];
+	int [] count6 = new int [100];
+	
 	public Table() {
 		tablePanel = new JPanel();
 		tablePanel.setLayout(new GridLayout(2,3));
@@ -132,6 +138,7 @@ public class Table implements ActionListener {
 		Vector<String> userColumn1 = new Vector<String> ();
 		userColumn1.addElement("이름");
 		userColumn1.addElement("가격");
+		userColumn1.addElement("수량");
 		model_T1 = new DefaultTableModel(userColumn1, 0);
 		T1 = new JTable(model_T1);
 		scrollpane = new JScrollPane(T1);
@@ -139,6 +146,7 @@ public class Table implements ActionListener {
 		Vector<String> userColumn2 = new Vector<String> ();
 		userColumn2.addElement("이름");
 		userColumn2.addElement("가격");
+		userColumn2.addElement("수량");
 		model_T2 = new DefaultTableModel(userColumn2, 0);
 		T2 = new JTable(model_T2);
 		scrollpane2 = new JScrollPane(T2);
@@ -146,6 +154,7 @@ public class Table implements ActionListener {
 		Vector<String> userColumn3 = new Vector<String> ();
 		userColumn3.addElement("이름");
 		userColumn3.addElement("가격");
+		userColumn3.addElement("수량");
 		model_T3 = new DefaultTableModel(userColumn3, 0);
 		T3 = new JTable(model_T3);
 		scrollpane3 = new JScrollPane(T3);
@@ -153,6 +162,7 @@ public class Table implements ActionListener {
 		Vector<String> userColumn4 = new Vector<String> ();
 		userColumn4.addElement("이름");
 		userColumn4.addElement("가격");
+		userColumn4.addElement("수량");
 		model_T4 = new DefaultTableModel(userColumn4, 0);
 		T4 = new JTable(model_T4);
 		scrollpane4 = new JScrollPane(T4);
@@ -160,6 +170,7 @@ public class Table implements ActionListener {
 		Vector<String> userColumn5 = new Vector<String> ();
 		userColumn5.addElement("이름");
 		userColumn5.addElement("가격");
+		userColumn5.addElement("수량");
 		model_T5 = new DefaultTableModel(userColumn5, 0);
 		T5 = new JTable(model_T5);
 		scrollpane5 = new JScrollPane(T5);
@@ -167,6 +178,7 @@ public class Table implements ActionListener {
 		Vector<String> userColumn6 = new Vector<String> ();
 		userColumn6.addElement("이름");
 		userColumn6.addElement("가격");
+		userColumn6.addElement("수량");
 		model_T6 = new DefaultTableModel(userColumn6, 0);
 		T6 = new JTable(model_T6);
 		scrollpane6 = new JScrollPane(T6);
@@ -197,10 +209,11 @@ public class Table implements ActionListener {
 		tablePanel.add(table_num4);
 		tablePanel.add(table_num5);
 		tablePanel.add(table_num6);
-
+		
 	}
 
 	void Frame_Open1() {
+		
 		JPanel BtnPanel = new JPanel(new GridLayout(1,3));
 		table1 = new Frame("테이블 1");
 		table1.setSize(400, 400);
@@ -228,12 +241,21 @@ public class Table implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int x = add_order1.getSelectedIndex();
-				model_T1.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0)});
-
+				count1[x] += 1;
+				if(count1[x] == 1)
+				model_T1.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0), count1[x]});
+				else
+				{
+					for(int j=0;j<model_T1.getRowCount();j++)
+					{
+						if((model_T1.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0)))
+								model_T1.setValueAt(count1[x],j,2);
+					}
+				}
 				int data = 0;
 				String total;
 				for(int i=0; i<model_T1.getRowCount();i++) {
-					data += Integer.parseInt((String)model_T1.getValueAt(i, 1));
+					data += (Integer.parseInt((String)model_T1.getValueAt(i, 1)) * Integer.parseInt(model_T1.getValueAt(i,2).toString()));
 				}
 				total = String.valueOf(data);
 				table1_total.setText(total);
@@ -293,8 +315,9 @@ public class Table implements ActionListener {
 				}
 
 				table1_total.setText("");
-				DefaultTableModel model = (DefaultTableModel) T1.getModel();
-				model.setNumRows(0);
+				//DefaultTableModel model = (DefaultTableModel) T1.getModel();
+				//model.setNumRows(0);
+				
 				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
@@ -308,6 +331,13 @@ public class Table implements ActionListener {
 					else {
 						Member.memberTable.setValueAt("일반", x, 4);
 					}
+				}
+				
+				for(int i=0; i<=model_T1.getRowCount();i++) {
+					model_T1.removeRow(0);
+				}
+				for(int i=0; i<100;i++) {
+					count1[i]=0;
 				}
 			}
 
@@ -323,7 +353,7 @@ public class Table implements ActionListener {
 	}
 
 	void Frame_Open2() {
-		JPanel BtnPanel = new JPanel(new GridLayout(1,2));
+		JPanel BtnPanel = new JPanel(new GridLayout(1,3));
 		table2 = new Frame("테이블 2");
 		table2.setSize(400, 400);
 		table2.setLayout(new BorderLayout());
@@ -349,12 +379,21 @@ public class Table implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int x = add_order2.getSelectedIndex();
-				model_T2.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0)});
-
+				count2[x] += 1;
+				if(count2[x] == 1)
+				model_T2.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0), count2[x]});
+				else 
+				{
+					for(int j=0;j<model_T2.getRowCount();j++)
+					{
+						if((model_T2.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0)))
+								model_T2.setValueAt(count2[x],j,2);
+					}
+				}
 				int data = 0;
 				String total;
 				for(int i=0; i<model_T2.getRowCount();i++) {
-					data += Integer.parseInt((String)model_T2.getValueAt(i, 1));
+					data += (Integer.parseInt((String)model_T2.getValueAt(i, 1)) * Integer.parseInt(model_T2.getValueAt(i,2).toString()));
 				}
 				total = String.valueOf(data);
 				table2_total.setText(total);
@@ -415,19 +454,28 @@ public class Table implements ActionListener {
 				}
 
 				table2_total.setText("");
-				DefaultTableModel model = (DefaultTableModel) T2.getModel();
-				model.setNumRows(0);
+				
 				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
-				int mileage = (int) Member.memberTable.getValueAt(x, 3);
-				if (mileage >= 500 && mileage < 1000)
-					Member.memberTable.setValueAt("골드", x, 4);
-				else if(mileage > 1000) {
-					Member.memberTable.setValueAt("플래티넘",x, 4);
+
+				if(Member.memberTable.getRowCount() != 0) {
+					int mileage = (int) Member.memberTable.getValueAt(x, 3);
+					if (mileage >= 500 && mileage < 1000)
+						Member.memberTable.setValueAt("골드", x, 4);
+					else if(mileage > 1000) {
+						Member.memberTable.setValueAt("플래티넘",x, 4);
+					}
+					else {
+						Member.memberTable.setValueAt("일반", x, 4);
+					}
 				}
-				else {
-					Member.memberTable.setValueAt("일반", x, 4);
+				
+				for(int i=0; i<=model_T2.getRowCount();i++) {
+					model_T2.removeRow(0);
+				}
+				for(int i=0; i<100;i++) {
+					count2[i]=0;
 				}
 			}
 
@@ -443,7 +491,7 @@ public class Table implements ActionListener {
 	}
 
 	void Frame_Open3() {
-		JPanel BtnPanel = new JPanel(new GridLayout(1,2));
+		JPanel BtnPanel = new JPanel(new GridLayout(1,3));
 		table3 = new Frame("테이블 3");
 		table3.setSize(400, 400);
 		table3.setLayout(new BorderLayout());
@@ -469,12 +517,21 @@ public class Table implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int x = add_order3.getSelectedIndex();
-				model_T3.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0)});
-
+				count3[x] += 1;
+				if(count3[x] == 1)
+				model_T3.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0), count3[x]});
+				else 
+				{
+					for(int j=0;j<model_T3.getRowCount();j++)
+					{
+						if((model_T3.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0)))
+								model_T3.setValueAt(count3[x],j,2);
+					}
+				}
 				int data = 0;
 				String total;
 				for(int i=0; i<model_T3.getRowCount();i++) {
-					data += Integer.parseInt((String)model_T3.getValueAt(i, 1));
+					data += (Integer.parseInt((String)model_T3.getValueAt(i, 1)) * Integer.parseInt(model_T3.getValueAt(i,2).toString()));
 				}
 				total = String.valueOf(data);
 				table3_total.setText(total);
@@ -535,19 +592,26 @@ public class Table implements ActionListener {
 				}
 
 				table3_total.setText("");
-				DefaultTableModel model = (DefaultTableModel) T3.getModel();
-				model.setNumRows(0);
 				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
-				int mileage = (int) Member.memberTable.getValueAt(x, 3);
-				if (mileage >= 500 && mileage < 1000)
-					Member.memberTable.setValueAt("골드", x, 4);
-				else if(mileage > 1000) {
-					Member.memberTable.setValueAt("플래티넘",x, 4);
+				if(Member.memberTable.getRowCount() != 0) {
+					int mileage = (int) Member.memberTable.getValueAt(x, 3);
+					if (mileage >= 500 && mileage < 1000)
+						Member.memberTable.setValueAt("골드", x, 4);
+					else if(mileage > 1000) {
+						Member.memberTable.setValueAt("플래티넘",x, 4);
+					}
+					else {
+						Member.memberTable.setValueAt("일반", x, 4);
+					}
 				}
-				else {
-					Member.memberTable.setValueAt("일반", x, 4);
+				
+				for(int i=0; i<=model_T3.getRowCount();i++) {
+					model_T3.removeRow(0);
+				}
+				for(int i=0; i<100;i++) {
+					count3[i]=0;
 				}
 			}
 
@@ -563,7 +627,7 @@ public class Table implements ActionListener {
 	}
 
 	void Frame_Open4() {
-		JPanel BtnPanel = new JPanel(new GridLayout(1,2));
+		JPanel BtnPanel = new JPanel(new GridLayout(1,3));
 		table4 = new Frame("테이블 4");
 		table4.setSize(400, 400);
 		table4.setLayout(new BorderLayout());
@@ -589,11 +653,21 @@ public class Table implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int x = add_order4.getSelectedIndex();
-				model_T4.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0)});
+				count4[x] += 1;
+				if(count4[x] == 1)
+				model_T4.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0), count4[x]});
+				else 
+				{
+					for(int j=0;j<model_T4.getRowCount();j++)
+					{
+						if((model_T4.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0)))
+								model_T4.setValueAt(count4[x],j,2);
+					}
+				}
 				int data = 0;
 				String total;
 				for(int i=0; i<model_T4.getRowCount();i++) {
-					data += Integer.parseInt((String)model_T4.getValueAt(i, 1));
+					data += (Integer.parseInt((String)model_T4.getValueAt(i, 1)) * Integer.parseInt(model_T4.getValueAt(i,2).toString()));
 				}
 				total = String.valueOf(data);
 				table4_total.setText(total);
@@ -654,19 +728,27 @@ public class Table implements ActionListener {
 				}
 
 				table4_total.setText("");
-				DefaultTableModel model = (DefaultTableModel) T4.getModel();
-				model.setNumRows(0);
+				
 				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
-				int mileage = (int) Member.memberTable.getValueAt(x, 3);
-				if (mileage >= 500 && mileage < 1000)
-					Member.memberTable.setValueAt("골드", x, 4);
-				else if(mileage > 1000) {
-					Member.memberTable.setValueAt("플래티넘",x, 4);
+				if(Member.memberTable.getRowCount() != 0) {
+					int mileage = (int) Member.memberTable.getValueAt(x, 3);
+					if (mileage >= 500 && mileage < 1000)
+						Member.memberTable.setValueAt("골드", x, 4);
+					else if(mileage > 1000) {
+						Member.memberTable.setValueAt("플래티넘",x, 4);
+					}
+					else {
+						Member.memberTable.setValueAt("일반", x, 4);
+					}
 				}
-				else {
-					Member.memberTable.setValueAt("일반", x, 4);
+					
+				for(int i=0; i<=model_T4.getRowCount();i++) {
+					model_T4.removeRow(0);
+				}
+				for(int i=0; i<100;i++) {
+					count4[i]=0;
 				}
 			}
 
@@ -682,7 +764,7 @@ public class Table implements ActionListener {
 	}
 
 	void Frame_Open5() {
-		JPanel BtnPanel = new JPanel(new GridLayout(1,2));
+		JPanel BtnPanel = new JPanel(new GridLayout(1,3));
 		table5 = new Frame("테이블 5");
 		table5.setSize(400, 400);
 		table5.setLayout(new BorderLayout());
@@ -708,12 +790,21 @@ public class Table implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int x = add_order5.getSelectedIndex();
-				model_T5.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0)});
-
+				count5[x] += 1;
+				if(count5[x] == 1)
+				model_T5.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0), count5[x]});
+				else 
+				{
+					for(int j=0;j<model_T5.getRowCount();j++)
+					{
+						if((model_T5.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0)))
+								model_T5.setValueAt(count5[x],j,2);
+					}
+				}
 				int data = 0;
 				String total;
 				for(int i=0; i<model_T5.getRowCount();i++) {
-					data += Integer.parseInt((String)model_T5.getValueAt(i, 1));
+					data += (Integer.parseInt((String)model_T5.getValueAt(i, 1)) * Integer.parseInt(model_T5.getValueAt(i,2).toString()));
 				}
 				total = String.valueOf(data);
 				table5_total.setText(total);
@@ -774,19 +865,27 @@ public class Table implements ActionListener {
 				}
 
 				table5_total.setText("");
-				DefaultTableModel model = (DefaultTableModel) T5.getModel();
-				model.setNumRows(0);
+				
 				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
-				int mileage = (int) Member.memberTable.getValueAt(x, 3);
-				if (mileage >= 500 && mileage < 1000)
-					Member.memberTable.setValueAt("골드", x, 4);
-				else if(mileage > 1000) {
-					Member.memberTable.setValueAt("플래티넘",x, 4);
+				if(Member.memberTable.getRowCount() != 0) {
+					int mileage = (int) Member.memberTable.getValueAt(x, 3);
+					if (mileage >= 500 && mileage < 1000)
+						Member.memberTable.setValueAt("골드", x, 4);
+					else if(mileage > 1000) {
+						Member.memberTable.setValueAt("플래티넘",x, 4);
+					}
+					else {
+						Member.memberTable.setValueAt("일반", x, 4);
+					}
 				}
-				else {
-					Member.memberTable.setValueAt("일반", x, 4);
+				
+				for(int i=0; i<=model_T5.getRowCount();i++) {
+					model_T5.removeRow(0);
+				}
+				for(int i=0; i<100;i++) {
+					count5[i]=0;
 				}
 			}
 
@@ -802,7 +901,7 @@ public class Table implements ActionListener {
 	}
 
 	void Frame_Open6() {
-		JPanel BtnPanel = new JPanel(new GridLayout(1,2));
+		JPanel BtnPanel = new JPanel(new GridLayout(1,3));
 		table6 = new Frame("테이블 6");
 		table6.setSize(400, 400);
 		table6.setLayout(new BorderLayout());
@@ -828,12 +927,21 @@ public class Table implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int x = add_order6.getSelectedIndex();
-				model_T6.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0)});
-
+				count6[x] += 1;
+				if(count6[x] == 1)
+				model_T6.addRow(new Object[] {Menu.menuTable.getValueAt(x, 0), Menu.unvisibleTable.getValueAt(x, 0), count6[x]});
+				else 
+				{
+					for(int j=0;j<model_T6.getRowCount();j++)
+					{
+						if((model_T6.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0)))
+								model_T6.setValueAt(count6[x],j,2);
+					}
+				}
 				int data = 0;
 				String total;
 				for(int i=0; i<model_T6.getRowCount();i++) {
-					data += Integer.parseInt((String)model_T6.getValueAt(i, 1));
+					data += (Integer.parseInt((String)model_T6.getValueAt(i, 1)) * Integer.parseInt(model_T6.getValueAt(i,2).toString()));
 				}
 				total = String.valueOf(data);
 				table6_total.setText(total);
@@ -895,19 +1003,27 @@ public class Table implements ActionListener {
 				}
 
 				table6_total.setText("");
-				DefaultTableModel model = (DefaultTableModel) T6.getModel();
-				model.setNumRows(0);
+				
 				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
-				int mileage = (int) Member.memberTable.getValueAt(x, 3);
-				if (mileage >= 500 && mileage < 1000)
-					Member.memberTable.setValueAt("골드", x, 4);
-				else if(mileage > 1000) {
-					Member.memberTable.setValueAt("플래티넘",x, 4);
+				if(Member.memberTable.getRowCount() != 0) {
+					int mileage = (int) Member.memberTable.getValueAt(x, 3);
+					if (mileage >= 500 && mileage < 1000)
+						Member.memberTable.setValueAt("골드", x, 4);
+					else if(mileage > 1000) {
+						Member.memberTable.setValueAt("플래티넘",x, 4);
+					}
+					else {
+						Member.memberTable.setValueAt("일반", x, 4);
+					}
 				}
-				else {
-					Member.memberTable.setValueAt("일반", x, 4);
+				
+				for(int i=0; i<=model_T6.getRowCount();i++) {
+					model_T6.removeRow(0);
+				}
+				for(int i=0; i<100;i++) {
+					count6[i]=0;
 				}
 			}
 
