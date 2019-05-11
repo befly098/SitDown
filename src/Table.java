@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -51,6 +52,7 @@ public class Table implements ActionListener {
 	Frame table5;
 	Frame table6;
 	// 각 테이블과 연결된 다이얼로그 프레임 
+	Frame cash;
 
 	static JTable T1;
 	static JTable T2;
@@ -59,6 +61,7 @@ public class Table implements ActionListener {
 	static JTable T5;
 	static JTable T6;
 	// 다이얼로그에 띄울 JTable
+	static JTable MEM;
 
 	DefaultTableModel model_T1;
 	DefaultTableModel model_T2;
@@ -67,6 +70,7 @@ public class Table implements ActionListener {
 	DefaultTableModel model_T5;
 	DefaultTableModel model_T6;
 	// JTable에 연결할 DefaultTableModel
+	DefaultTableModel model_mem;
 
 	JScrollPane scrollpane;
 	JScrollPane scrollpane2;
@@ -75,6 +79,7 @@ public class Table implements ActionListener {
 	JScrollPane scrollpane5;
 	JScrollPane scrollpane6;
 	// JTable 받을 JScrollPane
+	JScrollPane scrollpane_mem;
 
 	JComboBox add_order1;
 	JComboBox add_order2;
@@ -83,13 +88,6 @@ public class Table implements ActionListener {
 	JComboBox add_order5;
 	JComboBox add_order6;
 	// 메뉴 선택 박스
-
-	JComboBox member_info1;
-	JComboBox member_info2;
-	JComboBox member_info3;
-	JComboBox member_info4;
-	JComboBox member_info5;
-	JComboBox member_info6;
 	
 	int [] count1 = new int [100];
 	int [] count2 = new int [100];
@@ -182,6 +180,15 @@ public class Table implements ActionListener {
 		model_T6 = new DefaultTableModel(userColumn6, 0);
 		T6 = new JTable(model_T6);
 		scrollpane6 = new JScrollPane(T6);
+		
+		Vector<String> userColumn_mem = new Vector<String> ();
+		userColumn_mem.addElement("이름");
+		userColumn_mem.addElement("연락처");
+		userColumn_mem.addElement("마일리지");
+		userColumn_mem.addElement("등급");
+		model_mem = new DefaultTableModel(userColumn_mem, 0);
+		MEM = new JTable(model_mem);
+		scrollpane_mem = new JScrollPane(MEM);
 
 		table_num1.add(table1_btn);
 		table_num1.add(table1_total, BorderLayout.SOUTH);
@@ -211,6 +218,208 @@ public class Table implements ActionListener {
 		tablePanel.add(table_num6);
 		
 	}
+	
+	void Payment(int data)
+	{
+		cash = new Frame("결제창");
+		cash.setSize(450, 500);
+		cash.setLayout(new BorderLayout());
+		cash.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent windowEvent) {
+				cash.setBackground(Color.LIGHT_GRAY);
+				cash.setVisible(false);
+			}
+		});
+		
+		JPanel p = new JPanel();
+		p.add(new JLabel("번호 뒷자리"));
+		JTextField textfield = new JTextField("4자리", 10);
+		p.add(textfield);
+		JButton search = new JButton("검색");
+		p.add(search);
+		search.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String num = new String();
+				num = textfield.getText();
+				int row = Member.memberTable.getRowCount();
+				String[] val = new String[row];
+				for (int i = 0; i < val.length; i++)
+				{
+					val[i] = (String)Member.memberTable.getValueAt(i,2);
+					val[i] = val[i].substring(val[i].length()-4, val[i].length());
+					if(num.equals(val[i]))
+					{
+						model_mem.addRow(new Object[] {Member.memberTable.getValueAt(i, 1), Member.memberTable.getValueAt(i, 2), Member.memberTable.getValueAt(i, 3), Member.memberTable.getValueAt(i, 4)});
+					}
+				}
+			}
+		});
+		p.add(scrollpane_mem, BorderLayout.CENTER);
+		
+		JPanel paypanel = new JPanel();
+		JButton cash_btn = new JButton("현금결제");
+		paypanel.add(cash_btn);
+		cash_btn.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(MEM.getSelectedRow() == -1)
+					Final.today_money += data;
+				else
+				{
+					Object name = new Object();
+					name = model_mem.getValueAt(MEM.getSelectedRow(),0);
+					int row = Member.memberTable.getRowCount();
+					for (int i = 0; i < row; i++)
+					{
+						if(name.equals(Member.memberTable.getValueAt(i, 1)))
+						{
+							String rating = (String)Member.memberTable.getValueAt(i, 4);
+
+							if (rating.equals("일반")) {
+								int mileage = 0;
+								try {
+									mileage = (int)Member.memberTable.getValueAt(i, 3);
+								}
+								catch(ClassCastException e1) {
+									mileage = Integer.parseInt((String)Member.memberTable.getValueAt(i, 3));
+								}
+								mileage += data*0.02;
+								Member.memberTable.setValueAt(mileage, i, 3);
+								Final.today_money += data * 0.98;
+							}
+							else if(rating.compareTo("골드") == 0) {
+								int mileage = 0;
+								try {
+									mileage = (int)Member.memberTable.getValueAt(i, 3);
+								}
+								catch(ClassCastException e1) {
+									mileage = Integer.parseInt((String)Member.memberTable.getValueAt(i, 3));
+								}
+								mileage += data*0.02;
+								Member.memberTable.setValueAt(mileage, i, 3);
+								Final.today_money += data * 0.95;
+							}
+							else if(rating.equals("플래티넘")){
+								int mileage = 0;
+								try {
+									mileage = (int)Member.memberTable.getValueAt(i, 3);
+								}
+								catch(ClassCastException e1) {
+									mileage = Integer.parseInt((String)Member.memberTable.getValueAt(i, 3));
+								}
+								mileage += data*0.02;
+								Member.memberTable.setValueAt(mileage, i, 3);
+								Final.today_money += data * 0.9;
+							}
+							
+							int mileage = (int) Member.memberTable.getValueAt(i, 3);
+							if (mileage >= 500 && mileage < 1000)
+								Member.memberTable.setValueAt("골드", i, 4);
+							else if(mileage > 1000) {
+								Member.memberTable.setValueAt("플래티넘",i, 4);
+							}
+							else {
+								Member.memberTable.setValueAt("일반", i, 4);
+							}
+							break;
+						}
+					}
+				}
+				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
+				Final.priceLabel.setText(str);
+				
+				for(int i=0; i<model_mem.getRowCount();i++) {
+					model_mem.removeRow(0);
+				}
+				
+				cash.setVisible(false);
+			}
+		});
+		
+		JButton card_btn = new JButton("카드결제");
+		paypanel.add(card_btn);
+		card_btn.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(MEM.getSelectedRow() == -1)
+					Final.today_money += data;
+				else
+				{
+					Object name = new Object();
+					name = model_mem.getValueAt(MEM.getSelectedRow(),0);
+					int row = Member.memberTable.getRowCount();
+					for (int i = 0; i < row; i++)
+					{
+						if(name.equals(Member.memberTable.getValueAt(i, 1)))
+						{
+							String rating = (String)Member.memberTable.getValueAt(i, 4);
+
+							if (rating.equals("일반")) {
+								int mileage = 0;
+								try {
+									mileage = (int)Member.memberTable.getValueAt(i, 3);
+								}
+								catch(ClassCastException e1) {
+									mileage = Integer.parseInt((String)Member.memberTable.getValueAt(i, 3));
+								}
+								mileage += data*0.02;
+								Member.memberTable.setValueAt(mileage, i, 3);
+								Final.today_money += data * 0.98;
+							}
+							else if(rating.compareTo("골드") == 0) {
+								int mileage = 0;
+								try {
+									mileage = (int)Member.memberTable.getValueAt(i, 3);
+								}
+								catch(ClassCastException e1) {
+									mileage = Integer.parseInt((String)Member.memberTable.getValueAt(i, 3));
+								}
+								mileage += data*0.02;
+								Member.memberTable.setValueAt(mileage, i, 3);
+								Final.today_money += data * 0.95;
+							}
+							else if(rating.equals("플래티넘")){
+								int mileage = 0;
+								try {
+									mileage = (int)Member.memberTable.getValueAt(i, 3);
+								}
+								catch(ClassCastException e1) {
+									mileage = Integer.parseInt((String)Member.memberTable.getValueAt(i, 3));
+								}
+								mileage += data*0.02;
+								Member.memberTable.setValueAt(mileage, i, 3);
+								Final.today_money += data * 0.9;
+							}
+							
+							int mileage = (int) Member.memberTable.getValueAt(i, 3);
+							if (mileage >= 500 && mileage < 1000)
+								Member.memberTable.setValueAt("골드", i, 4);
+							else if(mileage > 1000) {
+								Member.memberTable.setValueAt("플래티넘",i, 4);
+							}
+							else {
+								Member.memberTable.setValueAt("일반", i, 4);
+							}
+							break;
+						}
+					}
+				}
+				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
+				Final.priceLabel.setText(str);
+				
+				for(int i=0; i<model_mem.getRowCount();i++) {
+					model_mem.removeRow(0);
+				}
+				
+				cash.setVisible(false);
+			}
+		});
+		
+		cash.add(p, BorderLayout.NORTH);
+		cash.add(paypanel,BorderLayout.SOUTH);
+		cash.setVisible(true);
+	}
 
 	void Frame_Open1() {
 		
@@ -226,14 +435,6 @@ public class Table implements ActionListener {
 		});
 
 		add_order1 = new JComboBox(getTableData(Menu.menuTable));
-
-		int row = Member.memberTable.getRowCount();
-		Object[] val = new Object[row];
-		for (int i = 0; i < val.length; i++)
-			val[i] = Member.memberTable.getValueAt(i,1);
-		member_info1 = new JComboBox(val);
-		member_info1.addItem("비회원");
-
 
 		JButton table1_add = new JButton("테이블 1 추가");
 		table1_add.addActionListener(new ActionListener () {
@@ -270,68 +471,8 @@ public class Table implements ActionListener {
 				table_num1.setBackground(Color.WHITE);
 				table1.setVisible(false);
 				int data = Integer.parseInt(table1_total.getText());
-				int x = member_info1.getSelectedIndex();
-				if (x < Member.memberTable.getRowCount()) {
-					String rating = (String)Member.memberTable.getValueAt(x, 4);
-
-					if (rating.equals("일반")) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.98;
-					}
-					else if(rating.compareTo("골드") == 0) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.95;
-					}
-					else if(rating.equals("플래티넘")){
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.9;
-					}}
-				else {
-					Final.today_money += data;
-				}
-
+				Payment(data);
 				table1_total.setText("");
-				//DefaultTableModel model = (DefaultTableModel) T1.getModel();
-				//model.setNumRows(0);
-				
-				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
-				Final.priceLabel.setText(str);
-
-				if(Member.memberTable.getRowCount() != 0) {
-					int mileage = (int) Member.memberTable.getValueAt(x, 3);
-					if (mileage >= 500 && mileage < 1000)
-						Member.memberTable.setValueAt("골드", x, 4);
-					else if(mileage > 1000) {
-						Member.memberTable.setValueAt("플래티넘",x, 4);
-					}
-					else {
-						Member.memberTable.setValueAt("일반", x, 4);
-					}
-				}
 				
 				for(int i=0; i<=model_T1.getRowCount();i++) {
 					model_T1.removeRow(0);
@@ -344,7 +485,6 @@ public class Table implements ActionListener {
 		});
 
 		BtnPanel.add(add_order1);
-		BtnPanel.add(member_info1);
 		BtnPanel.add(table1_add);
 		BtnPanel.add(table1_pay);
 		table1.add(BtnPanel, BorderLayout.SOUTH);
@@ -365,13 +505,6 @@ public class Table implements ActionListener {
 		});
 
 		add_order2 = new JComboBox(getTableData(Menu.menuTable));
-
-		int row = Member.memberTable.getRowCount();
-		Object[] val = new Object[row];
-		for (int i = 0; i < val.length; i++)
-			val[i] = Member.memberTable.getValueAt(i,1);
-		member_info2 = new JComboBox(val);
-		member_info2.addItem("비회원");
 
 		JButton table2_add = new JButton("테이블 2 추가");
 		table2_add.addActionListener(new ActionListener () {
@@ -408,68 +541,8 @@ public class Table implements ActionListener {
 				table_num2.setBackground(Color.WHITE);
 				table2.setVisible(false);
 				int data = Integer.parseInt(table2_total.getText());
-				int x = member_info2.getSelectedIndex();
-				if (x < Member.memberTable.getRowCount()) {
-					String rating = (String)Member.memberTable.getValueAt(x, 4);
-
-					if (rating.equals("일반")) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.98;
-					}
-					else if(rating.compareTo("골드") == 0) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.95;
-					}
-					else if(rating.equals("플래티넘")){
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.9;
-					}
-				}
-				else {
-					Final.today_money += data;	
-				}
-
+				Payment(data);	
 				table2_total.setText("");
-				
-				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
-				Final.priceLabel.setText(str);
-
-
-				if(Member.memberTable.getRowCount() != 0) {
-					int mileage = (int) Member.memberTable.getValueAt(x, 3);
-					if (mileage >= 500 && mileage < 1000)
-						Member.memberTable.setValueAt("골드", x, 4);
-					else if(mileage > 1000) {
-						Member.memberTable.setValueAt("플래티넘",x, 4);
-					}
-					else {
-						Member.memberTable.setValueAt("일반", x, 4);
-					}
-				}
 				
 				for(int i=0; i<=model_T2.getRowCount();i++) {
 					model_T2.removeRow(0);
@@ -482,7 +555,6 @@ public class Table implements ActionListener {
 		});
 
 		BtnPanel.add(add_order2);
-		BtnPanel.add(member_info2);
 		BtnPanel.add(table2_add);
 		BtnPanel.add(table2_pay);
 		table2.add(BtnPanel, BorderLayout.SOUTH);
@@ -503,13 +575,6 @@ public class Table implements ActionListener {
 		});
 
 		add_order3 = new JComboBox(getTableData(Menu.menuTable));
-
-		int row = Member.memberTable.getRowCount();
-		Object[] val = new Object[row];
-		for (int i = 0; i < val.length; i++)
-			val[i] = Member.memberTable.getValueAt(i,1);
-		member_info3 = new JComboBox(val);
-		member_info3.addItem("비회원");
 
 		JButton table3_add = new JButton("테이블 3 추가");
 		table3_add.addActionListener(new ActionListener () {
@@ -546,66 +611,8 @@ public class Table implements ActionListener {
 				table_num3.setBackground(Color.WHITE);
 				table3.setVisible(false);
 				int data = Integer.parseInt(table3_total.getText());
-				int x = member_info3.getSelectedIndex();
-				if (x < Member.memberTable.getRowCount()) {
-					String rating = (String) Member.memberTable.getValueAt(x, 4);
-
-					if (rating.equals("일반")) {
-						int mileage = 0;
-						try {
-							mileage = (int) Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String) Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.98;
-					}
-					else if(rating.compareTo("골드") == 0) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.95;
-					}
-					else if(rating.equals("플래티넘")){
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.9;
-					}
-				}
-				else {
-					Final.today_money += data;	
-				}
-
+				Payment(data);	
 				table3_total.setText("");
-				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
-				Final.priceLabel.setText(str);
-
-				if(Member.memberTable.getRowCount() != 0) {
-					int mileage = (int) Member.memberTable.getValueAt(x, 3);
-					if (mileage >= 500 && mileage < 1000)
-						Member.memberTable.setValueAt("골드", x, 4);
-					else if(mileage > 1000) {
-						Member.memberTable.setValueAt("플래티넘",x, 4);
-					}
-					else {
-						Member.memberTable.setValueAt("일반", x, 4);
-					}
-				}
 				
 				for(int i=0; i<=model_T3.getRowCount();i++) {
 					model_T3.removeRow(0);
@@ -618,7 +625,6 @@ public class Table implements ActionListener {
 		});
 
 		BtnPanel.add(add_order3);
-		BtnPanel.add(member_info3);
 		BtnPanel.add(table3_add);
 		BtnPanel.add(table3_pay);
 		table3.add(BtnPanel, BorderLayout.SOUTH);
@@ -639,13 +645,6 @@ public class Table implements ActionListener {
 		});
 
 		add_order4 = new JComboBox(getTableData(Menu.menuTable));
-
-		int row = Member.memberTable.getRowCount();
-		Object[] val = new Object[row];
-		for (int i = 0; i < val.length; i++)
-			val[i] = Member.memberTable.getValueAt(i,1);
-		member_info4 = new JComboBox(val);
-		member_info4.addItem("비회원");
 
 		JButton table4_add = new JButton("테이블 4 추가");
 		table4_add.addActionListener(new ActionListener () {
@@ -682,68 +681,9 @@ public class Table implements ActionListener {
 				table_num4.setBackground(Color.WHITE);
 				table4.setVisible(false);
 				int data = Integer.parseInt(table4_total.getText());
-				int x = member_info4.getSelectedIndex();
-				if (x < Member.memberTable.getRowCount()) {
-					String rating = (String)Member.memberTable.getValueAt(x, 4);
-
-					if (rating.equals("일반")) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.98;
-					}
-					else if(rating.compareTo("골드") == 0) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.95;
-					}
-					else if(rating.equals("플래티넘")){
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.9;
-					}
-				}
-				else {
-					Final.today_money += data;	
-				}
-
+				Payment(data);	
 				table4_total.setText("");
 				
-				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
-				Final.priceLabel.setText(str);
-
-				if(Member.memberTable.getRowCount() != 0) {
-					int mileage = (int) Member.memberTable.getValueAt(x, 3);
-					if (mileage >= 500 && mileage < 1000)
-						Member.memberTable.setValueAt("골드", x, 4);
-					else if(mileage > 1000) {
-						Member.memberTable.setValueAt("플래티넘",x, 4);
-					}
-					else {
-						Member.memberTable.setValueAt("일반", x, 4);
-					}
-				}
-					
 				for(int i=0; i<=model_T4.getRowCount();i++) {
 					model_T4.removeRow(0);
 				}
@@ -755,7 +695,6 @@ public class Table implements ActionListener {
 		});
 
 		BtnPanel.add(add_order4);
-		BtnPanel.add(member_info4);
 		BtnPanel.add(table4_add);
 		BtnPanel.add(table4_pay);
 		table4.add(BtnPanel, BorderLayout.SOUTH);
@@ -776,13 +715,6 @@ public class Table implements ActionListener {
 		});
 
 		add_order5 = new JComboBox(getTableData(Menu.menuTable));
-
-		int row = Member.memberTable.getRowCount();
-		Object[] val = new Object[row];
-		for (int i = 0; i < val.length; i++)
-			val[i] = Member.memberTable.getValueAt(i,1);
-		member_info5 = new JComboBox(val);
-		member_info5.addItem("비회원");
 
 		JButton table5_add = new JButton("테이블 5 추가");
 		table5_add.addActionListener(new ActionListener () {
@@ -819,67 +751,8 @@ public class Table implements ActionListener {
 				table_num5.setBackground(Color.WHITE);
 				table5.setVisible(false);
 				int data = Integer.parseInt(table5_total.getText());
-				int x = member_info5.getSelectedIndex();
-				if (x < Member.memberTable.getRowCount()) {
-					String rating = (String)Member.memberTable.getValueAt(x, 4);
-
-					if (rating.equals("일반")) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.98;
-					}
-					else if(rating.compareTo("골드") == 0) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.95;
-					}
-					else if(rating.equals("플래티넘")){
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.9;
-					}
-				}
-				else {
-					Final.today_money += data;	
-				}
-
+				Payment(data);	
 				table5_total.setText("");
-				
-				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
-				Final.priceLabel.setText(str);
-
-				if(Member.memberTable.getRowCount() != 0) {
-					int mileage = (int) Member.memberTable.getValueAt(x, 3);
-					if (mileage >= 500 && mileage < 1000)
-						Member.memberTable.setValueAt("골드", x, 4);
-					else if(mileage > 1000) {
-						Member.memberTable.setValueAt("플래티넘",x, 4);
-					}
-					else {
-						Member.memberTable.setValueAt("일반", x, 4);
-					}
-				}
 				
 				for(int i=0; i<=model_T5.getRowCount();i++) {
 					model_T5.removeRow(0);
@@ -892,7 +765,6 @@ public class Table implements ActionListener {
 		});
 
 		BtnPanel.add(add_order5);
-		BtnPanel.add(member_info5);
 		BtnPanel.add(table5_add);
 		BtnPanel.add(table5_pay);
 		table5.add(BtnPanel, BorderLayout.SOUTH);
@@ -913,13 +785,6 @@ public class Table implements ActionListener {
 		});
 
 		add_order6 = new JComboBox(getTableData(Menu.menuTable));
-
-		int row = Member.memberTable.getRowCount();
-		Object[] val = new Object[row];
-		for (int i = 0; i < val.length; i++)
-			val[i] = Member.memberTable.getValueAt(i,1);
-		member_info6 = new JComboBox(val);
-		member_info6.addItem("비회원");
 
 		JButton table6_add = new JButton("테이블 6 추가");
 		table6_add.addActionListener(new ActionListener () {
@@ -957,67 +822,8 @@ public class Table implements ActionListener {
 				table_num6.setBackground(Color.WHITE);
 				table6.setVisible(false);
 				int data = Integer.parseInt(table6_total.getText());
-				int x = member_info6.getSelectedIndex();
-				if (x < Member.memberTable.getRowCount()) {
-					String rating = (String)Member.memberTable.getValueAt(x, 4);
-
-					if (rating.equals("일반")) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.98;
-					}
-					else if(rating.compareTo("골드") == 0) {
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.95;
-					}
-					else if(rating.equals("플래티넘")){
-						int mileage = 0;
-						try {
-							mileage = (int)Member.memberTable.getValueAt(x, 3);
-						}
-						catch(ClassCastException e1) {
-							mileage = Integer.parseInt((String)Member.memberTable.getValueAt(x, 3));
-						}
-						mileage += data*0.02;
-						Member.memberTable.setValueAt(mileage, x, 3);
-						Final.today_money += data * 0.9;
-					}
-				}
-				else {
-					Final.today_money += data;	
-				}
-
+				Payment(data);	
 				table6_total.setText("");
-				
-				String str = "오늘 매출 : " + Final.today_money + "     전체 잔고 : " + Final.total_money;
-				Final.priceLabel.setText(str);
-
-				if(Member.memberTable.getRowCount() != 0) {
-					int mileage = (int) Member.memberTable.getValueAt(x, 3);
-					if (mileage >= 500 && mileage < 1000)
-						Member.memberTable.setValueAt("골드", x, 4);
-					else if(mileage > 1000) {
-						Member.memberTable.setValueAt("플래티넘",x, 4);
-					}
-					else {
-						Member.memberTable.setValueAt("일반", x, 4);
-					}
-				}
 				
 				for(int i=0; i<=model_T6.getRowCount();i++) {
 					model_T6.removeRow(0);
@@ -1030,7 +836,6 @@ public class Table implements ActionListener {
 		});
 
 		BtnPanel.add(add_order6);
-		BtnPanel.add(member_info6);
 		BtnPanel.add(table6_add);
 		BtnPanel.add(table6_pay);
 		table6.add(BtnPanel, BorderLayout.SOUTH);
