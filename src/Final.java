@@ -1,3 +1,5 @@
+package SitDown;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -152,8 +154,13 @@ public class Final extends JFrame implements ActionListener {
 		String actionCommand = e.getActionCommand(); // 버튼 이름 받아오는 String
 		
 		if(actionCommand.compareTo("종료") == 0) { // 종료 버튼 
+			int check = 0;
+			for (int i = 0; i < Table.T.length; i++) {
+				if (Table.T[i].getRowCount() <= 0)
+					check++;
+			}
 			
-			if(Table.T1.getRowCount() > 0 || Table.T2.getRowCount() > 0 || Table.T3.getRowCount() > 0 || Table.T4.getRowCount() > 0 || Table.T5.getRowCount() > 0 || Table.T6.getRowCount() > 0) {
+			if(check != Table.T.length) {
 				Frame errorBox = new Frame("Error");
 				errorBox.setSize(300, 300);
 				errorBox.addWindowListener(new WindowAdapter() {
@@ -210,8 +217,13 @@ public class Final extends JFrame implements ActionListener {
 			System.exit(0);
 		}
 		else if(actionCommand.equals("마감")) { // 마감 버튼 -> 날짜 바뀌기
+			int check = 0;
+			for (int i = 0; i < Table.T.length; i++) {
+				if (Table.T[i].getRowCount() <= 0)
+					check++;
+			}
 			
-			if(Table.T1.getRowCount() > 0 || Table.T2.getRowCount() > 0 || Table.T3.getRowCount() > 0 || Table.T4.getRowCount() > 0 || Table.T5.getRowCount() > 0 || Table.T6.getRowCount() > 0) {
+			if(check != Table.T.length) {
 				Frame errorBox = new Frame("Error");
 				errorBox.setSize(300, 300);
 				errorBox.addWindowListener(new WindowAdapter() {
