@@ -268,7 +268,7 @@ public class Final extends JFrame implements ActionListener {
 					price *= data;
 					k += data;
 					Storage.storageTable.setValueAt(0, i, 2);
-					Storage.storageTable.setValueAt(k, i, 1);
+					Storage.storageTable.setValueAt(Integer.toString(k), i, 1);
 					total_money -= price;
 				}
 			

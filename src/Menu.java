@@ -1,3 +1,4 @@
+package SitDown;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +11,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -18,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.WindowAdapter;
 
@@ -45,7 +49,7 @@ public class Menu implements ActionListener {
 	JTextField menuFrame_name;
 	JTextField menuFrame_price;
 	JTextField menuFrame_originalPrice;
-	JTextField menuFrame_ingredients;
+	JTextArea menuFrame_ingredients;
 	JPanel dialogPanel;
 	
 	JLabel menu_nameinfo;
@@ -59,7 +63,7 @@ public class Menu implements ActionListener {
 	JTextField menuFrame_name3;
 	JTextField menuFrame_price3;
 	JTextField menuFrame_originalPrice3;
-	JTextField menuFrame_ingredients3;
+	JTextArea menuFrame_ingredients3;
 	JPanel editPanel;
 	JLabel menu_nameinfo3;
 	JLabel menu_priceinfo3;
@@ -73,7 +77,7 @@ public class Menu implements ActionListener {
 	JTextField menuinfo_name;
 	JTextField menuinfo_price;
 	JTextField menuinfo_originalPrice;
-	JTextField menuinfo_ingredients;
+	JTextArea menuinfo_ingredients;
 	// 메뉴 인포 테이블에 들어갈 텍스트 필드 
 	
 	JButton menu_add;
@@ -219,7 +223,9 @@ public class Menu implements ActionListener {
 		menuinfo_name = new JTextField(10);
 		menuinfo_price = new JTextField(10);
 		menuinfo_originalPrice = new JTextField(10);
-		menuinfo_ingredients = new JTextField(10);
+		menuinfo_ingredients = new JTextArea(20,10);
+		JScrollPane menuinfo_scrollPane=new JScrollPane(menuinfo_ingredients);
+		
 		
 		menuInfoPanel.add(menu_nameinfo2);
 		menuInfoPanel.add(menuinfo_name);
@@ -228,7 +234,7 @@ public class Menu implements ActionListener {
 		menuInfoPanel.add(menu_originalPriceinfo2);
 		menuInfoPanel.add(menuinfo_originalPrice);
 		menuInfoPanel.add(menu_ingredientinfo2);
-		menuInfoPanel.add(menuinfo_ingredients);
+		menuInfoPanel.add(menuinfo_scrollPane);
 		menuInfoPanel.add(menu_edit);
 		menuInfoPanel.add(menu_delete);
 		
@@ -253,7 +259,8 @@ public class Menu implements ActionListener {
 		menuFrame_name = new JTextField(10);
 		menuFrame_price = new JTextField(10);
 		menuFrame_originalPrice = new JTextField(10);
-		menuFrame_ingredients = new JTextField(10);
+		menuFrame_ingredients = new JTextArea(20,10); //added
+		JScrollPane scrollPane=new JScrollPane(menuFrame_ingredients);
 		
 		dialogPanel = new JPanel();
 		dialogPanel.setLayout(new GridLayout(4,2));
@@ -265,7 +272,7 @@ public class Menu implements ActionListener {
 		dialogPanel.add(menu_originalPriceinfo);
 		dialogPanel.add(menuFrame_originalPrice);
 		dialogPanel.add(menu_ingredientinfo);
-		dialogPanel.add(menuFrame_ingredients);
+		dialogPanel.add(scrollPane);
 		
 		add_Dialog.add(menuFrame_add, BorderLayout.SOUTH);
 		add_Dialog.add(dialogPanel);
@@ -289,7 +296,8 @@ public class Menu implements ActionListener {
 		menuFrame_name3 = new JTextField(10);
 		menuFrame_price3 = new JTextField(10);
 		menuFrame_originalPrice3 = new JTextField(10);
-		menuFrame_ingredients3 = new JTextField(10);
+		menuFrame_ingredients3 = new JTextArea(20,10); //added
+		JScrollPane scrollPane3=new JScrollPane(menuFrame_ingredients3);
 		
 		editPanel = new JPanel();
 		editPanel.setLayout(new GridLayout(4,2));
@@ -301,7 +309,17 @@ public class Menu implements ActionListener {
 		editPanel.add(menu_originalPriceinfo3);
 		editPanel.add(menuFrame_originalPrice3);
 		editPanel.add(menu_ingredientinfo3);
-		editPanel.add(menuFrame_ingredients3);
+		editPanel.add(scrollPane3);
+		
+		int row = menuTable.getSelectedRow();
+		String data = (String) menuTable.getValueAt(row, 0);
+		menuFrame_name3.setText(data);
+		data = (String) unvisibleTable.getValueAt(row, 0);
+		menuFrame_price3.setText(data);
+		data = (String) unvisibleTable.getValueAt(row, 1);
+		menuFrame_originalPrice3.setText(data);
+		data = (String) unvisibleTable.getValueAt(row, 2);
+		menuFrame_ingredients3.setText(data);
 		
 		edit_Dialog.add(menuFrame_edit, BorderLayout.SOUTH);
 		edit_Dialog.add(editPanel);
@@ -363,6 +381,7 @@ public class Menu implements ActionListener {
 			data = (String) unvisibleTable.getValueAt(row, 1);
 			menuinfo_originalPrice.setText(data);
 			data = (String) unvisibleTable.getValueAt(row, 2);
+			System.out.println(data);
 			menuinfo_ingredients.setText(data);
 			
 			edit_Dialog.setVisible(false);

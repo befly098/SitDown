@@ -1,3 +1,4 @@
+package SitDown;
 //package ChickenStore;
 
 import java.io.FileInputStream;
