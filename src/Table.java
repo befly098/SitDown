@@ -36,6 +36,7 @@ public class Table implements ActionListener {
 
 	JPanel[] table_num = new JPanel[50];
 	// 테이블 + 토탈 값 넣을 패널
+	JPanel[] table = new JPanel[50];
 
 	JButton[] table_btn = new JButton[50];
 	// 다이얼로그와 연결된 테이블 버튼
@@ -61,31 +62,31 @@ public class Table implements ActionListener {
 	// 메뉴 선택 박스
 
 	int tables = 6;
-	int[][] count = new int[6][100];
+	int[][] count = new int[50][100];
 
 	public Table() {
 		tablePanel = new JPanel();
 		tablePanel.setLayout(new GridLayout(1, 2));
 
 		tableListPanel = new JPanel();
-		tableListPanel.setLayout(new GridLayout(5, 3));
+		tableListPanel.setLayout(new GridLayout(5, 2));
 
-		for (int i = 0; i < tables; i++) {
+		for (int i = 0; i < table_num.length; i++) {
 			table_num[i] = new JPanel();
 			table_num[i].setLayout(new BorderLayout());
 			table_num[i].setBackground(Color.WHITE);
 		}
 
 		String name = new String("테이블 1");
-		for (int i = 0; i < tables; i++) {
+		for (int i = 0; i < table_btn.length; i++) {
 			table_btn[i] = new JButton(name);
 			name = name.replace(Integer.toString(i + 1), Integer.toString(i + 2));
 		}
 
-		for (int i = 0; i < tables; i++)
+		for (int i = 0; i < table_total.length; i++)
 			table_total[i] = new JTextField(10);
 
-		for (int i = 0; i < tables; i++) {
+		for (int i = 0; i < T.length; i++) {
 			Vector[] userColumn = new Vector[50];
 			userColumn[i] = new Vector<String>();
 			userColumn[i].addElement("이름");
@@ -105,17 +106,17 @@ public class Table implements ActionListener {
 		MEM = new JTable(model_mem);
 		scrollpane_mem = new JScrollPane(MEM);
 
-		for (int i = 0; i < tables; i++) {
+		for (int i = 0; i < table_num.length; i++) {
 			table_num[i].add(table_btn[i]);
 			table_num[i].add(table_total[i], BorderLayout.SOUTH);
 		}
 
-		for (int i = 0; i < tables; i++)
+		for (int i = 0; i < table_btn.length; i++)
 			table_btn[i].addActionListener(this);
 
 		for (int i = 0; i < tables; i++)
 			tableListPanel.add(table_num[i]);
-
+			
 		tableTotalPanel = new JPanel(new BorderLayout());
 		tableEditPanel = new JPanel(new GridLayout(1, 2));
 		table_add = new JButton("테이블 추가");
@@ -150,7 +151,13 @@ public class Table implements ActionListener {
 		BtnPanel.add(menu_list);
 		BtnPanel.add(menu_add);
 		BtnPanel.add(menu_pay);
-
+		
+		/*for (int i = 0; i < table.length; i++) {
+			table[i] = new JPanel(new BorderLayout());
+			table[i].add(scrollpane[i]);
+			table[i].add(BtnPanel, BorderLayout.SOUTH);
+		}*/
+		
 		orderPanel.add(scrollpane_order);
 		orderPanel.add(BtnPanel, BorderLayout.SOUTH);
 
@@ -350,7 +357,7 @@ public class Table implements ActionListener {
 		 * table_num[index].setBackground(Color.LIGHT_GRAY);
 		 * table[index].setVisible(false); } });
 		 */
-
+		
 		menu_add.addActionListener(new ActionListener() {
 
 			@Override
@@ -435,11 +442,12 @@ public class Table implements ActionListener {
 					count[index][i] = 0;
 				}
 			}
-
 		});
 
+		/*tablePanel.remove(orderPanel);
+		tablePanel.add(table[index]);
 		BtnPanel.add(menu_add);
-		BtnPanel.add(menu_pay);
+		BtnPanel.add(menu_pay);*/
 	}
 
 	public Object[] getTableData(JTable table) {
@@ -457,7 +465,7 @@ public class Table implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
-		String[] name = new String[tables];
+		String[] name = new String[50];
 
 		for (int i = 0; i < 50; i++) {
 			name[i] = new String("테이블 ");
@@ -468,28 +476,36 @@ public class Table implements ActionListener {
 			if (actionCommand.equals(name[i])) {
 				Table_Open(i);
 				table_num[i].setBackground(Color.DARK_GRAY);
+				//tablePanel.remove(table[i]);
+				//tablePanel.add(orderPanel);
 				break;
 			}
 		}
 
 		if (actionCommand.compareTo("테이블 추가") == 0) {
-			table_num[tables] = new JPanel();
-			table_num[tables].setLayout(new BorderLayout());
-			table_num[tables].setBackground(Color.WHITE);
-
-			table_btn[tables] = new JButton(name[tables]);
-			table_btn[tables].addActionListener(this);
-
-			table_total[tables] = new JTextField(10);
-
 			table_num[tables].add(table_btn[tables]);
 			table_num[tables].add(table_total[tables], BorderLayout.SOUTH);
 
 			tableListPanel.add(table_num[tables]);
-			tableTotalPanel.add(tableListPanel);
-			tablePanel.add(tableTotalPanel);
 
 			tables++;
+		}
+		else if (actionCommand.compareTo("테이블 삭제") == 0) {
+			if (tables > 0) {
+				tableListPanel.remove(table_num[tables-1]);
+				
+				table_total[tables-1].setText("");
+
+				/*for (int i = 0; i <= model_T[tables-1].getRowCount(); i++)
+					model_T[tables-1].removeRow(0);*/
+				
+				for (int i = 0; i < 100; i++)
+					count[tables-1][i] = 0;
+				
+				tableListPanel.setVisible(true);
+				
+				tables--;
+			}
 		}
 	}
 }
