@@ -1,10 +1,7 @@
-package SitDown;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -28,10 +25,10 @@ public class Member implements ActionListener {
 	static JTable memberTable; // 멤버 테이블
 	static DefaultTableModel memberTableModel;
 	
-	JTextField member_name;
-	JTextField member_number;
-	JTextField member_mileage;
-	JTextField member_phone;
+	JTextField memberNameTextField;
+	JTextField memberNumberTextField;
+	JTextField memberMileageTextField;
+	JTextField memberPhoneTextField;
 	// 테이블에 입력할 텍스트 담는 필드
 	
 	JLabel memberName;
@@ -39,10 +36,16 @@ public class Member implements ActionListener {
 	JLabel memberMileage;
 	JLabel memberPhone;
 	
-	JButton member_add;
-	JButton member_delete;
-	JButton member_edit;
+	JButton addMember;
+	JButton deleteMember;
+	JButton editMember;
 	// 테이블 관련 버튼 
+	
+	private static final String NUMBER = "번호";  
+	private static final String NAME = "이름";  
+	private static final String PHONENUMBER = "연락처";
+	private static final String MILEAGE = "마일리지";
+	private static final String LEVEL = "회원등급";  
 	
 	public Member() {
 		memberPanel = new JPanel();
@@ -55,12 +58,12 @@ public class Member implements ActionListener {
 			Vector columnNames = (Vector)inputStream.readObject();
 			
 			if(rowData.isEmpty()) {
-				Vector<String> userColumn = new Vector<String> ();
-				userColumn.addElement("번호");
-				userColumn.addElement("이름");
-				userColumn.addElement("연락처");
-				userColumn.addElement("마일리지");
-				userColumn.addElement("회원등급");
+				Vector<String> userColumn = new Vector<> ();
+				userColumn.addElement(NUMBER);
+				userColumn.addElement(NAME);
+				userColumn.addElement(PHONENUMBER);
+				userColumn.addElement(MILEAGE);
+				userColumn.addElement(LEVEL);
 				memberTableModel = new DefaultTableModel(userColumn, 0);
 			}
 			else {
@@ -71,29 +74,29 @@ public class Member implements ActionListener {
 			inputStream.close();
 			
 		} catch(FileNotFoundException e) {
-			Vector<String> userColumn = new Vector<String> ();
-			userColumn.addElement("번호");
-			userColumn.addElement("이름");
-			userColumn.addElement("연락처");
-			userColumn.addElement("마일리지");
-			userColumn.addElement("회원등급");
+			Vector<String> userColumn = new Vector<> ();
+			userColumn.addElement(NUMBER);
+			userColumn.addElement(NAME);
+			userColumn.addElement(PHONENUMBER);
+			userColumn.addElement(MILEAGE);
+			userColumn.addElement(LEVEL);
 			memberTableModel = new DefaultTableModel(userColumn, 0);
 		} catch (ClassNotFoundException e) {
-			Vector<String> userColumn = new Vector<String> ();
-			userColumn.addElement("번호");
-			userColumn.addElement("이름");
-			userColumn.addElement("연락처");
-			userColumn.addElement("마일리지");
-			userColumn.addElement("회원등급");
+			Vector<String> userColumn = new Vector<> ();
+			userColumn.addElement(NUMBER);
+			userColumn.addElement(NAME);
+			userColumn.addElement(PHONENUMBER);
+			userColumn.addElement(MILEAGE);
+			userColumn.addElement(LEVEL);
 			memberTableModel = new DefaultTableModel(userColumn, 0);
 			e.printStackTrace();
 		} catch (IOException e) {
-			Vector<String> userColumn = new Vector<String> ();
-			userColumn.addElement("번호");
-			userColumn.addElement("이름");
-			userColumn.addElement("연락처");
-			userColumn.addElement("마일리지");
-			userColumn.addElement("회원등급");
+			Vector<String> userColumn = new Vector<> ();
+			userColumn.addElement(NUMBER);
+			userColumn.addElement(NAME);
+			userColumn.addElement(PHONENUMBER);
+			userColumn.addElement(MILEAGE);
+			userColumn.addElement(LEVEL);
 			memberTableModel = new DefaultTableModel(userColumn, 0);
 			e.printStackTrace();
 		}
@@ -102,31 +105,31 @@ public class Member implements ActionListener {
 		JScrollPane scrollpane = new JScrollPane(memberTable);
 		memberPanel.add(scrollpane, BorderLayout.CENTER);
 		
-		memberName = new JLabel("이름");
+		memberName = new JLabel(NAME);
 		memberName.setHorizontalAlignment(JLabel.CENTER);
 
-		memberNumber = new JLabel("번호");
+		memberNumber = new JLabel(NUMBER);
 		memberNumber.setHorizontalAlignment(JLabel.CENTER);
 		
-		memberMileage = new JLabel("마일리지");
+		memberMileage = new JLabel(MILEAGE);
 		memberMileage.setHorizontalAlignment(JLabel.CENTER);
 		
-		memberPhone = new JLabel("연락처");
+		memberPhone = new JLabel(PHONENUMBER);
 		memberPhone.setHorizontalAlignment(JLabel.CENTER);
 		
-		member_name = new JTextField(10);
-		member_number = new JTextField(10);
-		member_mileage = new JTextField(10);
-		member_phone = new JTextField(10);
+		memberNameTextField = new JTextField(10);
+		memberNumberTextField = new JTextField(10);
+		memberMileageTextField = new JTextField(10);
+		memberPhoneTextField = new JTextField(10);
 		
-		member_add = new JButton("추가");
-		member_add.addActionListener(this);
+		addMember = new JButton("추가");
+		addMember.addActionListener(this);
 		
-		member_delete = new JButton("삭제");
-		member_delete.addActionListener(this);
+		deleteMember = new JButton("삭제");
+		deleteMember.addActionListener(this);
 		
-		member_edit = new JButton("편집");
-		member_edit.addActionListener(this);
+		editMember = new JButton("편집");
+		editMember.addActionListener(this);
 		// 텍스트필드와 버튼 생성 
 		
 		memberBtnPanel = new JPanel();
@@ -140,14 +143,14 @@ public class Member implements ActionListener {
 		textfieldPanel.add(memberName);
 		textfieldPanel.add(memberPhone);
 		textfieldPanel.add(memberMileage);
-		textfieldPanel.add(member_number);
-		textfieldPanel.add(member_name);
-		textfieldPanel.add(member_phone);
-		textfieldPanel.add(member_mileage);
+		textfieldPanel.add(memberNumberTextField);
+		textfieldPanel.add(memberNameTextField);
+		textfieldPanel.add(memberPhoneTextField);
+		textfieldPanel.add(memberMileageTextField);
 		
-		btnPanel.add(member_add);
-		btnPanel.add(member_delete);
-		btnPanel.add(member_edit);
+		btnPanel.add(addMember);
+		btnPanel.add(deleteMember);
+		btnPanel.add(editMember);
 		
 		memberBtnPanel.add(textfieldPanel);
 		memberBtnPanel.add(btnPanel);
@@ -162,22 +165,22 @@ public class Member implements ActionListener {
 		String actionCommand = e.getActionCommand();
 		
 		if(actionCommand.equals("추가")) {
-			if(Integer.parseInt(member_mileage.getText()) <= 500) {
-				memberTableModel.addRow(new Object[] {member_number.getText(), member_name.getText(), member_phone.getText(), member_mileage.getText(), "일반"});
+			if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
+				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "일반"});
 			}
 			
-			else if(Integer.parseInt(member_mileage.getText()) > 500 && Integer.parseInt(member_mileage.getText()) <= 1000) {
-				memberTableModel.addRow(new Object[] {member_number.getText(), member_name.getText(), member_phone.getText(), member_mileage.getText(), "골드"});
+			else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
+				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "골드"});
 			}
 			
 			else {
-				memberTableModel.addRow(new Object[] {member_number.getText(), member_name.getText(), member_phone.getText(), member_mileage.getText(), "플래티넘"});
+				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "플래티넘"});
 			}
 			
-			member_number.setText("");
-			member_name.setText("");
-			member_phone.setText("");
-			member_mileage.setText("");
+			memberNumberTextField.setText("");
+			memberNameTextField.setText("");
+			memberPhoneTextField.setText("");
+			memberMileageTextField.setText("");
 		}
 		
 		else if(actionCommand.equals("삭제")) {
@@ -186,16 +189,16 @@ public class Member implements ActionListener {
 		
 		else if(actionCommand.equals("편집")) {
 			int row = memberTable.getSelectedRow();
-			memberTable.setValueAt(member_number.getText(), row, 0);
-			memberTable.setValueAt(member_name.getText(), row, 1);
-			memberTable.setValueAt(member_phone.getText(), row, 2);
-			memberTable.setValueAt(member_mileage.getText(), row, 3);
+			memberTable.setValueAt(memberNumberTextField.getText(), row, 0);
+			memberTable.setValueAt(memberNameTextField.getText(), row, 1);
+			memberTable.setValueAt(memberPhoneTextField.getText(), row, 2);
+			memberTable.setValueAt(memberMileageTextField.getText(), row, 3);
 			
-			if(Integer.parseInt(member_mileage.getText()) <= 500) {
+			if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
 				memberTable.setValueAt("일반", row, 4);
 			}
 			
-			else if(Integer.parseInt(member_mileage.getText()) > 500 && Integer.parseInt(member_mileage.getText()) <= 1000) {
+			else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
 				memberTable.setValueAt("골드", row, 4);
 			}
 			
@@ -203,10 +206,10 @@ public class Member implements ActionListener {
 				memberTable.setValueAt("플래티넘", row, 4);
 			}
 			
-			member_number.setText("");
-			member_name.setText("");
-			member_phone.setText("");
-			member_mileage.setText("");
+			memberNumberTextField.setText("");
+			memberNameTextField.setText("");
+			memberPhoneTextField.setText("");
+			memberMileageTextField.setText("");
 		}
 		
 	}
