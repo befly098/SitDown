@@ -1,8 +1,5 @@
 package SitDown;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,13 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public class Member implements ActionListener {
-	
-	Connection con = null;
-	
-	String className = "org.gjt.mm.mysql.Driver";
-	String url = "jdbc:mysql://localhost:3306/sitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
-	String user = "root";
-	String passwd = "6523qudwn";
 	
 	JPanel memberPanel; // 멤버 패널
 	JPanel memberBtnPanel; // 텍스트필드와 버튼 담을 패널 

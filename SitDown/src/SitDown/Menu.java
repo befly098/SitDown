@@ -1,8 +1,4 @@
 package SitDown;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,13 +26,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.WindowAdapter;
 
 public class Menu implements ActionListener {
-	
-	Connection con = null;
-	
-	String className = "org.gjt.mm.mysql.Driver";
-	String url = "jdbc:mysql://localhost:3306/sitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
-	String user = "root";
-	String passwd = "6523qudwn";
 	
 	JPanel menuPanel;
 	static JTable menuTable;
