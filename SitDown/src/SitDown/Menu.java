@@ -1,18 +1,14 @@
 package SitDown;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -30,63 +26,69 @@ public class Menu implements ActionListener {
 	JPanel menuPanel;
 	static JTable menuTable;
 	
-	JPanel menuTablePanel; // ÌÖåÏù¥Î∏î+Î≤ÑÌäº Îã¥ÏùÑ Ìå®ÎÑê 
-	JPanel menuInfoPanel; // Î©îÎâ¥ Ï†ïÎ≥¥ Îã¥ÏùÑ Ìå®ÎÑê (Í∑∏Î¶¨Îìú 3,4)
-	JPanel menuTableBtnPanel;  // ÌÖçÏä§Ìä∏ ÌïÑÎìúÏôÄ Î≤ÑÌäº Îã¥ÏùÑ Ìå®ÎÑê 
+	JPanel menuTablePanel; // ≈◊¿Ã∫Ì+πˆ∆∞ ¥„¿ª ∆–≥Œ 
+	JPanel menuInfoPanel; // ∏ﬁ¥∫ ¡§∫∏ ¥„¿ª ∆–≥Œ (±◊∏ÆµÂ 3,4)
+	JPanel menuTableBtnPanel;  // ≈ÿΩ∫∆Æ « µÂøÕ πˆ∆∞ ¥„¿ª ∆–≥Œ 
 	
-	JLabel menu_nameinfo2;
-	JLabel menu_priceinfo2;
-	JLabel menu_originalPriceinfo2;
-	JLabel menu_ingredientinfo2;
-	// Î©îÎâ¥ Ïù∏Ìè¨ ÌÖåÏù¥Î∏îÏóê Îì§Ïñ¥Í∞à ÎùºÎ≤® 
+	JLabel menuNameInfo2;
+	JLabel menuPriceInfo2;
+	JLabel menuOriginalPriceinfo2;
+	JLabel menuIngredientInfo2;
+	// ∏ﬁ¥∫ ¿Œ∆˜ ≈◊¿Ã∫Ìø° µÈæÓ∞• ∂Û∫ß 
 	
 	static DefaultTableModel menuTableModel;
 	
-	// Ïó¨Í∏∞ÏÑúÎ∂ÄÌÑ∞ 
+	// ø©±‚º≠∫Œ≈Õ 
 	static DefaultTableModel unvisibleTableModel;
 	static JTable unvisibleTable;
-	Frame add_Dialog;
-	JTextField menuFrame_name;
-	JTextField menuFrame_price;
-	JTextField menuFrame_originalPrice;
-	JTextArea menuFrame_ingredients;
+	Frame addDialog;
+	JTextField menuFrameName;
+	JTextField menuFramePrice;
+	JTextField menuFrameOriginalPrice;
+	JTextArea menuFrameIngredients;
 	JPanel dialogPanel;
 	
-	JLabel menu_nameinfo;
-	JLabel menu_priceinfo;
-	JLabel menu_originalPriceinfo;
-	JLabel menu_ingredientinfo;
-	// Ïó¨Í∏∞ÍπåÏßÄ Î©îÎâ¥ Ï∂îÍ∞Ä Îã§Ïù¥ÏñºÎ°úÍ∑∏Ïóê ÏÇ¨Ïö©Ìïú Î≥ÄÏàò 
+	JLabel menuNameInfo;
+	JLabel menuPriceInfo;
+	JLabel menuOriginalPriceInfo;
+	JLabel menuIngredientInfo;
+	// ø©±‚±Ó¡ˆ ∏ﬁ¥∫ √ﬂ∞° ¥Ÿ¿ÃæÛ∑Œ±◊ø° ªÁøÎ«— ∫Øºˆ 
 	
-	// Ïó¨Í∏∞ÏÑúÎ∂ÄÌÑ∞ 
-	Frame edit_Dialog;
-	JTextField menuFrame_name3;
-	JTextField menuFrame_price3;
-	JTextField menuFrame_originalPrice3;
-	JTextArea menuFrame_ingredients3;
+	// ø©±‚º≠∫Œ≈Õ 
+	Frame editDialog;
+	JTextField menuFrameName3;
+	JTextField menuFramePrice3;
+	JTextField menuFrameOriginalPrice3;
+	JTextArea menuFrameIngredients3;
 	JPanel editPanel;
-	JLabel menu_nameinfo3;
-	JLabel menu_priceinfo3;
-	JLabel menu_originalPriceinfo3;
-	JLabel menu_ingredientinfo3;
-	// Ïó¨Í∏∞ÍπåÏßÄ Î©îÎâ¥ Ìé∏Ïßë Îã§Ïù¥ÏñºÎ°úÍ∑∏Ïóê ÏÇ¨Ïö©Ìïú Î≥ÄÏàò 
+	JLabel menuNameInfo3;
+	JLabel menuPriceInfo3;
+	JLabel menuOriginalPriceInfo3;
+	JLabel menuIngredientInfo3;
+	// ø©±‚±Ó¡ˆ ∏ﬁ¥∫ ∆Ì¡˝ ¥Ÿ¿ÃæÛ∑Œ±◊ø° ªÁøÎ«— ∫Øºˆ 
 	
-	JTextField menu_name;
-	// Î©îÎâ¥ ÌÖåÏù¥Î∏îÏóê Îì§Ïñ¥Í∞à ÌÖçÏä§Ìä∏ÌïÑÎìú 
+	JTextField menu_name; //æ≤¥¬ ∞˜¿Ã æ¯¥¬µÌ
+	// ∏ﬁ¥∫ ≈◊¿Ã∫Ìø° µÈæÓ∞• ≈ÿΩ∫∆Æ« µÂ 
 	
-	JTextField menuinfo_name;
-	JTextField menuinfo_price;
-	JTextField menuinfo_originalPrice;
-	JTextArea menuinfo_ingredients;
-	// Î©îÎâ¥ Ïù∏Ìè¨ ÌÖåÏù¥Î∏îÏóê Îì§Ïñ¥Í∞à ÌÖçÏä§Ìä∏ ÌïÑÎìú 
+	JTextField menuInfoName;
+	JTextField menuInfoPrice;
+	JTextField menuInfoOriginalPrice;
+	JTextArea menuInfoIngredients;
+	// ∏ﬁ¥∫ ¿Œ∆˜ ≈◊¿Ã∫Ìø° µÈæÓ∞• ≈ÿΩ∫∆Æ « µÂ 
 	
-	JButton menu_add;
-	JButton menu_edit;
-	JButton menu_delete;
-	JButton menu_info;
-	JButton menuFrame_add;
-	JButton menuFrame_edit;
-	// Î©îÎâ¥ Ï∂îÍ∞Ä ÏÇ≠Ï†ú Î≤ÑÌäº 
+	JButton menuAdd;
+	JButton menuEdit;
+	JButton menuDelete;
+	JButton menuInfo;
+	JButton menuFrameAdd;
+	JButton menuFrameEdit;
+	// ∏ﬁ¥∫ √ﬂ∞° ªË¡¶ πˆ∆∞ 
+	
+	private static final String NAME = "¿Ã∏ß";
+	private static final String PRICE = "∞°∞›";
+	private static final String PRODUCTIONPRICE = "ª˝ªÍ¥‹∞°";
+	private static final String MATERIAL = "¿Á∑·";
+	private static final String USED = "ªÁøÎµ» ¿Á∑·";
 	
 	public Menu() {
 		
@@ -100,8 +102,8 @@ public class Menu implements ActionListener {
 		menuInfoPanel.setLayout(new GridLayout(5,2));
 		
 		//
-		unvisibleTable = new JTable();
-		// ÌÖçÏä§Ìä∏ÌïÑÎìúÏóê ÎÑ£ÏùÑ ÏïàÎ≥¥Ïù¥Îäî ÌÖåÏù¥Î∏î 
+		unvisibleTable = new JTable();	//Ω∫≈¬∆Ω
+		// ≈ÿΩ∫∆Æ« µÂø° ≥÷¿ª æ»∫∏¿Ã¥¬ ≈◊¿Ã∫Ì 
 		
 		try {
 			ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("MenuTable"));
@@ -110,281 +112,260 @@ public class Menu implements ActionListener {
 			Vector rowData = (Vector)inputStream.readObject();
 			Vector columnNames = (Vector)inputStream.readObject();
 			if(rowData.isEmpty()) {
-				Vector<String> userColumn = new Vector<String> ();
-				userColumn.addElement("Ïù¥Î¶Ñ");
-				menuTableModel = new DefaultTableModel(userColumn, 0);
+				Vector<String> userColumn = new Vector<> ();
+				userColumn.addElement(NAME);
+				menuTableModel = new DefaultTableModel(userColumn, 0);	//Ω∫≈¬∆Ω
 			}
 			
 			else {
-				menuTableModel = new DefaultTableModel();
+				menuTableModel = new DefaultTableModel();	//Ω∫≈¬∆Ω
 				menuTableModel.setDataVector(rowData, columnNames);
 			}
 			
 			Vector rowData2 = (Vector)inputStream2.readObject();
 			Vector columnNames2 = (Vector)inputStream2.readObject();
 			if(rowData2.isEmpty()) {
-				Vector<String> userColumn_unvisible = new Vector<String> ();
-				userColumn_unvisible.addElement("Í∞ÄÍ≤©");
-				userColumn_unvisible.addElement("ÏÉùÏÇ∞Îã®Í∞Ä");
-				userColumn_unvisible.addElement("Ïû¨Î£å");
-				unvisibleTableModel = new DefaultTableModel(userColumn_unvisible, 0);
+				Vector<String> userColumnUnvisible = new Vector<> ();
+				userColumnUnvisible.addElement(PRICE);
+				userColumnUnvisible.addElement(PRODUCTIONPRICE);
+				userColumnUnvisible.addElement(MATERIAL);
+				unvisibleTableModel = new DefaultTableModel(userColumnUnvisible, 0);	//Ω∫≈¬∆Ω
 			}
 			
 			else {
-				unvisibleTableModel = new DefaultTableModel();
+				unvisibleTableModel = new DefaultTableModel();	//Ω∫≈¬∆Ω
 				unvisibleTableModel.setDataVector(rowData2, columnNames2);
 			}
 			
 			inputStream.close();
 			inputStream2.close();
 			
-		} catch(FileNotFoundException e) {
+		} catch(/*FileNotFoundException | */ClassNotFoundException | IOException e) { //¿˙∞≈ ∆˜«‘µ«∏È æ»µ ...
 			
-			Vector<String> userColumn = new Vector<String> ();
-			userColumn.addElement("Ïù¥Î¶Ñ");
-			menuTableModel = new DefaultTableModel(userColumn, 0);
+			Vector<String> userColumn = new Vector<> ();
+			userColumn.addElement(NAME);
+			menuTableModel = new DefaultTableModel(userColumn, 0);	//Ω∫≈¬∆Ω
 			
-			Vector<String> userColumn_unvisible = new Vector<String> ();
-			userColumn_unvisible.addElement("Í∞ÄÍ≤©");
-			userColumn_unvisible.addElement("ÏÉùÏÇ∞Îã®Í∞Ä");
-			userColumn_unvisible.addElement("Ïû¨Î£å");
-			unvisibleTableModel = new DefaultTableModel(userColumn_unvisible, 0);
+			Vector<String> userColumnUnvisible = new Vector<> ();
+			userColumnUnvisible.addElement(PRICE);
+			userColumnUnvisible.addElement(PRODUCTIONPRICE);
+			userColumnUnvisible.addElement(MATERIAL);
+			unvisibleTableModel = new DefaultTableModel(userColumnUnvisible, 0);	//Ω∫≈¬∆Ω
 
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			Vector<String> userColumn = new Vector<String> ();
-			userColumn.addElement("Ïù¥Î¶Ñ");
-			menuTableModel = new DefaultTableModel(userColumn, 0);
-			
-			Vector<String> userColumn_unvisible = new Vector<String> ();
-			userColumn_unvisible.addElement("Í∞ÄÍ≤©");
-			userColumn_unvisible.addElement("ÏÉùÏÇ∞Îã®Í∞Ä");
-			userColumn_unvisible.addElement("Ïû¨Î£å");
-			unvisibleTableModel = new DefaultTableModel(userColumn_unvisible, 0);
-			e.printStackTrace();
-		} catch (IOException e) {
-			Vector<String> userColumn = new Vector<String> ();
-			userColumn.addElement("Ïù¥Î¶Ñ");
-			menuTableModel = new DefaultTableModel(userColumn, 0);
-			
-			Vector<String> userColumn_unvisible = new Vector<String> ();
-			userColumn_unvisible.addElement("Í∞ÄÍ≤©");
-			userColumn_unvisible.addElement("ÏÉùÏÇ∞Îã®Í∞Ä");
-			userColumn_unvisible.addElement("Ïû¨Î£å");
-			unvisibleTableModel = new DefaultTableModel(userColumn_unvisible, 0);
 			e.printStackTrace();
 		}
 		
-		menuTable = new JTable(menuTableModel);
+		menuTable = new JTable(menuTableModel);	//Ω∫≈¬∆Ω
 		JScrollPane scrollpane = new JScrollPane(menuTable);
 		menuTablePanel.add(scrollpane, BorderLayout.CENTER);
-		unvisibleTable = new JTable(unvisibleTableModel);
+		unvisibleTable = new JTable(unvisibleTableModel);	//Ω∫≈¬∆Ω
 		
-		menu_nameinfo = new JLabel("Ïù¥Î¶Ñ");
-		menu_nameinfo.setHorizontalAlignment(JLabel.CENTER);
-		menu_priceinfo = new JLabel("Í∞ÄÍ≤©");
-		menu_priceinfo.setHorizontalAlignment(JLabel.CENTER);
-		menu_originalPriceinfo = new JLabel("ÏÉùÏÇ∞Îã®Í∞Ä");
-		menu_originalPriceinfo.setHorizontalAlignment(JLabel.CENTER);
-		menu_ingredientinfo = new JLabel("ÏÇ¨Ïö©Îêú Ïû¨Î£å");
-		menu_ingredientinfo.setHorizontalAlignment(JLabel.CENTER);
+		menuNameInfo = new JLabel(NAME);
+		menuNameInfo.setHorizontalAlignment(JLabel.CENTER);
+		menuPriceInfo = new JLabel(PRICE);
+		menuPriceInfo.setHorizontalAlignment(JLabel.CENTER);
+		menuOriginalPriceInfo = new JLabel(PRODUCTIONPRICE);
+		menuOriginalPriceInfo.setHorizontalAlignment(JLabel.CENTER);
+		menuIngredientInfo = new JLabel(USED);
+		menuIngredientInfo.setHorizontalAlignment(JLabel.CENTER);
 		
-		menu_nameinfo2 = new JLabel("Ïù¥Î¶Ñ");
-		menu_nameinfo2.setHorizontalAlignment(JLabel.CENTER);
-		menu_priceinfo2 = new JLabel("Í∞ÄÍ≤©");
-		menu_priceinfo2.setHorizontalAlignment(JLabel.CENTER);
-		menu_originalPriceinfo2 = new JLabel("ÏÉùÏÇ∞Îã®Í∞Ä");
-		menu_originalPriceinfo2.setHorizontalAlignment(JLabel.CENTER);
-		menu_ingredientinfo2 = new JLabel("ÏÇ¨Ïö©Îêú Ïû¨Î£å");
-		menu_ingredientinfo2.setHorizontalAlignment(JLabel.CENTER);
+		menuNameInfo2 = new JLabel(NAME);
+		menuNameInfo2.setHorizontalAlignment(JLabel.CENTER);
+		menuPriceInfo2 = new JLabel(PRICE);
+		menuPriceInfo2.setHorizontalAlignment(JLabel.CENTER);
+		menuOriginalPriceinfo2 = new JLabel(PRODUCTIONPRICE);
+		menuOriginalPriceinfo2.setHorizontalAlignment(JLabel.CENTER);
+		menuIngredientInfo2 = new JLabel(USED);
+		menuIngredientInfo2.setHorizontalAlignment(JLabel.CENTER);
 		
-		menu_nameinfo3 = new JLabel("Ïù¥Î¶Ñ");
-		menu_nameinfo3.setHorizontalAlignment(JLabel.CENTER);
-		menu_priceinfo3 = new JLabel("Í∞ÄÍ≤©");
-		menu_priceinfo3.setHorizontalAlignment(JLabel.CENTER);
-		menu_originalPriceinfo3 = new JLabel("ÏÉùÏÇ∞Îã®Í∞Ä");
-		menu_originalPriceinfo3.setHorizontalAlignment(JLabel.CENTER);
-		menu_ingredientinfo3 = new JLabel("ÏÇ¨Ïö©Îêú Ïû¨Î£å");
-		menu_ingredientinfo3.setHorizontalAlignment(JLabel.CENTER);
+		menuNameInfo3 = new JLabel(NAME);
+		menuNameInfo3.setHorizontalAlignment(JLabel.CENTER);
+		menuPriceInfo3 = new JLabel(PRICE);
+		menuPriceInfo3.setHorizontalAlignment(JLabel.CENTER);
+		menuOriginalPriceInfo3 = new JLabel(PRODUCTIONPRICE);
+		menuOriginalPriceInfo3.setHorizontalAlignment(JLabel.CENTER);
+		menuIngredientInfo3 = new JLabel(USED);
+		menuIngredientInfo3.setHorizontalAlignment(JLabel.CENTER);
 		
-		menu_add = new JButton("Ï∂îÍ∞Ä");
-		menu_add.addActionListener(this);
-		menu_edit = new JButton("Ìé∏Ïßë");
-		menu_edit.addActionListener(this);
-		menu_delete = new JButton("ÏÇ≠Ï†ú");
-		menu_delete.addActionListener(this);
-		menu_info = new JButton("ÏÉÅÏÑ∏Ï†ïÎ≥¥");
-		menu_info.addActionListener(this);
+		menuAdd = new JButton("√ﬂ∞°");
+		menuAdd.addActionListener(this);
+		menuEdit = new JButton("∆Ì¡˝");
+		menuEdit.addActionListener(this);
+		menuDelete = new JButton("ªË¡¶");
+		menuDelete.addActionListener(this);
+		menuInfo = new JButton("ªÛºº¡§∫∏");
+		menuInfo.addActionListener(this);
 		
-		menuTableBtnPanel.add(menu_add);
-		menuTableBtnPanel.add(menu_info);
+		menuTableBtnPanel.add(menuAdd);
+		menuTableBtnPanel.add(menuInfo);
 		menuTablePanel.add(menuTableBtnPanel, BorderLayout.SOUTH);
 		
-		menuinfo_name = new JTextField(10);
-		menuinfo_price = new JTextField(10);
-		menuinfo_originalPrice = new JTextField(10);
-		menuinfo_ingredients = new JTextArea(20,10);
-		JScrollPane menuinfo_scrollPane=new JScrollPane(menuinfo_ingredients);
+		menuInfoName = new JTextField(10);
+		menuInfoPrice = new JTextField(10);
+		menuInfoOriginalPrice = new JTextField(10);
+		menuInfoIngredients = new JTextArea(20,10);
+		JScrollPane menuInfoscrollPane=new JScrollPane(menuInfoIngredients);
 		
 		
-		menuInfoPanel.add(menu_nameinfo2);
-		menuInfoPanel.add(menuinfo_name);
-		menuInfoPanel.add(menu_priceinfo2);
-		menuInfoPanel.add(menuinfo_price);
-		menuInfoPanel.add(menu_originalPriceinfo2);
-		menuInfoPanel.add(menuinfo_originalPrice);
-		menuInfoPanel.add(menu_ingredientinfo2);
-		menuInfoPanel.add(menuinfo_scrollPane);
-		menuInfoPanel.add(menu_edit);
-		menuInfoPanel.add(menu_delete);
+		menuInfoPanel.add(menuNameInfo2);
+		menuInfoPanel.add(menuInfoName);
+		menuInfoPanel.add(menuPriceInfo2);
+		menuInfoPanel.add(menuInfoPrice);
+		menuInfoPanel.add(menuOriginalPriceinfo2);
+		menuInfoPanel.add(menuInfoOriginalPrice);
+		menuInfoPanel.add(menuIngredientInfo2);
+		menuInfoPanel.add(menuInfoscrollPane);
+		menuInfoPanel.add(menuEdit);
+		menuInfoPanel.add(menuDelete);
 		
 		menuPanel.add(menuInfoPanel, BorderLayout.EAST);
 		menuPanel.add(menuTablePanel);
 	}
 
-	void Frame_Open() {
+	void FrameOpen() {
 		
-		add_Dialog = new Frame("Î©îÎâ¥ Ï†ïÎ≥¥ ÏûÖÎ†•");
-		add_Dialog.setSize(300, 300);
-		add_Dialog.setLayout(new BorderLayout());
-		add_Dialog.addWindowListener(new WindowAdapter() {
+		addDialog = new Frame("∏ﬁ¥∫ ¡§∫∏ ¿‘∑¬");
+		addDialog.setSize(300, 300);
+		addDialog.setLayout(new BorderLayout());
+		addDialog.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent windowEvent) {
-				add_Dialog.setVisible(false);
+				addDialog.setVisible(false);
 			}
 		});
 		
-		menuFrame_add = new JButton("ÎÇ¥Ïö© Ï∂îÍ∞Ä");
-		menuFrame_add.addActionListener(this);
+		menuFrameAdd = new JButton("≥ªøÎ √ﬂ∞°");
+		menuFrameAdd.addActionListener(this);
 		
-		menuFrame_name = new JTextField(10);
-		menuFrame_price = new JTextField(10);
-		menuFrame_originalPrice = new JTextField(10);
-		menuFrame_ingredients = new JTextArea(20,10); //added
-		JScrollPane scrollPane=new JScrollPane(menuFrame_ingredients);
+		menuFrameName = new JTextField(10);
+		menuFramePrice = new JTextField(10);
+		menuFrameOriginalPrice = new JTextField(10);
+		menuFrameIngredients = new JTextArea(20,10); //added
+		JScrollPane scrollPane=new JScrollPane(menuFrameIngredients);
 		
 		dialogPanel = new JPanel();
 		dialogPanel.setLayout(new GridLayout(4,2));
 		
-		dialogPanel.add(menu_nameinfo);
-		dialogPanel.add(menuFrame_name);
-		dialogPanel.add(menu_priceinfo);
-		dialogPanel.add(menuFrame_price);
-		dialogPanel.add(menu_originalPriceinfo);
-		dialogPanel.add(menuFrame_originalPrice);
-		dialogPanel.add(menu_ingredientinfo);
+		dialogPanel.add(menuNameInfo);
+		dialogPanel.add(menuFrameName);
+		dialogPanel.add(menuPriceInfo);
+		dialogPanel.add(menuFramePrice);
+		dialogPanel.add(menuOriginalPriceInfo);
+		dialogPanel.add(menuFrameOriginalPrice);
+		dialogPanel.add(menuIngredientInfo);
 		dialogPanel.add(scrollPane);
 		
-		add_Dialog.add(menuFrame_add, BorderLayout.SOUTH);
-		add_Dialog.add(dialogPanel);
-		add_Dialog.setVisible(true);
+		addDialog.add(menuFrameAdd, BorderLayout.SOUTH);
+		addDialog.add(dialogPanel);
+		addDialog.setVisible(true);
 	}
 	
-	void Frame_Edit() {
+	void FrameEdit() {
 		
-		edit_Dialog = new Frame("Î©îÎâ¥ Ï†ïÎ≥¥ ÏûÖÎ†•");
-		edit_Dialog.setSize(300, 300);
-		edit_Dialog.setLayout(new BorderLayout());
-		edit_Dialog.addWindowListener(new WindowAdapter() {
+		editDialog = new Frame("∏ﬁ¥∫ ¡§∫∏ ¿‘∑¬");
+		editDialog.setSize(300, 300);
+		editDialog.setLayout(new BorderLayout());
+		editDialog.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent windowEvent) {
-				edit_Dialog.setVisible(false);
+				editDialog.setVisible(false);
 			}
 		});
 		
-		menuFrame_edit = new JButton("Ìé∏Ïßë ÏôÑÎ£å");
-		menuFrame_edit.addActionListener(this);
+		menuFrameEdit = new JButton("∆Ì¡˝ øœ∑·");
+		menuFrameEdit.addActionListener(this);
 		
-		menuFrame_name3 = new JTextField(10);
-		menuFrame_price3 = new JTextField(10);
-		menuFrame_originalPrice3 = new JTextField(10);
-		menuFrame_ingredients3 = new JTextArea(20,10); //added
-		JScrollPane scrollPane3=new JScrollPane(menuFrame_ingredients3);
+		menuFrameName3 = new JTextField(10);
+		menuFramePrice3 = new JTextField(10);
+		menuFrameOriginalPrice3 = new JTextField(10);
+		menuFrameIngredients3 = new JTextArea(20,10); //added
+		JScrollPane scrollPane3=new JScrollPane(menuFrameIngredients3);
 		
 		editPanel = new JPanel();
 		editPanel.setLayout(new GridLayout(4,2));
 		
-		editPanel.add(menu_nameinfo3);
-		editPanel.add(menuFrame_name3);
-		editPanel.add(menu_priceinfo3);
-		editPanel.add(menuFrame_price3);
-		editPanel.add(menu_originalPriceinfo3);
-		editPanel.add(menuFrame_originalPrice3);
-		editPanel.add(menu_ingredientinfo3);
+		editPanel.add(menuNameInfo3);
+		editPanel.add(menuFrameName3);
+		editPanel.add(menuPriceInfo3);
+		editPanel.add(menuFramePrice3);
+		editPanel.add(menuOriginalPriceInfo3);
+		editPanel.add(menuFrameOriginalPrice3);
+		editPanel.add(menuIngredientInfo3);
 		editPanel.add(scrollPane3);
 		
 		int row = menuTable.getSelectedRow();
 		String data = (String) menuTable.getValueAt(row, 0);
-		menuFrame_name3.setText(data);
+		menuFrameName3.setText(data);
 		data = (String) unvisibleTable.getValueAt(row, 0);
-		menuFrame_price3.setText(data);
+		menuFramePrice3.setText(data);
 		data = (String) unvisibleTable.getValueAt(row, 1);
-		menuFrame_originalPrice3.setText(data);
+		menuFrameOriginalPrice3.setText(data);
 		data = (String) unvisibleTable.getValueAt(row, 2);
-		menuFrame_ingredients3.setText(data);
+		menuFrameIngredients3.setText(data);
 		
-		edit_Dialog.add(menuFrame_edit, BorderLayout.SOUTH);
-		edit_Dialog.add(editPanel);
-		edit_Dialog.setVisible(true);
+		editDialog.add(menuFrameEdit, BorderLayout.SOUTH);
+		editDialog.add(editPanel);
+		editDialog.setVisible(true);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		
-		if(actionCommand.equals("Ï∂îÍ∞Ä")) {
-			//menuTableModel.addRow(new Object[] {menu_name.getText()});
-			Frame_Open();
+		if(actionCommand.equals("√ﬂ∞°")) {
+			FrameOpen();
 		}
 		
-		else if(actionCommand.equals("ÏÉÅÏÑ∏Ï†ïÎ≥¥")) {
+		else if(actionCommand.equals("ªÛºº¡§∫∏")) {
 			int row = menuTable.getSelectedRow();
 			String data = (String) menuTable.getValueAt(row, 0);
-			menuinfo_name.setText(data);
+			menuInfoName.setText(data);
 			data = (String) unvisibleTable.getValueAt(row, 0);
-			menuinfo_price.setText(data);
+			menuInfoPrice.setText(data);
 			data = (String) unvisibleTable.getValueAt(row, 1);
-			menuinfo_originalPrice.setText(data);
+			menuInfoOriginalPrice.setText(data);
 			data = (String) unvisibleTable.getValueAt(row, 2);
-			menuinfo_ingredients.setText(data);
+			menuInfoIngredients.setText(data);
 		}
 		
-		else if(actionCommand.equals("ÎÇ¥Ïö© Ï∂îÍ∞Ä")) {
-			menuTableModel.addRow(new Object[] {menuFrame_name.getText()});
-			unvisibleTableModel.addRow(new Object[] {menuFrame_price.getText(), menuFrame_originalPrice.getText(), menuFrame_ingredients.getText()});
-			add_Dialog.setVisible(false);
+		else if(actionCommand.equals("≥ªøÎ √ﬂ∞°")) {
+			menuTableModel.addRow(new Object[] {menuFrameName.getText()});
+			unvisibleTableModel.addRow(new Object[] {menuFramePrice.getText(), menuFrameOriginalPrice.getText(), menuFrameIngredients.getText()});
+			addDialog.setVisible(false);
 		}
 		
-		else if(actionCommand.equals("Ìé∏Ïßë")) {
-			Frame_Edit();
+		else if(actionCommand.equals("∆Ì¡˝")) {
+			FrameEdit();
 		}
 		
-		else if(actionCommand.equals("ÏÇ≠Ï†ú")) {
+		else if(actionCommand.equals("ªË¡¶")) {
 			int row = menuTable.getSelectedRow();
 			menuTableModel.removeRow(row);
 			unvisibleTableModel.removeRow(row);
-			menuinfo_name.setText("");
-			menuinfo_price.setText("");
-			menuinfo_originalPrice.setText("");
-			menuinfo_ingredients.setText("");
+			menuInfoName.setText("");
+			menuInfoPrice.setText("");
+			menuInfoOriginalPrice.setText("");
+			menuInfoIngredients.setText("");
 		}
 		
-		else if(actionCommand.equals("Ìé∏Ïßë ÏôÑÎ£å")) {
+		else if(actionCommand.equals("∆Ì¡˝ øœ∑·")) {
 			int row = menuTable.getSelectedRow();
-			menuTable.setValueAt(menuFrame_name3.getText(), row, 0);
-			unvisibleTable.setValueAt(menuFrame_price3.getText(), row, 0);
-			unvisibleTable.setValueAt(menuFrame_originalPrice3.getText(), row, 1);
-			unvisibleTable.setValueAt(menuFrame_ingredients3.getText(), row, 2);
+			menuTable.setValueAt(menuFrameName3.getText(), row, 0);
+			unvisibleTable.setValueAt(menuFramePrice3.getText(), row, 0);
+			unvisibleTable.setValueAt(menuFrameOriginalPrice3.getText(), row, 1);
+			unvisibleTable.setValueAt(menuFrameIngredients3.getText(), row, 2);
 			
 			String data = (String) menuTable.getValueAt(row, 0);
-			menuinfo_name.setText(data);
+			menuInfoName.setText(data);
 			data = (String) unvisibleTable.getValueAt(row, 0);
-			menuinfo_price.setText(data);
+			menuInfoPrice.setText(data);
 			data = (String) unvisibleTable.getValueAt(row, 1);
-			menuinfo_originalPrice.setText(data);
+			menuInfoOriginalPrice.setText(data);
 			data = (String) unvisibleTable.getValueAt(row, 2);
 			System.out.println(data);
-			menuinfo_ingredients.setText(data);
+			menuInfoIngredients.setText(data);
 			
-			edit_Dialog.setVisible(false);
+			editDialog.setVisible(false);
 		}
 		
 	}
