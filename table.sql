@@ -1,21 +1,30 @@
-CREATE TABLE menu(
-    menu_no INT(8) PRIMARY KEY NOT NULL,
-    menu_name VARCHAR(30) not null,
-    price INT(8) not null,
-    baseMoney INT(8) not null,
-    orderCount INT(8) not null
+DROP table Storage;
+DROP table Member;
+DROP table Table;
+
+create table Storage(
+	Iname char(20) not null,
+	Iprice int not null default 0,
+	Iseller char(20),
+	Icontact char(20),
+	Iquant int default 0,
+	Iorder int default 0,
+	primary key(Iname)
 );
 
-CREATE TABLE storage(
-    Ing_no INT(8) PRIMARY KEY NOT NULL,
-    Ing_name VARCHAR(30) not null,
-    Ing_count INT(8) not null,
-    Ing_order INT(8) not null
+create table Member(
+	Mnum int,
+	Mname char(20),
+	Mcontact char(20),
+	Mmileage int,
+	Mlevel char(20),
+	primary key(Mnum, Mname)
 );
 
-CREATE TABLE cust(
-    table_no INT(8) not null,
-    menu_num INT(8) not null,
-    order_count INT(8) not null,
-    price INT(8) not null
+create table Otable(
+	Tnum int,
+	Tmenu char(20),
+	Tprice int,
+	Tquant int,
+	primary key(Tnum, Tmenu)
 );
