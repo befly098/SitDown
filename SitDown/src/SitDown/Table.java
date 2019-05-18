@@ -30,7 +30,7 @@ public class Table implements ActionListener {
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/sitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
 	String user = "root";
-	String passwd = "6523qudwn";
+	String passwd = "SitDown";
 	
 	JPanel tablePanel;
 
