@@ -8,16 +8,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 
 public class Table implements ActionListener {
@@ -38,7 +43,8 @@ public class Table implements ActionListener {
 	// 테이블 + 토탈 값 넣을 패널
 	JPanel[] table = new JPanel[50];
 
-	JButton[] table_btn = new JButton[50];
+	JToggleButton[] table_btn = new JToggleButton[50];
+	ButtonGroup table_btn_group = new ButtonGroup();
 	// 다이얼로그와 연결된 테이블 버튼
 
 	JTextField[] table_total = new JTextField[50];
@@ -79,20 +85,21 @@ public class Table implements ActionListener {
 
 		String name = new String("테이블 1");
 		for (int i = 0; i < table_btn.length; i++) {
-			table_btn[i] = new JButton(name);
+			table_btn[i] = new JToggleButton(name);
+			table_btn_group.add(table_btn[i]);
 			name = name.replace(Integer.toString(i + 1), Integer.toString(i + 2));
 		}
 
 		for (int i = 0; i < table_total.length; i++)
 			table_total[i] = new JTextField(10);
-
+		String table_column[] = { "이름", "가격", "수량" };
 		for (int i = 0; i < T.length; i++) {
 			Vector[] userColumn = new Vector[50];
 			userColumn[i] = new Vector<String>();
 			userColumn[i].addElement("이름");
 			userColumn[i].addElement("가격");
 			userColumn[i].addElement("수량");
-			model_T[i] = new DefaultTableModel(userColumn, 0);
+			model_T[i] = new DefaultTableModel(userColumn[i], 0);
 			T[i] = new JTable(model_T[i]);
 			scrollpane[i] = new JScrollPane(T[i]);
 		}
@@ -116,7 +123,7 @@ public class Table implements ActionListener {
 
 		for (int i = 0; i < tables; i++)
 			tableListPanel.add(table_num[i]);
-			
+
 		tableTotalPanel = new JPanel(new BorderLayout());
 		tableEditPanel = new JPanel(new GridLayout(1, 2));
 		table_add = new JButton("테이블 추가");
@@ -129,6 +136,7 @@ public class Table implements ActionListener {
 		tableTotalPanel.add(tableListPanel);
 		tableTotalPanel.add(tableEditPanel, BorderLayout.SOUTH);
 
+		/////////// 아래부터 주문 정보를 보여주는 패널 디자인 ////////////////
 		orderPanel = new JPanel();
 		orderPanel.setLayout(new BorderLayout());
 		BtnPanel = new JPanel(new GridLayout(1, 3));
@@ -151,13 +159,16 @@ public class Table implements ActionListener {
 		BtnPanel.add(menu_list);
 		BtnPanel.add(menu_add);
 		BtnPanel.add(menu_pay);
-		
-		/*for (int i = 0; i < table.length; i++) {
-			table[i] = new JPanel(new BorderLayout());
-			table[i].add(scrollpane[i]);
-			table[i].add(BtnPanel, BorderLayout.SOUTH);
-		}*/
-		
+
+		/*
+		 * //add here for (int i = 0; i < table.length; i++) {
+		 * 
+		 * JLabel jl = new JLabel("Hello!!!!");
+		 * 
+		 * table[i] = new JPanel(new BorderLayout()); table[i].add(jl);
+		 * table[i].add(scrollpane[i]); table[i].add(BtnPanel, BorderLayout.SOUTH); }
+		 */
+
 		orderPanel.add(scrollpane_order);
 		orderPanel.add(BtnPanel, BorderLayout.SOUTH);
 
@@ -270,6 +281,15 @@ public class Table implements ActionListener {
 				}
 
 				cash.setVisible(false);
+
+				table_total[clicked_table_btn].setText("");
+
+				for (int i = 0; i <= model_T[clicked_table_btn].getRowCount(); i++) {
+					model_T[clicked_table_btn].removeRow(0);
+				}
+				for (int i = 0; i < 100; i++) {
+					count[clicked_table_btn][i] = 0;
+				}
 			}
 		});
 
@@ -340,6 +360,15 @@ public class Table implements ActionListener {
 				}
 
 				cash.setVisible(false);
+
+				table_total[clicked_table_btn].setText("");
+
+				for (int i = 0; i <= model_T[clicked_table_btn].getRowCount(); i++) {
+					model_T[clicked_table_btn].removeRow(0);
+				}
+				for (int i = 0; i < 100; i++) {
+					count[clicked_table_btn][i] = 0;
+				}
 			}
 		});
 
@@ -348,107 +377,7 @@ public class Table implements ActionListener {
 		cash.setVisible(true);
 	}
 
-	void Table_Open(int index) {
-		/*
-		 * table[index] = new Frame("테이블 1"); table[index].setSize(400, 400);
-		 * table[index].setLayout(new BorderLayout());
-		 * table[index].addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent windowEvent) {
-		 * table_num[index].setBackground(Color.LIGHT_GRAY);
-		 * table[index].setVisible(false); } });
-		 */
-		
-		menu_add.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int x = menu_list.getSelectedIndex();
-				count[index][x] += 1;
-				if (count[index][x] == 1) {
-					int check=0;
-					for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
-						check = 0;
-						if (Menu.unvisibleTable.getValueAt(x, 2).equals(Storage.storageTable.getValueAt(s_index, 0))) {
-							if (Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1)) > 0) {
-								check = 1;
-								model_T[index].addRow(new Object[] { Menu.menuTable.getValueAt(x, 0),
-										Menu.unvisibleTable.getValueAt(x, 0), count[index][x] });
-								// have to reduce quantity of storage!
-								int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(x, 1));
-								quantity--;
-								Storage.storageTable.setValueAt(Integer.toString(quantity), x, 1);
-								break;
-							} else
-								break;
-						}
-					}
-					if (check == 0) {
-						System.out.println("Cannot add it!");
-					}
-				}
-
-				else {
-					int check=0;
-					for(int j=0;j<model_T[index].getRowCount();j++)
-					{
-						if((model_T[index].getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0))) {
-							
-								for(int s_index=0;s_index<Storage.storageTable.getRowCount();s_index++) {
-									check=0;
-
-									if(Menu.unvisibleTable.getValueAt(x, 2).equals(Storage.storageTable.getValueAt(s_index, 0))) {
-										if(Integer.valueOf((String)Storage.storageTable.getValueAt(s_index,1))>0) {
-											model_T[index].setValueAt(count[index][x],j,2);
-											int quantity=Integer.valueOf((String)Storage.storageTable.getValueAt(x,1));
-											quantity--;
-											Storage.storageTable.setValueAt(Integer.toString(quantity), x, 1);
-											check=1;
-											break;
-										}
-										else break;
-									}
-								}
-								if(check==0) {
-									System.out.println("Cannot add it!");
-								}
-						}
-					}
-				}
-				int data = 0;
-				String total;
-				for (int i = 0; i < model_T[index].getRowCount(); i++) {
-					data += (Integer.parseInt((String) model_T[index].getValueAt(i, 1))
-							* Integer.parseInt(model_T[index].getValueAt(i, 2).toString()));
-				}
-				total = String.valueOf(data);
-				table_total[index].setText(total);
-			}
-		});
-
-		menu_pay.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				table_num[index].setBackground(Color.WHITE);
-				// table[index].setVisible(false);
-				int data = Integer.parseInt(table_total[index].getText());
-				Payment(data);
-				table_total[index].setText("");
-
-				for (int i = 0; i <= model_T[index].getRowCount(); i++) {
-					model_T[index].removeRow(0);
-				}
-				for (int i = 0; i < 100; i++) {
-					count[index][i] = 0;
-				}
-			}
-		});
-
-		/*tablePanel.remove(orderPanel);
-		tablePanel.add(table[index]);
-		BtnPanel.add(menu_add);
-		BtnPanel.add(menu_pay);*/
-	}
+	int clicked_table_btn = -1;
 
 	public Object[] getTableData(JTable table) {
 
@@ -456,8 +385,9 @@ public class Table implements ActionListener {
 		int nRow = dtm.getRowCount();
 		Object[] tableData = new Object[nRow];
 
-		for (int i = 0; i < nRow; i++)
+		for (int i = 0; i < nRow; i++) {
 			tableData[i] = dtm.getValueAt(i, 0);
+		}
 
 		return tableData;
 	}
@@ -474,11 +404,15 @@ public class Table implements ActionListener {
 
 		for (int i = 0; i < tables; i++) {
 			if (actionCommand.equals(name[i])) {
-				Table_Open(i);
+				// Table_Open(i, e);
+				order.setModel(model_T[i]);
+				menu_list.removeAllItems();
+				menu_list.setModel(new DefaultComboBoxModel(getTableData(Menu.menuTable)));
+				menu_list.repaint();
+				clicked_table_btn = i;
 				table_num[i].setBackground(Color.DARK_GRAY);
-				//tablePanel.remove(table[i]);
-				//tablePanel.add(orderPanel);
 				break;
+
 			}
 		}
 
@@ -488,24 +422,155 @@ public class Table implements ActionListener {
 
 			tableListPanel.add(table_num[tables]);
 
-			tables++;
-		}
-		else if (actionCommand.compareTo("테이블 삭제") == 0) {
-			if (tables > 0) {
-				tableListPanel.remove(table_num[tables-1]);
-				
-				table_total[tables-1].setText("");
+			// tableListPanel.setVisible(true);
 
-				/*for (int i = 0; i <= model_T[tables-1].getRowCount(); i++)
-					model_T[tables-1].removeRow(0);*/
-				
-				for (int i = 0; i < 100; i++)
-					count[tables-1][i] = 0;
-				
-				tableListPanel.setVisible(true);
-				
-				tables--;
+			tables++;
+		} else if (actionCommand.compareTo("테이블 삭제") == 0) {
+			if (tables > 1) {
+				if (table_total[tables - 1].getText().equals("")) {
+					tableListPanel.remove(table_num[tables - 1]);
+					table_total[tables - 1].setText("");
+
+					/*
+					 * for (int i = 0; i <= model_T[tables-1].getRowCount(); i++)
+					 * model_T[tables-1].removeRow(0);
+					 */
+
+					for (int i = 0; i < 100; i++)
+						count[tables - 1][i] = 0;
+
+					tableListPanel.setVisible(true);
+					tables--;
+					clicked_table_btn = -1;
+				}
+
+				else if (!table_total[tables - 1].getText().equals("")) {
+					String notification_str = "테이블" + String.valueOf(tables) + "을 먼저 결제해주세요";
+					JOptionPane.showMessageDialog(null, notification_str, "미결제 테이블", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+
+		}
+
+		tableListPanel.revalidate();
+		tableListPanel.repaint();
+
+		if (actionCommand.compareTo("추가") == 0) {
+			int selected_menu = menu_list.getSelectedIndex();
+			int cannot_order_flag = 0;
+			String empty_ingredient = "";
+			String ingredient_arr[] = String.valueOf(Menu.unvisibleTable.getValueAt(selected_menu, 2)).split("\n");
+			String storage_ingredient[] = new String[Storage.storageTable.getRowCount()];
+
+			if(clicked_table_btn!=-1) {
+			for (int i = 0; i < Storage.storageTable.getRowCount(); i++) {
+				storage_ingredient[i] = String.valueOf(Storage.storageTable.getValueAt(i, 0));
+			}
+			// 모든 재료가 있는지 확인
+			for (int s_index = 0; s_index < ingredient_arr.length; s_index++) {
+				boolean ingredient_contains = Arrays.stream(storage_ingredient)
+						.anyMatch(ingredient_arr[s_index]::equals);
+				if (Boolean.FALSE.equals(ingredient_contains)) {
+					cannot_order_flag = 1;
+					empty_ingredient = ingredient_arr[s_index];
+					break;
+				}
+			}
+
+			// 재료 개수가 0개 이상인지 확인
+			if (cannot_order_flag != 1) {
+				for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
+					boolean ingredient_contains = Arrays.stream(ingredient_arr)
+							.anyMatch(storage_ingredient[s_index]::equals);
+
+					if (Boolean.TRUE.equals(ingredient_contains)) {
+						if (Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1)) == 0) {
+							cannot_order_flag = 1;
+							empty_ingredient = String.valueOf(Storage.storageTable.getValueAt(s_index, 0));
+							break;
+						}
+					}
+				}
+			}
+
+			// 만약에 모든 재료가 존재한다면
+			if (cannot_order_flag == 0) {
+				count[clicked_table_btn][selected_menu] += 1;
+
+				if (count[clicked_table_btn][selected_menu] == 1) {
+
+					model_T[clicked_table_btn].addRow(new Object[] { Menu.menuTable.getValueAt(selected_menu, 0),
+							Menu.unvisibleTable.getValueAt(selected_menu, 0),
+							count[clicked_table_btn][selected_menu] });
+
+					for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
+						boolean ingredient_contains = Arrays.stream(ingredient_arr)
+								.anyMatch(storage_ingredient[s_index]::equals);
+						if (Boolean.TRUE.equals(ingredient_contains)) {
+							int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1));
+							quantity--;
+							Storage.storageTable.setValueAt(Integer.toString(quantity), s_index, 1);
+						}
+					}
+
+				}
+
+				else {
+					for (int j = 0; j < model_T[clicked_table_btn].getRowCount(); j++) {
+						if ((model_T[clicked_table_btn].getValueAt(j, 0))
+								.equals(Menu.menuTable.getValueAt(selected_menu, 0))) {
+							model_T[clicked_table_btn].setValueAt(count[clicked_table_btn][selected_menu], j, 2);
+							break;
+						}
+					}
+
+					for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
+						boolean ingredient_contains = Arrays.stream(ingredient_arr)
+								.anyMatch(storage_ingredient[s_index]::equals);
+						if (Boolean.TRUE.equals(ingredient_contains)) {
+							int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1));
+							quantity--;
+							Storage.storageTable.setValueAt(Integer.toString(quantity), s_index, 1);
+						}
+					}
+
+				}
+
+				int data = 0;
+				String total;
+				for (int i = 0; i < model_T[clicked_table_btn].getRowCount(); i++) {
+					data += (Integer.parseInt((String) model_T[clicked_table_btn].getValueAt(i, 1))
+							* Integer.parseInt(model_T[clicked_table_btn].getValueAt(i, 2).toString()));
+				}
+				total = String.valueOf(data);
+				table_total[clicked_table_btn].setText(total);
+				model_T[clicked_table_btn].fireTableDataChanged();
+				order.setModel(model_T[clicked_table_btn]);//
+			}
+			// 모든 재료가 존재하지 않는다면
+
+			else if (cannot_order_flag == 1) {
+				String notification_str = String.valueOf(Menu.menuTable.getValueAt(selected_menu, 0)) + "의 '"
+						+ empty_ingredient + "'이/가 부족합니다!";
+				JOptionPane.showMessageDialog(null, notification_str, "재료 소진", JOptionPane.INFORMATION_MESSAGE);
+			}
+
+		}
+			else {
+				JOptionPane.showMessageDialog(null, "메뉴를 주문할 테이블을 선택해주세요!", "테이블 미선택", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
+
+		if (actionCommand.compareTo("결제") == 0) {
+			if (clicked_table_btn != -1) {
+				table_num[clicked_table_btn].setBackground(Color.WHITE);
+				int data = Integer.parseInt(table_total[clicked_table_btn].getText());
+				Payment(data);
+			}
+			
+			else
+				JOptionPane.showMessageDialog(null, "결제하실 테이블을 선택해주세요!", "테이블 미선택", JOptionPane.INFORMATION_MESSAGE);
+		}
+
 	}
 }
