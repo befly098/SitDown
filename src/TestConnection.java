@@ -12,7 +12,9 @@ public class TestConnection {
 		String className = "org.gjt.mm.mysql.Driver";
 		String url = "jdbc:mysql://localhost:3306/sitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
 		String user = "root";
-		String passwd = "6523qudwn";
+		String passwd = "123456";
+		
+		System.out.println("testing\n");
 		
 		try {
 			Class.forName(className);

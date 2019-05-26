@@ -30,7 +30,7 @@ public class Member implements ActionListener {
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
 	String user = "root";
-	String passwd = "6523qudwn";
+	String passwd = "123456";
 	String sql = "INSERT INTO Storage(Iname, Iprice, Iseller, Icontact, Iquant, Iorder) VALUES";
 	Statement stmt = null;
 	PreparedStatement pstmt = null;

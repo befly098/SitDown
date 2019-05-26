@@ -50,7 +50,7 @@ public class Menu implements ActionListener {
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
 	String user = "root";
-	String passwd = "6523qudwn";
+	String passwd = "123456";
 	String sql = "INSERT INTO Storage(Iname, Iprice, Iseller, Icontact, Iquant, Iorder) VALUES";
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
@@ -227,6 +227,9 @@ public class Menu implements ActionListener {
 					menuinfo_price.setText(data);
 					data = String.valueOf(unvisibleTable.getValueAt(row,  1));
 					menuinfo_originalPrice.setText(data);
+					data = String.valueOf(unvisibleTable.getValueAt(row, 2));
+					menuinfo_ingredients.setText(data);
+					
 				}
 			}
 		});
@@ -264,11 +267,8 @@ public class Menu implements ActionListener {
 		menu_edit.addActionListener(this);
 		menu_delete = new JButton("삭제");
 		menu_delete.addActionListener(this);
-		menu_info = new JButton("상세정보");
-		menu_info.addActionListener(this);
 		
 		menuTableBtnPanel.add(menu_add);
-		menuTableBtnPanel.add(menu_info);
 		menuTablePanel.add(menuTableBtnPanel, BorderLayout.SOUTH);
 		
 		menuinfo_name = new JTextField(10);
@@ -386,18 +386,6 @@ public class Menu implements ActionListener {
 			Frame_Open();
 		}
 		
-		else if(actionCommand.equals("상세정보")) {
-			int row = menuTable.getSelectedRow();
-			String data = (String) menuTable.getValueAt(row, 0);
-			menuinfo_name.setText(data);
-			data = (String) unvisibleTable.getValueAt(row, 0);
-			menuinfo_price.setText(data);
-			data = (String) unvisibleTable.getValueAt(row, 1);
-			menuinfo_originalPrice.setText(data);
-			data = (String) unvisibleTable.getValueAt(row, 2);
-			menuinfo_ingredients.setText(data);
-		}
-		
 		else if(actionCommand.equals("내용 추가")) {
 			menuTableModel.addRow(new Object[] {menuFrame_name.getText()});
 			unvisibleTableModel.addRow(new Object[] {menuFrame_price.getText(), menuFrame_originalPrice.getText(), menuFrame_ingredients.getText()});
@@ -416,9 +404,25 @@ public class Menu implements ActionListener {
 				e1.printStackTrace();
 			}
 			
+			String ingredients = (String) menuFrame_ingredients.getText();
+			String[] change_ingredients = ingredients.split("\\n");
 			
+			for(int i=0; i<change_ingredients.length; i++) {
+				String[] change_ingredients2 = change_ingredients[i].split(" ");
+				
+				sql = "INSERT INTO Recipe(Food, Ing, Needs) VALUES";
+				sql += "(\"" + menuFrame_name.getText() + "\"," + "\"" + change_ingredients2[0] + "\"" + "," + change_ingredients2[1] + ");";
 			
-			
+				try {
+					Class.forName(className);
+					con = DriverManager.getConnection(url, user, passwd); 
+					stmt = (Statement) con.createStatement();
+					stmt.executeUpdate(sql);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 			
 			add_Dialog.setVisible(false);
 		}
@@ -431,6 +435,17 @@ public class Menu implements ActionListener {
 			int row = menuTable.getSelectedRow();
 			
 			String Fname = String.valueOf(menuTable.getValueAt(row, 0));
+			sql = "DELETE FROM Recipe WHERE Food=\"" + Fname + "\";";
+			try {
+				Class.forName(className);
+				con = DriverManager.getConnection(url, user, passwd);
+				stmt = (Statement) con.createStatement();
+				stmt.executeUpdate(sql);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			sql = "DELETE FROM Menu WHERE Fname=\"" + Fname + "\";";
 			try {
 				Class.forName(className);
@@ -441,6 +456,7 @@ public class Menu implements ActionListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			
 			
 			menuTableModel.removeRow(row);
 			unvisibleTableModel.removeRow(row);

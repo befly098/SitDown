@@ -30,7 +30,7 @@ public class Table implements ActionListener {
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/sitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
 	String user = "root";
-	String passwd = "6523qudwn";
+	String passwd = "123456";
 	
 	JPanel tablePanel;
 
@@ -141,7 +141,7 @@ public class Table implements ActionListener {
 
 		orderPanel = new JPanel();
 		orderPanel.setLayout(new BorderLayout());
-		BtnPanel = new JPanel(new GridLayout(1, 3));
+		BtnPanel = new JPanel(new GridLayout(1, 4));
 
 		Vector<String> userColumn_order = new Vector<String>();
 		userColumn_order.addElement("이름");
@@ -153,12 +153,14 @@ public class Table implements ActionListener {
 
 		menu_list = new JComboBox(getTableData(Menu.menuTable));
 		menu_list.addActionListener(this);
+		JTextField menu_quant = new JTextField(10);
 		menu_add = new JButton("추가");
 		menu_add.addActionListener(this);
 		menu_pay = new JButton("결제");
 		menu_pay.addActionListener(this);
 
 		BtnPanel.add(menu_list);
+		BtnPanel.add(menu_quant);
 		BtnPanel.add(menu_add);
 		BtnPanel.add(menu_pay);
 		
@@ -195,6 +197,8 @@ public class Table implements ActionListener {
 		search.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String actionCommand = e.getActionCommand();
+				
 				String num = new String();
 				num = textfield.getText();
 				int row = Member.memberTable.getRowCount();
@@ -208,6 +212,7 @@ public class Table implements ActionListener {
 										Member.memberTable.getValueAt(i, 3), Member.memberTable.getValueAt(i, 4) });
 					}
 				}
+			
 			}
 		});
 		p.add(scrollpane_mem, BorderLayout.CENTER);
@@ -392,6 +397,14 @@ public class Table implements ActionListener {
 								break;
 						}
 					}
+					
+					String actionCommand = e.getActionCommand();
+					
+					if (actionCommand.equals("추가")) {
+						//menu_list에서 선택한 메뉴
+						//menu_quant에서 입력한 수량
+						// 메뉴의 가격은 메뉴 탭에서 가져오기
+					}
 					if (check == 0) {
 						System.out.println("Cannot add it!");
 					}
@@ -434,7 +447,7 @@ public class Table implements ActionListener {
 				table_total[index].setText(total);
 			}
 		});
-
+ 
 		menu_pay.addActionListener(new ActionListener() {
 
 			@Override
