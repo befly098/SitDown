@@ -1,6 +1,5 @@
 # SitDown
 
-SitDown 폴더에 src 폴더를 SonarQube와 연결해주세요 튜터님! 항상 수고 많으십니다 감사합니다!!
 
 SonarCloud 링크: https://sonarcloud.io/dashboard?id=LectureSTT
 
