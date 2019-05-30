@@ -1,8 +1,5 @@
 package SitDown;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
@@ -11,27 +8,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 
 public class Table implements ActionListener {
 
-	Connection con = null;
-	
-	String className = "org.gjt.mm.mysql.Driver";
-	String url = "jdbc:mysql://localhost:3306/sitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
-	String user = "root";
-	String passwd = "123456";
-	
 	JPanel tablePanel;
 
 	JPanel orderPanel;
@@ -45,14 +40,15 @@ public class Table implements ActionListener {
 	JButton table_add, table_delete;
 
 	JPanel[] table_num = new JPanel[50];
-	// í…Œì´ë¸” + í† íƒˆ ê°’ ë„£ì„ íŒ¨ë„
+	// Å×ÀÌºí + ÅäÅ» °ª ³ÖÀ» ÆĞ³Î
 	JPanel[] table = new JPanel[50];
 
-	JButton[] table_btn = new JButton[50];
-	// ë‹¤ì´ì–¼ë¡œê·¸ì™€ ì—°ê²°ëœ í…Œì´ë¸” ë²„íŠ¼
+	JToggleButton[] table_btn = new JToggleButton[50];
+	ButtonGroup table_btn_group = new ButtonGroup();
+	// ´ÙÀÌ¾ó·Î±×¿Í ¿¬°áµÈ Å×ÀÌºí ¹öÆ°
 
 	JTextField[] table_total = new JTextField[50];
-	// í…Œì´ë¸” ì´ì•¡ ë„ìš¸ í…ìŠ¤íŠ¸ í•„ë“œ
+	// Å×ÀÌºí ÃÑ¾× ¶ç¿ï ÅØ½ºÆ® ÇÊµå
 
 	Frame cash;
 
@@ -65,11 +61,11 @@ public class Table implements ActionListener {
 
 	JScrollPane[] scrollpane = new JScrollPane[50];
 	JScrollPane scrollpane_order;
-	// JTable ë°›ì„ JScrollPane
+	// JTable ¹ŞÀ» JScrollPane
 	JScrollPane scrollpane_mem;
 
 	JComboBox menu_list;
-	// ë©”ë‰´ ì„ íƒ ë°•ìŠ¤
+	// ¸Ş´º ¼±ÅÃ ¹Ú½º
 
 	int tables = 6;
 	int[][] count = new int[50][100];
@@ -87,31 +83,32 @@ public class Table implements ActionListener {
 			table_num[i].setBackground(Color.WHITE);
 		}
 
-		String name = new String("í…Œì´ë¸” 1");
+		String name = new String("Å×ÀÌºí 1");
 		for (int i = 0; i < table_btn.length; i++) {
-			table_btn[i] = new JButton(name);
+			table_btn[i] = new JToggleButton(name);
+			table_btn_group.add(table_btn[i]);
 			name = name.replace(Integer.toString(i + 1), Integer.toString(i + 2));
 		}
 
 		for (int i = 0; i < table_total.length; i++)
 			table_total[i] = new JTextField(10);
-
+		String table_column[] = { "ÀÌ¸§", "°¡°İ", "¼ö·®" };
 		for (int i = 0; i < T.length; i++) {
 			Vector[] userColumn = new Vector[50];
 			userColumn[i] = new Vector<String>();
-			userColumn[i].addElement("ì´ë¦„");
-			userColumn[i].addElement("ê°€ê²©");
-			userColumn[i].addElement("ìˆ˜ëŸ‰");
-			model_T[i] = new DefaultTableModel(userColumn, 0);
+			userColumn[i].addElement("ÀÌ¸§");
+			userColumn[i].addElement("°¡°İ");
+			userColumn[i].addElement("¼ö·®");
+			model_T[i] = new DefaultTableModel(userColumn[i], 0);
 			T[i] = new JTable(model_T[i]);
 			scrollpane[i] = new JScrollPane(T[i]);
 		}
 
 		Vector<String> userColumn_mem = new Vector<String>();
-		userColumn_mem.addElement("ì´ë¦„");
-		userColumn_mem.addElement("ì—°ë½ì²˜");
-		userColumn_mem.addElement("ë§ˆì¼ë¦¬ì§€");
-		userColumn_mem.addElement("ë“±ê¸‰");
+		userColumn_mem.addElement("ÀÌ¸§");
+		userColumn_mem.addElement("¿¬¶ôÃ³");
+		userColumn_mem.addElement("¸¶ÀÏ¸®Áö");
+		userColumn_mem.addElement("µî±Ş");
 		model_mem = new DefaultTableModel(userColumn_mem, 0);
 		MEM = new JTable(model_mem);
 		scrollpane_mem = new JScrollPane(MEM);
@@ -126,12 +123,12 @@ public class Table implements ActionListener {
 
 		for (int i = 0; i < tables; i++)
 			tableListPanel.add(table_num[i]);
-			
+
 		tableTotalPanel = new JPanel(new BorderLayout());
 		tableEditPanel = new JPanel(new GridLayout(1, 2));
-		table_add = new JButton("í…Œì´ë¸” ì¶”ê°€");
+		table_add = new JButton("Å×ÀÌºí Ãß°¡");
 		table_add.addActionListener(this);
-		table_delete = new JButton("í…Œì´ë¸” ì‚­ì œ");
+		table_delete = new JButton("Å×ÀÌºí »èÁ¦");
 		table_delete.addActionListener(this);
 
 		tableEditPanel.add(table_add);
@@ -139,37 +136,39 @@ public class Table implements ActionListener {
 		tableTotalPanel.add(tableListPanel);
 		tableTotalPanel.add(tableEditPanel, BorderLayout.SOUTH);
 
+		/////////// ¾Æ·¡ºÎÅÍ ÁÖ¹® Á¤º¸¸¦ º¸¿©ÁÖ´Â ÆĞ³Î µğÀÚÀÎ ////////////////
 		orderPanel = new JPanel();
 		orderPanel.setLayout(new BorderLayout());
-		BtnPanel = new JPanel(new GridLayout(1, 4));
+		BtnPanel = new JPanel(new GridLayout(1, 3));
 
 		Vector<String> userColumn_order = new Vector<String>();
-		userColumn_order.addElement("ì´ë¦„");
-		userColumn_order.addElement("ê°€ê²©");
-		userColumn_order.addElement("ìˆ˜ëŸ‰");
+		userColumn_order.addElement("ÀÌ¸§");
+		userColumn_order.addElement("°¡°İ");
+		userColumn_order.addElement("¼ö·®");
 		model_order = new DefaultTableModel(userColumn_order, 0);
 		order = new JTable(model_order);
 		scrollpane_order = new JScrollPane(order);
 
 		menu_list = new JComboBox(getTableData(Menu.menuTable));
 		menu_list.addActionListener(this);
-		JTextField menu_quant = new JTextField(10);
-		menu_add = new JButton("ì¶”ê°€");
+		menu_add = new JButton("Ãß°¡");
 		menu_add.addActionListener(this);
-		menu_pay = new JButton("ê²°ì œ");
+		menu_pay = new JButton("°áÁ¦");
 		menu_pay.addActionListener(this);
 
 		BtnPanel.add(menu_list);
-		BtnPanel.add(menu_quant);
 		BtnPanel.add(menu_add);
 		BtnPanel.add(menu_pay);
-		
-		/*for (int i = 0; i < table.length; i++) {
-			table[i] = new JPanel(new BorderLayout());
-			table[i].add(scrollpane[i]);
-			table[i].add(BtnPanel, BorderLayout.SOUTH);
-		}*/
-		
+
+		/*
+		 * //add here for (int i = 0; i < table.length; i++) {
+		 * 
+		 * JLabel jl = new JLabel("Hello!!!!");
+		 * 
+		 * table[i] = new JPanel(new BorderLayout()); table[i].add(jl);
+		 * table[i].add(scrollpane[i]); table[i].add(BtnPanel, BorderLayout.SOUTH); }
+		 */
+
 		orderPanel.add(scrollpane_order);
 		orderPanel.add(BtnPanel, BorderLayout.SOUTH);
 
@@ -178,7 +177,7 @@ public class Table implements ActionListener {
 	}
 
 	void Payment(int data) {
-		cash = new Frame("ê²°ì œì°½");
+		cash = new Frame("°áÁ¦Ã¢");
 		cash.setSize(450, 500);
 		cash.setLayout(new BorderLayout());
 		cash.addWindowListener(new WindowAdapter() {
@@ -189,16 +188,14 @@ public class Table implements ActionListener {
 		});
 
 		JPanel p = new JPanel();
-		p.add(new JLabel("ë²ˆí˜¸ ë’·ìë¦¬"));
-		JTextField textfield = new JTextField("4ìë¦¬", 10);
+		p.add(new JLabel("¹øÈ£ µŞÀÚ¸®"));
+		JTextField textfield = new JTextField("4ÀÚ¸®", 10);
 		p.add(textfield);
-		JButton search = new JButton("ê²€ìƒ‰");
+		JButton search = new JButton("°Ë»ö");
 		p.add(search);
 		search.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String actionCommand = e.getActionCommand();
-				
 				String num = new String();
 				num = textfield.getText();
 				int row = Member.memberTable.getRowCount();
@@ -212,13 +209,12 @@ public class Table implements ActionListener {
 										Member.memberTable.getValueAt(i, 3), Member.memberTable.getValueAt(i, 4) });
 					}
 				}
-			
 			}
 		});
 		p.add(scrollpane_mem, BorderLayout.CENTER);
 
 		JPanel paypanel = new JPanel();
-		JButton cash_btn = new JButton("í˜„ê¸ˆê²°ì œ");
+		JButton cash_btn = new JButton("Çö±İ°áÁ¦");
 		paypanel.add(cash_btn);
 		cash_btn.addActionListener(new ActionListener() {
 			@Override
@@ -233,7 +229,7 @@ public class Table implements ActionListener {
 						if (name.equals(Member.memberTable.getValueAt(i, 1))) {
 							String rating = (String) Member.memberTable.getValueAt(i, 4);
 
-							if (rating.equals("ì¼ë°˜")) {
+							if (rating.equals("ÀÏ¹İ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -243,7 +239,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.today_money += data * 0.98;
-							} else if (rating.compareTo("ê³¨ë“œ") == 0) {
+							} else if (rating.compareTo("°ñµå") == 0) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -253,7 +249,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.today_money += data * 0.95;
-							} else if (rating.equals("í”Œë˜í‹°ë„˜")) {
+							} else if (rating.equals("ÇÃ·¡Æ¼³Ñ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -267,17 +263,17 @@ public class Table implements ActionListener {
 
 							int mileage = (int) Member.memberTable.getValueAt(i, 3);
 							if (mileage >= 500 && mileage < 1000)
-								Member.memberTable.setValueAt("ê³¨ë“œ", i, 4);
+								Member.memberTable.setValueAt("°ñµå", i, 4);
 							else if (mileage > 1000) {
-								Member.memberTable.setValueAt("í”Œë˜í‹°ë„˜", i, 4);
+								Member.memberTable.setValueAt("ÇÃ·¡Æ¼³Ñ", i, 4);
 							} else {
-								Member.memberTable.setValueAt("ì¼ë°˜", i, 4);
+								Member.memberTable.setValueAt("ÀÏ¹İ", i, 4);
 							}
 							break;
 						}
 					}
 				}
-				String str = "ì˜¤ëŠ˜ ë§¤ì¶œ : " + Final.today_money + "     ì „ì²´ ì”ê³  : " + Final.total_money;
+				String str = "¿À´Ã ¸ÅÃâ : " + Final.today_money + "     ÀüÃ¼ ÀÜ°í : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
 				for (int i = 0; i < model_mem.getRowCount(); i++) {
@@ -285,10 +281,19 @@ public class Table implements ActionListener {
 				}
 
 				cash.setVisible(false);
+
+				table_total[clicked_table_btn].setText("");
+
+				for (int i = 0; i <= model_T[clicked_table_btn].getRowCount(); i++) {
+					model_T[clicked_table_btn].removeRow(0);
+				}
+				for (int i = 0; i < 100; i++) {
+					count[clicked_table_btn][i] = 0;
+				}
 			}
 		});
 
-		JButton card_btn = new JButton("ì¹´ë“œê²°ì œ");
+		JButton card_btn = new JButton("Ä«µå°áÁ¦");
 		paypanel.add(card_btn);
 		card_btn.addActionListener(new ActionListener() {
 			@Override
@@ -303,7 +308,7 @@ public class Table implements ActionListener {
 						if (name.equals(Member.memberTable.getValueAt(i, 1))) {
 							String rating = (String) Member.memberTable.getValueAt(i, 4);
 
-							if (rating.equals("ì¼ë°˜")) {
+							if (rating.equals("ÀÏ¹İ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -313,7 +318,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.today_money += data * 0.98;
-							} else if (rating.compareTo("ê³¨ë“œ") == 0) {
+							} else if (rating.compareTo("°ñµå") == 0) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -323,7 +328,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.today_money += data * 0.95;
-							} else if (rating.equals("í”Œë˜í‹°ë„˜")) {
+							} else if (rating.equals("ÇÃ·¡Æ¼³Ñ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -337,17 +342,17 @@ public class Table implements ActionListener {
 
 							int mileage = (int) Member.memberTable.getValueAt(i, 3);
 							if (mileage >= 500 && mileage < 1000)
-								Member.memberTable.setValueAt("ê³¨ë“œ", i, 4);
+								Member.memberTable.setValueAt("°ñµå", i, 4);
 							else if (mileage > 1000) {
-								Member.memberTable.setValueAt("í”Œë˜í‹°ë„˜", i, 4);
+								Member.memberTable.setValueAt("ÇÃ·¡Æ¼³Ñ", i, 4);
 							} else {
-								Member.memberTable.setValueAt("ì¼ë°˜", i, 4);
+								Member.memberTable.setValueAt("ÀÏ¹İ", i, 4);
 							}
 							break;
 						}
 					}
 				}
-				String str = "ì˜¤ëŠ˜ ë§¤ì¶œ : " + Final.today_money + "     ì „ì²´ ì”ê³  : " + Final.total_money;
+				String str = "¿À´Ã ¸ÅÃâ : " + Final.today_money + "     ÀüÃ¼ ÀÜ°í : " + Final.total_money;
 				Final.priceLabel.setText(str);
 
 				for (int i = 0; i < model_mem.getRowCount(); i++) {
@@ -355,6 +360,15 @@ public class Table implements ActionListener {
 				}
 
 				cash.setVisible(false);
+
+				table_total[clicked_table_btn].setText("");
+
+				for (int i = 0; i <= model_T[clicked_table_btn].getRowCount(); i++) {
+					model_T[clicked_table_btn].removeRow(0);
+				}
+				for (int i = 0; i < 100; i++) {
+					count[clicked_table_btn][i] = 0;
+				}
 			}
 		});
 
@@ -363,115 +377,7 @@ public class Table implements ActionListener {
 		cash.setVisible(true);
 	}
 
-	void Table_Open(int index) {
-		/*
-		 * table[index] = new Frame("í…Œì´ë¸” 1"); table[index].setSize(400, 400);
-		 * table[index].setLayout(new BorderLayout());
-		 * table[index].addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent windowEvent) {
-		 * table_num[index].setBackground(Color.LIGHT_GRAY);
-		 * table[index].setVisible(false); } });
-		 */
-		
-		menu_add.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int x = menu_list.getSelectedIndex();
-				count[index][x] += 1;
-				if (count[index][x] == 1) {
-					int check=0;
-					for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
-						check = 0;
-						if (Menu.unvisibleTable.getValueAt(x, 2).equals(Storage.storageTable.getValueAt(s_index, 0))) {
-							if (Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1)) > 0) {
-								check = 1;
-								model_T[index].addRow(new Object[] { Menu.menuTable.getValueAt(x, 0),
-										Menu.unvisibleTable.getValueAt(x, 0), count[index][x] });
-								// have to reduce quantity of storage!
-								int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(x, 1));
-								quantity--;
-								Storage.storageTable.setValueAt(Integer.toString(quantity), x, 1);
-								break;
-							} else
-								break;
-						}
-					}
-					
-					String actionCommand = e.getActionCommand();
-					
-					if (actionCommand.equals("ì¶”ê°€")) {
-						//menu_listì—ì„œ ì„ íƒí•œ ë©”ë‰´
-						//menu_quantì—ì„œ ì…ë ¥í•œ ìˆ˜ëŸ‰
-						// ë©”ë‰´ì˜ ê°€ê²©ì€ ë©”ë‰´ íƒ­ì—ì„œ ê°€ì ¸ì˜¤ê¸°
-					}
-					if (check == 0) {
-						System.out.println("Cannot add it!");
-					}
-				}
-
-				else {
-					int check=0;
-					for(int j=0;j<model_T[index].getRowCount();j++)
-					{
-						if((model_T[index].getValueAt(j,0)).equals(Menu.menuTable.getValueAt(x, 0))) {
-							
-								for(int s_index=0;s_index<Storage.storageTable.getRowCount();s_index++) {
-									check=0;
-
-									if(Menu.unvisibleTable.getValueAt(x, 2).equals(Storage.storageTable.getValueAt(s_index, 0))) {
-										if(Integer.valueOf((String)Storage.storageTable.getValueAt(s_index,1))>0) {
-											model_T[index].setValueAt(count[index][x],j,2);
-											int quantity=Integer.valueOf((String)Storage.storageTable.getValueAt(x,1));
-											quantity--;
-											Storage.storageTable.setValueAt(Integer.toString(quantity), x, 1);
-											check=1;
-											break;
-										}
-										else break;
-									}
-								}
-								if(check==0) {
-									System.out.println("Cannot add it!");
-								}
-						}
-					}
-				}
-				int data = 0;
-				String total;
-				for (int i = 0; i < model_T[index].getRowCount(); i++) {
-					data += (Integer.parseInt((String) model_T[index].getValueAt(i, 1))
-							* Integer.parseInt(model_T[index].getValueAt(i, 2).toString()));
-				}
-				total = String.valueOf(data);
-				table_total[index].setText(total);
-			}
-		});
- 
-		menu_pay.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				table_num[index].setBackground(Color.WHITE);
-				// table[index].setVisible(false);
-				int data = Integer.parseInt(table_total[index].getText());
-				Payment(data);
-				table_total[index].setText("");
-
-				for (int i = 0; i <= model_T[index].getRowCount(); i++) {
-					model_T[index].removeRow(0);
-				}
-				for (int i = 0; i < 100; i++) {
-					count[index][i] = 0;
-				}
-			}
-		});
-
-		/*tablePanel.remove(orderPanel);
-		tablePanel.add(table[index]);
-		BtnPanel.add(menu_add);
-		BtnPanel.add(menu_pay);*/
-	}
+	int clicked_table_btn = -1;
 
 	public Object[] getTableData(JTable table) {
 
@@ -479,8 +385,9 @@ public class Table implements ActionListener {
 		int nRow = dtm.getRowCount();
 		Object[] tableData = new Object[nRow];
 
-		for (int i = 0; i < nRow; i++)
+		for (int i = 0; i < nRow; i++) {
 			tableData[i] = dtm.getValueAt(i, 0);
+		}
 
 		return tableData;
 	}
@@ -491,44 +398,179 @@ public class Table implements ActionListener {
 		String[] name = new String[50];
 
 		for (int i = 0; i < 50; i++) {
-			name[i] = new String("í…Œì´ë¸” ");
+			name[i] = new String("Å×ÀÌºí ");
 			name[i] = name[i].concat(Integer.toString(i + 1));
 		}
 
 		for (int i = 0; i < tables; i++) {
 			if (actionCommand.equals(name[i])) {
-				Table_Open(i);
+				// Table_Open(i, e);
+				order.setModel(model_T[i]);
+				menu_list.removeAllItems();
+				menu_list.setModel(new DefaultComboBoxModel(getTableData(Menu.menuTable)));
+				menu_list.repaint();
+				clicked_table_btn = i;
 				table_num[i].setBackground(Color.DARK_GRAY);
-				//tablePanel.remove(table[i]);
-				//tablePanel.add(orderPanel);
 				break;
+
 			}
 		}
 
-		if (actionCommand.compareTo("í…Œì´ë¸” ì¶”ê°€") == 0) {
+		if (actionCommand.compareTo("Å×ÀÌºí Ãß°¡") == 0) {
 			table_num[tables].add(table_btn[tables]);
 			table_num[tables].add(table_total[tables], BorderLayout.SOUTH);
 
 			tableListPanel.add(table_num[tables]);
 
-			tables++;
-		}
-		else if (actionCommand.compareTo("í…Œì´ë¸” ì‚­ì œ") == 0) {
-			if (tables > 0) {
-				tableListPanel.remove(table_num[tables-1]);
-				
-				table_total[tables-1].setText("");
+			// tableListPanel.setVisible(true);
 
-				/*for (int i = 0; i <= model_T[tables-1].getRowCount(); i++)
-					model_T[tables-1].removeRow(0);*/
-				
-				for (int i = 0; i < 100; i++)
-					count[tables-1][i] = 0;
-				
-				tableListPanel.setVisible(true);
-				
-				tables--;
+			tables++;
+		} else if (actionCommand.compareTo("Å×ÀÌºí »èÁ¦") == 0) {
+			if (tables > 1) {
+				if (table_total[tables - 1].getText().equals("")) {
+					tableListPanel.remove(table_num[tables - 1]);
+					table_total[tables - 1].setText("");
+
+					/*
+					 * for (int i = 0; i <= model_T[tables-1].getRowCount(); i++)
+					 * model_T[tables-1].removeRow(0);
+					 */
+
+					for (int i = 0; i < 100; i++)
+						count[tables - 1][i] = 0;
+
+					tableListPanel.setVisible(true);
+					tables--;
+					clicked_table_btn = -1;
+				}
+
+				else if (!table_total[tables - 1].getText().equals("")) {
+					String notification_str = "Å×ÀÌºí" + String.valueOf(tables) + "À» ¸ÕÀú °áÁ¦ÇØÁÖ¼¼¿ä";
+					JOptionPane.showMessageDialog(null, notification_str, "¹Ì°áÁ¦ Å×ÀÌºí", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+
+		}
+
+		tableListPanel.revalidate();
+		tableListPanel.repaint();
+
+		if (actionCommand.compareTo("Ãß°¡") == 0) {
+			int selected_menu = menu_list.getSelectedIndex();
+			int cannot_order_flag = 0;
+			String empty_ingredient = "";
+			String ingredient_arr[] = String.valueOf(Menu.unvisibleTable.getValueAt(selected_menu, 2)).split("\n");
+			String storage_ingredient[] = new String[Storage.storageTable.getRowCount()];
+
+			if(clicked_table_btn!=-1) {
+			for (int i = 0; i < Storage.storageTable.getRowCount(); i++) {
+				storage_ingredient[i] = String.valueOf(Storage.storageTable.getValueAt(i, 0));
+			}
+			// ¸ğµç Àç·á°¡ ÀÖ´ÂÁö È®ÀÎ
+			for (int s_index = 0; s_index < ingredient_arr.length; s_index++) {
+				boolean ingredient_contains = Arrays.stream(storage_ingredient)
+						.anyMatch(ingredient_arr[s_index]::equals);
+				if (Boolean.FALSE.equals(ingredient_contains)) {
+					cannot_order_flag = 1;
+					empty_ingredient = ingredient_arr[s_index];
+					break;
+				}
+			}
+
+			// Àç·á °³¼ö°¡ 0°³ ÀÌ»óÀÎÁö È®ÀÎ
+			if (cannot_order_flag != 1) {
+				for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
+					boolean ingredient_contains = Arrays.stream(ingredient_arr)
+							.anyMatch(storage_ingredient[s_index]::equals);
+
+					if (Boolean.TRUE.equals(ingredient_contains)) {
+						if (Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1)) == 0) {
+							cannot_order_flag = 1;
+							empty_ingredient = String.valueOf(Storage.storageTable.getValueAt(s_index, 0));
+							break;
+						}
+					}
+				}
+			}
+
+			// ¸¸¾à¿¡ ¸ğµç Àç·á°¡ Á¸ÀçÇÑ´Ù¸é
+			if (cannot_order_flag == 0) {
+				count[clicked_table_btn][selected_menu] += 1;
+
+				if (count[clicked_table_btn][selected_menu] == 1) {
+
+					model_T[clicked_table_btn].addRow(new Object[] { Menu.menuTable.getValueAt(selected_menu, 0),
+							Menu.unvisibleTable.getValueAt(selected_menu, 0),
+							count[clicked_table_btn][selected_menu] });
+
+					for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
+						boolean ingredient_contains = Arrays.stream(ingredient_arr)
+								.anyMatch(storage_ingredient[s_index]::equals);
+						if (Boolean.TRUE.equals(ingredient_contains)) {
+							int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1));
+							quantity--;
+							Storage.storageTable.setValueAt(Integer.toString(quantity), s_index, 1);
+						}
+					}
+
+				}
+
+				else {
+					for (int j = 0; j < model_T[clicked_table_btn].getRowCount(); j++) {
+						if ((model_T[clicked_table_btn].getValueAt(j, 0))
+								.equals(Menu.menuTable.getValueAt(selected_menu, 0))) {
+							model_T[clicked_table_btn].setValueAt(count[clicked_table_btn][selected_menu], j, 2);
+							break;
+						}
+					}
+
+					for (int s_index = 0; s_index < Storage.storageTable.getRowCount(); s_index++) {
+						boolean ingredient_contains = Arrays.stream(ingredient_arr)
+								.anyMatch(storage_ingredient[s_index]::equals);
+						if (Boolean.TRUE.equals(ingredient_contains)) {
+							int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1));
+							quantity--;
+							Storage.storageTable.setValueAt(Integer.toString(quantity), s_index, 1);
+						}
+					}
+
+				}
+
+				int data = 0;
+				String total;
+				for (int i = 0; i < model_T[clicked_table_btn].getRowCount(); i++) {
+					data += (Integer.parseInt((String) model_T[clicked_table_btn].getValueAt(i, 1))
+							* Integer.parseInt(model_T[clicked_table_btn].getValueAt(i, 2).toString()));
+				}
+				total = String.valueOf(data);
+				table_total[clicked_table_btn].setText(total);
+				model_T[clicked_table_btn].fireTableDataChanged();
+				order.setModel(model_T[clicked_table_btn]);//
+			}
+			// ¸ğµç Àç·á°¡ Á¸ÀçÇÏÁö ¾Ê´Â´Ù¸é
+
+			else if (cannot_order_flag == 1) {
+				String notification_str = String.valueOf(Menu.menuTable.getValueAt(selected_menu, 0)) + "ÀÇ '"
+						+ empty_ingredient + "'ÀÌ/°¡ ºÎÁ·ÇÕ´Ï´Ù!";
+				JOptionPane.showMessageDialog(null, notification_str, "Àç·á ¼ÒÁø", JOptionPane.INFORMATION_MESSAGE);
+			}
+
+		}
+			else {
+				JOptionPane.showMessageDialog(null, "¸Ş´º¸¦ ÁÖ¹®ÇÒ Å×ÀÌºíÀ» ¼±ÅÃÇØÁÖ¼¼¿ä!", "Å×ÀÌºí ¹Ì¼±ÅÃ", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
+
+		if (actionCommand.compareTo("°áÁ¦") == 0) {
+			if (clicked_table_btn != -1) {
+				table_num[clicked_table_btn].setBackground(Color.WHITE);
+				int data = Integer.parseInt(table_total[clicked_table_btn].getText());
+				Payment(data);
+			}
+			
+			else
+				JOptionPane.showMessageDialog(null, "°áÁ¦ÇÏ½Ç Å×ÀÌºíÀ» ¼±ÅÃÇØÁÖ¼¼¿ä!", "Å×ÀÌºí ¹Ì¼±ÅÃ", JOptionPane.INFORMATION_MESSAGE);
+		}
+
 	}
 }
