@@ -382,7 +382,7 @@ public class Table implements ActionListener {
 	}
 
 	int clicked_table_btn = -1;
-	int m_quantity;
+	int m_quantity=-1;
 
 	public Object[] getTableData(JTable table) {
 
@@ -585,6 +585,7 @@ public class Table implements ActionListener {
 				table_total[clicked_table_btn].setText(total);
 				model_T[clicked_table_btn].fireTableDataChanged();
 				order.setModel(model_T[clicked_table_btn]);//
+				m_quantity=-1;
 			}
 			// 모든 재료가 존재하지 않는다면
 
