@@ -65,6 +65,7 @@ public class Table implements ActionListener {
 	JScrollPane scrollpane_mem;
 
 	JComboBox menu_list;
+	JTextField menu_quantity;
 	// 메뉴 선택 박스
 
 	int tables = 6;
@@ -151,12 +152,15 @@ public class Table implements ActionListener {
 
 		menu_list = new JComboBox(getTableData(Menu.menuTable));
 		menu_list.addActionListener(this);
+		menu_quantity=new JTextField(100);
+		menu_quantity.setText("1");
 		menu_add = new JButton("추가");
 		menu_add.addActionListener(this);
 		menu_pay = new JButton("결제");
 		menu_pay.addActionListener(this);
 
 		BtnPanel.add(menu_list);
+		BtnPanel.add(menu_quantity);
 		BtnPanel.add(menu_add);
 		BtnPanel.add(menu_pay);
 
@@ -378,6 +382,7 @@ public class Table implements ActionListener {
 	}
 
 	int clicked_table_btn = -1;
+	int m_quantity;
 
 	public Object[] getTableData(JTable table) {
 
@@ -459,10 +464,33 @@ public class Table implements ActionListener {
 			int selected_menu = menu_list.getSelectedIndex();
 			int cannot_order_flag = 0;
 			String empty_ingredient = "";
-			String ingredient_arr[] = String.valueOf(Menu.unvisibleTable.getValueAt(selected_menu, 2)).split("\n");
+			String ingredient_arr[] = String.valueOf(Menu.unvisibleTable.getValueAt(selected_menu, 2)).split("[\n, ]+");
+			for(int i=0;i<ingredient_arr.length;i++)
+				System.out.println(ingredient_arr[i]);
 			String storage_ingredient[] = new String[Storage.storageTable.getRowCount()];
 
 			if(clicked_table_btn!=-1) {
+				
+				//수량 입력문이 정수인지 확인
+				try {
+					Integer.parseInt(menu_quantity.getText());
+				} catch(NumberFormatException error) { 
+					JOptionPane.showMessageDialog(null, "수량은 정수로만 입력할 수 있습니다!", "입력 오류", JOptionPane.INFORMATION_MESSAGE);
+			        return; 
+			    } catch(NullPointerException error) {
+			    	JOptionPane.showMessageDialog(null, "수량을 입력해주세요!", "입력 오류", JOptionPane.INFORMATION_MESSAGE);
+			        return;
+			    }
+				
+				//메뉴 수량 quantity 변수에 저장
+				m_quantity=Integer.parseInt(menu_quantity.getText());
+				if(m_quantity<1) {
+					JOptionPane.showMessageDialog(null, "1 이상의 수를 입력해주세요!", "입력 오류", JOptionPane.INFORMATION_MESSAGE);
+			        return;
+				}
+				
+				menu_quantity.setText("1");
+				
 			for (int i = 0; i < Storage.storageTable.getRowCount(); i++) {
 				storage_ingredient[i] = String.valueOf(Storage.storageTable.getValueAt(i, 0));
 			}
@@ -484,7 +512,7 @@ public class Table implements ActionListener {
 							.anyMatch(storage_ingredient[s_index]::equals);
 
 					if (Boolean.TRUE.equals(ingredient_contains)) {
-						if (Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1)) == 0) {
+						if (Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1)) < m_quantity) {
 							cannot_order_flag = 1;
 							empty_ingredient = String.valueOf(Storage.storageTable.getValueAt(s_index, 0));
 							break;
@@ -492,12 +520,23 @@ public class Table implements ActionListener {
 					}
 				}
 			}
-
+			
 			// 만약에 모든 재료가 존재한다면
 			if (cannot_order_flag == 0) {
-				count[clicked_table_btn][selected_menu] += 1;
+				count[clicked_table_btn][selected_menu] += m_quantity;
+				
+				boolean in_table=false;
+				
+				for(int j = 0; j < model_T[clicked_table_btn].getRowCount(); j++) 
+				{
+					if ((model_T[clicked_table_btn].getValueAt(j, 0))
+							.equals(Menu.menuTable.getValueAt(selected_menu, 0))) {
+						in_table=true;
+						break;
+					}
+				}
 
-				if (count[clicked_table_btn][selected_menu] == 1) {
+				if (!(in_table)) {
 
 					model_T[clicked_table_btn].addRow(new Object[] { Menu.menuTable.getValueAt(selected_menu, 0),
 							Menu.unvisibleTable.getValueAt(selected_menu, 0),
@@ -508,7 +547,7 @@ public class Table implements ActionListener {
 								.anyMatch(storage_ingredient[s_index]::equals);
 						if (Boolean.TRUE.equals(ingredient_contains)) {
 							int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1));
-							quantity--;
+							quantity-=m_quantity;
 							Storage.storageTable.setValueAt(Integer.toString(quantity), s_index, 1);
 						}
 					}
@@ -529,7 +568,7 @@ public class Table implements ActionListener {
 								.anyMatch(storage_ingredient[s_index]::equals);
 						if (Boolean.TRUE.equals(ingredient_contains)) {
 							int quantity = Integer.valueOf((String) Storage.storageTable.getValueAt(s_index, 1));
-							quantity--;
+							quantity-=m_quantity;
 							Storage.storageTable.setValueAt(Integer.toString(quantity), s_index, 1);
 						}
 					}
