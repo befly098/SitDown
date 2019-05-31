@@ -485,6 +485,7 @@ public class Table implements ActionListener {
 				//메뉴 수량 quantity 변수에 저장
 				m_quantity=Integer.parseInt(menu_quantity.getText());
 				if(m_quantity<1) {
+					m_quantity=-1;
 					JOptionPane.showMessageDialog(null, "1 이상의 수를 입력해주세요!", "입력 오류", JOptionPane.INFORMATION_MESSAGE);
 			        return;
 				}
