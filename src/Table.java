@@ -448,9 +448,28 @@ public class Table implements ActionListener {
 			int selectedMenu = menuList.getSelectedIndex();
 			int cannotOrderFlag = 0;
 			String emptyIngredient = "";
-			String ingredientArr[] = String.valueOf(Menu.unvisibleTable.getValueAt(selectedMenu, 2)).split("[\n, ]+");
+			String ingredientArr[] = String.valueOf(Menu.unvisibleTable.getValueAt(selectedMenu, 2)).split("[\n]+");
+			String ingredientNameArr[]=new String[ingredientArr.length];
+			String ingredientQuantityArr[]=new String[ingredientArr.length];
+			int ingredientQauntity;
+			
 			for(int i=0;i<ingredientArr.length;i++)
-				System.out.println(ingredientArr[i]);
+			{
+				if(ingredientArr[i].split("[ ]+").length<2)
+				{
+					JOptionPane.showMessageDialog(null, "재료 입력을 (재료이름) (수량)으로 바꿔주세요.", "재료 입력 오류", JOptionPane.INFORMATION_MESSAGE);
+			        return; 
+				}
+				else if(ingredientArr[i].split("[ ]+").length>2)
+				{
+					JOptionPane.showMessageDialog(null, "재료이름에는 공백이 들어갈 수 없습니다", "재료 입력 오류", JOptionPane.INFORMATION_MESSAGE);
+			        return; 
+				}
+				ingredientNameArr[i]=ingredientArr[i].split("[ ]+")[0];
+				ingredientQuantityArr[i]=ingredientArr[i].split("[ ]+")[1];
+				//System.out.println(ingredientQuantityArr[i]);
+			}
+			
 			String storageIngredient[] = new String[Storage.storageTable.getRowCount()];
 
 			if(clickedTableBtn!=-1) {
@@ -481,23 +500,26 @@ public class Table implements ActionListener {
 			}
 			// 모든 재료가 있는지 확인
 			for (int sIndex = 0; sIndex < ingredientArr.length; sIndex++) {
+				//System.out.println(ingredientArr[sIndex].split("[ ]+")[0]);
 				boolean ingredientContains = Arrays.stream(storageIngredient)
-						.anyMatch(ingredientArr[sIndex]::equals);
+						.anyMatch(ingredientArr[sIndex].split("[ ]+")[0]::equals);
 				if (Boolean.FALSE.equals(ingredientContains)) {
 					cannotOrderFlag = 1;
-					emptyIngredient = ingredientArr[sIndex];
+					emptyIngredient = ingredientArr[sIndex].split("[ ]+")[0];
 					break;
 				}
 			}
 
+
 			// 재료 개수가 0개 이상인지 확인
 			if (cannotOrderFlag != 1) {
 				for (int sIndex = 0; sIndex < Storage.storageTable.getRowCount(); sIndex++) {
-					boolean ingredientContains = Arrays.stream(ingredientArr)
+					boolean ingredientContains = Arrays.stream(ingredientNameArr)
 							.anyMatch(storageIngredient[sIndex]::equals);
 
 					if (Boolean.TRUE.equals(ingredientContains)) {
-						if (Integer.valueOf((String) Storage.storageTable.getValueAt(sIndex, 1)) < mQuantity) {
+						ingredientQauntity=Integer.parseInt((String)ingredientQuantityArr[Arrays.asList(ingredientNameArr).indexOf(storageIngredient[sIndex])]);
+						if (Integer.valueOf((String) Storage.storageTable.getValueAt(sIndex, 1)) < mQuantity*ingredientQauntity) {
 							cannotOrderFlag = 1;
 							emptyIngredient = String.valueOf(Storage.storageTable.getValueAt(sIndex, 0));
 							break;
@@ -528,11 +550,14 @@ public class Table implements ActionListener {
 							count[clickedTableBtn][selectedMenu] });
 
 					for (int sIndex = 0; sIndex < Storage.storageTable.getRowCount(); sIndex++) {
-						boolean ingredientContains = Arrays.stream(ingredientArr)
+						boolean ingredientContains = Arrays.stream(ingredientNameArr)
 								.anyMatch(storageIngredient[sIndex]::equals);
 						if (Boolean.TRUE.equals(ingredientContains)) {
 							int quantity = Integer.parseInt((String) Storage.storageTable.getValueAt(sIndex, 1));
-							quantity-=mQuantity;
+							ingredientQauntity=Integer.parseInt((String)ingredientQuantityArr[Arrays.asList(ingredientNameArr).indexOf(storageIngredient[sIndex])]);
+							System.out.printf("quan: %d\n",quantity);
+							System.out.printf("quan*menu: %d\n",mQuantity*ingredientQauntity);
+							quantity-=mQuantity*ingredientQauntity;
 							Storage.storageTable.setValueAt(Integer.toString(quantity), sIndex, 1);
 						}
 					}
@@ -549,11 +574,12 @@ public class Table implements ActionListener {
 					}
 
 					for (int sIndex = 0; sIndex < Storage.storageTable.getRowCount(); sIndex++) {
-						boolean ingredientContains = Arrays.stream(ingredientArr)
+						boolean ingredientContains = Arrays.stream(ingredientNameArr)
 								.anyMatch(storageIngredient[sIndex]::equals);
 						if (Boolean.TRUE.equals(ingredientContains)) {
+							ingredientQauntity=Integer.parseInt((String)ingredientQuantityArr[Arrays.asList(ingredientNameArr).indexOf(storageIngredient[sIndex])]);
 							int quantity = Integer.parseInt((String) Storage.storageTable.getValueAt(sIndex, 1));
-							quantity-=mQuantity;
+							quantity-=mQuantity*ingredientQauntity;
 							Storage.storageTable.setValueAt(Integer.toString(quantity), sIndex, 1);
 						}
 					}
