@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,14 +16,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.mysql.jdbc.Statement;
@@ -34,47 +31,49 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
-public class Final extends JFrame implements ActionListener {
+public class Final extends JFrame implements ActionListener{
 	
-	Connection con = null;
+	Connection connect = null;
 	
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/sitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
 	String user = "root";
 	String passwd = "123456";
 	String sql;
-	Statement stmt = null;
+	Statement statement = null;
 	
 	Date today = new Date();
-	SimpleDateFormat date = new SimpleDateFormat("yyyyë…„ MMì›” ddì¼");
+	SimpleDateFormat date = new SimpleDateFormat("yyyy³â MM¿ù ddÀÏ");
 	SimpleDateFormat day = new SimpleDateFormat("dd");
 	
 	JPanel datePanel;
-	static JLabel dateLabel;
-	JButton finishBtn; // ìƒë‹¨ë°”ì— ë“¤ì–´ê°ˆ ë§ˆê° ë²„íŠ¼ 
-	// ë‚ ì§œ ì„¤ì •í•˜ëŠ” ë¶€ë¶„, ë‚ ì§œ í¬ë§· ì„¤ì •, datePanel ì€ ë¼ë²¨ê³¼ ë²„íŠ¼ ë¶™ì´ë ¤ê³  ì„ ì–¸
+	JLabel dateLabel;
+	JButton finishBtn; // »ó´Ü¹Ù¿¡ µé¾î°¥ ¸¶°¨ ¹öÆ° 
+	// ³¯Â¥ ¼³Á¤ÇÏ´Â ºÎºĞ, ³¯Â¥ Æ÷¸Ë ¼³Á¤, datePanel Àº ¶óº§°ú ¹öÆ° ºÙÀÌ·Á°í ¼±¾ğ
 	
 	JPanel moneyPanel;
 	static JLabel priceLabel;
-	JButton quitBtn; // í•˜ë‹¨ë°”ì— ë“¤ì–´ê°ˆ ì¢…ë£Œ ë²„íŠ¼
-	// ë§¤ì¶œ ì„¤ì •í•˜ëŠ” ë¶€ë¶„, moneyPanel ì€ ë¼ë²¨ê³¼ ë²„íŠ¼ ë¶™ì´ë ¤ê³  ì„ ì–¸ 
+	JButton quitBtn; // ÇÏ´Ü¹Ù¿¡ µé¾î°¥ Á¾·á ¹öÆ°
+	// ¸ÅÃâ ¼³Á¤ÇÏ´Â ºÎºĞ, moneyPanel Àº ¶óº§°ú ¹öÆ° ºÙÀÌ·Á°í ¼±¾ğ 
 	
-	static JTabbedPane tabPanel; // ì¹´í…Œê³ ë¦¬ ë“¤ì–´ê°ˆ tab
+	JTabbedPane tabPanel; // Ä«Å×°í¸® µé¾î°¥ tab
 	
-	public static int today_money;
-	public static int total_money;
-	//  today : ì˜¤ëŠ˜ ë§¤ì¶œ, total : ì „ì²´ ë§¤ì¶œ 
+	public static int todayMoney;
+	public static int totalMoney;
+	//  today : ¿À´Ã ¸ÅÃâ, total : ÀüÃ¼ ¸ÅÃâ 
 	
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
-	// ìœˆë„ìš° í¬ê¸°ì— ì´ìš©í•  ë³€ìˆ˜ : ë†’ì´ì™€ ë„ˆë¹„
+	// À©µµ¿ì Å©±â¿¡ ÀÌ¿ëÇÒ º¯¼ö : ³ôÀÌ¿Í ³Êºñ
 	
 	private Member member;
 	private Menu menu;
 	private Storage storage;
 	private Table table;
 	
-	public static void main(String[] args) { // ë©”ì¸í•¨ìˆ˜ 
+	public static final String dateMoney = "date_money";
+	
+	public static void main(String[] args) { // ¸ŞÀÎÇÔ¼ö 
 		Final gui = new Final();
 		gui.setVisible(true);
 	}
@@ -89,15 +88,15 @@ public class Final extends JFrame implements ActionListener {
 		storage = new Storage();
 		table = new Table();
 		
-		upper_bar();
-		under_bar();
+		upperBar();
+		underBar();
 		
 		tabPanel = new JTabbedPane();
 
-		tabPanel.addTab("í…Œì´ë¸”", table.tablePanel);
-		tabPanel.addTab("ë©”ë‰´", menu.menuPanel);
-		tabPanel.addTab("ì°½ê³ ", storage.storagePanel);
-		tabPanel.addTab("íšŒì›", member.memberPanel);
+		tabPanel.addTab("Å×ÀÌºí", table.tablePanel);
+		tabPanel.addTab("¸Ş´º", menu.menuPanel);
+		tabPanel.addTab("Ã¢°í", storage.storagePanel);
+		tabPanel.addTab("È¸¿ø", member.memberPanel);
 		
 		add(tabPanel);
 		
@@ -105,16 +104,16 @@ public class Final extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
-	void upper_bar() {	// ì—¬ê¸°ê¹Œì§€ ìƒë‹¨ë°” ì¶”ê°€ ê³¼ì • (ë‚ ì§œ, ë§ˆê°ë²„íŠ¼) 
+	void upperBar() {	// ¿©±â±îÁö »ó´Ü¹Ù Ãß°¡ °úÁ¤ (³¯Â¥, ¸¶°¨¹öÆ°) 
 		
 		datePanel = new JPanel();
 		datePanel.setBackground(Color.WHITE);
 		datePanel.setLayout(new BorderLayout());
 		
 		try {
-			ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("date_money"));
-			Date day = (Date) inputStream.readObject();	
-			today = day;
+			ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(dateMoney));
+			Date todayDate = (Date) inputStream.readObject();	
+			today = todayDate;
 		} catch (IOException | ClassNotFoundException e) {
 			today = new Date();
 		}
@@ -123,33 +122,32 @@ public class Final extends JFrame implements ActionListener {
 		dateLabel.setFont(new Font("Arial", Font.PLAIN, 20));
 		datePanel.add(dateLabel, BorderLayout.WEST);
 		
-		finishBtn = new JButton("ë§ˆê°");
+		finishBtn = new JButton("¸¶°¨");
 		finishBtn.addActionListener(this);
 		datePanel.add(finishBtn, BorderLayout.EAST);
 		add(datePanel, BorderLayout.NORTH);
 		
 	}
 	
-	void under_bar() {  // ì—¬ê¸°ê¹Œì§€ í•˜ë‹¨ë°” ì¶”ê°€ ê³¼ì • (ë§¤ì¶œ, ì¢…ë£Œë²„íŠ¼)
+	void underBar() {  // ¿©±â±îÁö ÇÏ´Ü¹Ù Ãß°¡ °úÁ¤ (¸ÅÃâ, Á¾·á¹öÆ°)
 		
 		moneyPanel = new JPanel();
 		moneyPanel.setBackground(Color.WHITE);
 		moneyPanel.setLayout(new BorderLayout());
 		
 		try {
-			ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("date_money"));
-			Date day = (Date) inputStream.readObject();
+			ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(dateMoney));
 			int money = inputStream.readInt();
-			total_money = money;
-		} catch (IOException | ClassNotFoundException e) {
-			total_money = 0;
+			totalMoney = money;
+		} catch (IOException e) {
+			totalMoney = 0;
 		}
 
-		priceLabel = new JLabel("ì˜¤ëŠ˜ ë§¤ì¶œ : " + today_money + "     ì „ì²´ ì”ê³  : " + total_money);
+		priceLabel = new JLabel("¿À´Ã ¸ÅÃâ : " + todayMoney + "     ÀüÃ¼ ÀÜ°í : " + totalMoney);
 		priceLabel.setFont(new Font("Arial", Font.PLAIN, 20));
 		moneyPanel.add(priceLabel, BorderLayout.WEST);
 		
-		quitBtn = new JButton("ì¢…ë£Œ");
+		quitBtn = new JButton("Á¾·á");
 		quitBtn.addActionListener(this);
 		moneyPanel.add(quitBtn, BorderLayout.EAST);	
 		add(moneyPanel, BorderLayout.SOUTH);
@@ -157,17 +155,18 @@ public class Final extends JFrame implements ActionListener {
 	}
 	
 	private Vector<String> getColumnNames(DefaultTableModel myJTable) {
-        Vector<String> columnNames = new Vector<String>();
-		for (int i = 0; i < myJTable.getColumnCount(); i++)
+        Vector<String> columnNames = new Vector<>();
+		for (int i = 0; i < myJTable.getColumnCount(); i++) {
             columnNames.add(myJTable.getColumnName(i) );
+		}
             return columnNames;
     }
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String actionCommand = e.getActionCommand(); // ë²„íŠ¼ ì´ë¦„ ë°›ì•„ì˜¤ëŠ” String
+		String actionCommand = e.getActionCommand(); // ¹öÆ° ÀÌ¸§ ¹Ş¾Æ¿À´Â String
 		
-		if(actionCommand.compareTo("ì¢…ë£Œ") == 0) { // ì¢…ë£Œ ë²„íŠ¼ 
+		if(actionCommand.compareTo("Á¾·á") == 0) { // Á¾·á ¹öÆ° 
 			int check = 0;
 			for (int i = 0; i < Table.T.length; i++) {
 				if (Table.T[i].getRowCount() <= 0)
@@ -178,19 +177,20 @@ public class Final extends JFrame implements ActionListener {
 				Frame errorBox = new Frame("Error");
 				errorBox.setSize(300, 300);
 				errorBox.addWindowListener(new WindowAdapter() {
+					@Override
 					public void windowClosing(WindowEvent windowEvent) {
 						errorBox.setVisible(false);
 					}
 				});
-				JLabel errorMessage = new JLabel("ê³„ì‚°ì´ ì•ˆëœ í…Œì´ë¸”ì´ ìˆìŠµë‹ˆë‹¤!");
+				JLabel errorMessage = new JLabel("°è»êÀÌ ¾ÈµÈ Å×ÀÌºíÀÌ ÀÖ½À´Ï´Ù!");
 				errorMessage.setHorizontalAlignment(JLabel.CENTER);
 				errorBox.add(errorMessage);
 				errorBox.setVisible(true);
 				return;
 			}
 			
-			if(today_money > 0) {
-				total_money += today_money;
+			if(todayMoney > 0) {
+				totalMoney += todayMoney;
 			}
 			
 			try {
@@ -200,7 +200,7 @@ public class Final extends JFrame implements ActionListener {
 				ObjectOutputStream outputStream4 = new ObjectOutputStream(new FileOutputStream("StorageTable"));
 				ObjectOutputStream outputStream5 = new ObjectOutputStream(new FileOutputStream("unvisibleTable"));
 				ObjectOutputStream outputStream6 = new ObjectOutputStream(new FileOutputStream("WorkerTable"));
-				ObjectOutputStream outputStream_DM = new ObjectOutputStream(new FileOutputStream("date_money"));
+				ObjectOutputStream outputStreamDM = new ObjectOutputStream(new FileOutputStream(dateMoney));
 				
 				outputStream.writeObject(Member.memberTableModel.getDataVector());
 				outputStream.writeObject(getColumnNames(Member.memberTableModel));
@@ -213,8 +213,8 @@ public class Final extends JFrame implements ActionListener {
 				outputStream5.writeObject(Storage.unvisibleTableModel.getDataVector());
 				outputStream5.writeObject(getColumnNames(Storage.unvisibleTableModel));
 				
-				outputStream_DM.writeObject(today);
-				outputStream_DM.writeInt(total_money);
+				outputStreamDM.writeObject(today);
+				outputStreamDM.writeInt(totalMoney);
 				
 				outputStream.close();
 				outputStream2.close();
@@ -222,7 +222,7 @@ public class Final extends JFrame implements ActionListener {
 				outputStream4.close();
 				outputStream5.close();
 				outputStream6.close();
-				outputStream_DM.close();
+				outputStreamDM.close();
 				
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -230,7 +230,7 @@ public class Final extends JFrame implements ActionListener {
 			
 			System.exit(0);
 		}
-		else if(actionCommand.equals("ë§ˆê°")) { // ë§ˆê° ë²„íŠ¼ -> ë‚ ì§œ ë°”ë€Œê¸°
+		else if(actionCommand.equals("¸¶°¨")) { // ¸¶°¨ ¹öÆ° -> ³¯Â¥ ¹Ù²î±â
 			int check = 0;
 			for (int i = 0; i < Table.T.length; i++) {
 				if (Table.T[i].getRowCount() <= 0)
@@ -241,11 +241,12 @@ public class Final extends JFrame implements ActionListener {
 				Frame errorBox = new Frame("Error");
 				errorBox.setSize(300, 300);
 				errorBox.addWindowListener(new WindowAdapter() {
+					@Override
 					public void windowClosing(WindowEvent windowEvent) {
 						errorBox.setVisible(false);
 					}
 				});
-				JLabel errorMessage = new JLabel("ê³„ì‚°ì´ ì•ˆëœ í…Œì´ë¸”ì´ ìˆìŠµë‹ˆë‹¤!");
+				JLabel errorMessage = new JLabel("°è»êÀÌ ¾ÈµÈ Å×ÀÌºíÀÌ ÀÖ½À´Ï´Ù!");
 				errorMessage.setHorizontalAlignment(JLabel.CENTER);
 				errorBox.add(errorMessage);
 				errorBox.setVisible(true);
@@ -256,15 +257,12 @@ public class Final extends JFrame implements ActionListener {
 			cal.setTime(today);
 			cal.add(Calendar.DATE, 1);
 			
-			String strDay = day.format(cal.getTime());
-			int get_day = Integer.parseInt(strDay);
-			
 			today = new Date(cal.getTimeInMillis());
 			String strDate = date.format(cal.getTime());
 			dateLabel.setText(strDate);
 			
-			total_money += today_money;
-			today_money = 0;
+			totalMoney += todayMoney;
+			todayMoney = 0;
 			
 			for(int i = 0; i<Storage.storageTable.getRowCount();i++){
 				int data = 0;
@@ -277,7 +275,7 @@ public class Final extends JFrame implements ActionListener {
 				}
 				
 				if(data != 0) {
-					int k = Integer.valueOf(String.valueOf(Storage.storageTable.getValueAt(i, 1)));
+					int k = Integer.parseInt(String.valueOf(Storage.storageTable.getValueAt(i, 1)));
 					String s1 = (String)Storage.storageTable.getValueAt(i, 0);
 					int price = Integer.parseInt((String)Storage.storageTable.getValueAt(i, 3));
 					price *= data;
@@ -289,19 +287,18 @@ public class Final extends JFrame implements ActionListener {
 					System.out.println(sql);
 					try {
 						Class.forName(className);
-						con = DriverManager.getConnection(url, user, passwd);
-						stmt = (Statement) con.createStatement();
-						stmt.executeUpdate(sql);
+						connect = DriverManager.getConnection(url, user, passwd);
+						statement = (Statement) connect.createStatement();
+						statement.executeUpdate(sql);
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					total_money -= price;
+					totalMoney -= price;
 				}
 			
 			}
 			
-			strDate = "ì˜¤ëŠ˜ ë§¤ì¶œ : " + today_money + "     ì „ì²´ ì”ê³  : " + total_money;
+			strDate = "¿À´Ã ¸ÅÃâ : " + todayMoney + "     ÀüÃ¼ ÀÜ°í : " + totalMoney;
 			priceLabel.setText(strDate);
 			
 			
