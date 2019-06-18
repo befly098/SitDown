@@ -36,18 +36,18 @@ public class Member implements ActionListener {
 	PreparedStatement pstmt = null;
 	
 	
-	JPanel memberPanel; // ¸â¹ö ÆĞ³Î
-	JPanel memberBtnPanel; // ÅØ½ºÆ®ÇÊµå¿Í ¹öÆ° ´ãÀ» ÆĞ³Î 
-	JPanel textfieldPanel; // ÅØ½ºÆ®ÇÊµå ÆĞ³Î 
-	JPanel btnPanel; // ¹öÆ° ÆĞ³Î 
-	static JTable memberTable; // ¸â¹ö Å×ÀÌºí
+	JPanel memberPanel; // ë©¤ë²„ íŒ¨ë„
+	JPanel memberBtnPanel; // í…ìŠ¤íŠ¸í•„ë“œì™€ ë²„íŠ¼ ë‹´ì„ íŒ¨ë„ 
+	JPanel textfieldPanel; // í…ìŠ¤íŠ¸í•„ë“œ íŒ¨ë„ 
+	JPanel btnPanel; // ë²„íŠ¼ íŒ¨ë„ 
+	static JTable memberTable; // ë©¤ë²„ í…Œì´ë¸”
 	static DefaultTableModel memberTableModel;
 	
 	JTextField memberNameTextField;
 	JTextField memberNumberTextField;
 	JTextField memberMileageTextField;
 	JTextField memberPhoneTextField;
-	// Å×ÀÌºí¿¡ ÀÔ·ÂÇÒ ÅØ½ºÆ® ´ã´Â ÇÊµå
+	// í…Œì´ë¸”ì— ì…ë ¥í•  í…ìŠ¤íŠ¸ ë‹´ëŠ” í•„ë“œ
 	
 	JLabel memberName;
 	JLabel memberNumber;
@@ -57,21 +57,22 @@ public class Member implements ActionListener {
 	JButton addMember;
 	JButton deleteMember;
 	JButton editMember;
-	// Å×ÀÌºí °ü·Ã ¹öÆ° 
+	// í…Œì´ë¸” ê´€ë ¨ ë²„íŠ¼ 
 	
-	private static final String NUMBER = "¹øÈ£";  
-	private static final String NAME = "ÀÌ¸§";  
-	private static final String PHONENUMBER = "¿¬¶ôÃ³";
-	private static final String MILEAGE = "¸¶ÀÏ¸®Áö";
-	private static final String LEVEL = "È¸¿øµî±Ş";
+	private static final String NUMBER = "ë²ˆí˜¸";  
+	private static final String NAME = "ì´ë¦„";  
+	private static final String PHONENUMBER = "ì—°ë½ì²˜";
+	private static final String MILEAGE = "ë§ˆì¼ë¦¬ì§€";
+	private static final String LEVEL = "íšŒì›ë“±ê¸‰";
 	private static final String sqlMent = "INSERT INTO Member(Mnum, Mname, Mcontact, Mmileage, Mlevel) VALUES";
 	
-	public Member() {
+	public Member() throws IOException {
 		memberPanel = new JPanel();
 		memberPanel.setLayout(new BorderLayout());
 		
+		ObjectInputStream inputStream = null;
 		try {
-			ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("MemberTable"));
+			inputStream = new ObjectInputStream(new FileInputStream("MemberTable"));
 			
 			Vector rowData = (Vector)inputStream.readObject();
 			Vector columnNames = (Vector)inputStream.readObject();
@@ -109,6 +110,8 @@ public class Member implements ActionListener {
 			userColumn.addElement(LEVEL);
 			memberTableModel = new DefaultTableModel(userColumn, 0);
 			e.printStackTrace();
+		} finally {
+			inputStream.close();
 		}
 		
 		memberTable = new JTable(memberTableModel);
@@ -132,15 +135,15 @@ public class Member implements ActionListener {
 		memberMileageTextField = new JTextField(10);
 		memberPhoneTextField = new JTextField(10);
 		
-		addMember = new JButton("Ãß°¡");
+		addMember = new JButton("ì¶”ê°€");
 		addMember.addActionListener(this);
 		
-		deleteMember = new JButton("»èÁ¦");
+		deleteMember = new JButton("ì‚­ì œ");
 		deleteMember.addActionListener(this);
 		
-		editMember = new JButton("ÆíÁı");
+		editMember = new JButton("í¸ì§‘");
 		editMember.addActionListener(this);
-		// ÅØ½ºÆ®ÇÊµå¿Í ¹öÆ° »ı¼º 
+		// í…ìŠ¤íŠ¸í•„ë“œì™€ ë²„íŠ¼ ìƒì„± 
 		
 		memberBtnPanel = new JPanel();
 		memberBtnPanel.setLayout(new GridLayout(2,1));
@@ -164,7 +167,7 @@ public class Member implements ActionListener {
 		
 		memberBtnPanel.add(textfieldPanel);
 		memberBtnPanel.add(btnPanel);
-		// ÆĞ³Î¿¡ ÅØ½ºÆ®ÇÊµå¿Í ¹öÆ° Ãß°¡ 
+		// íŒ¨ë„ì— í…ìŠ¤íŠ¸í•„ë“œì™€ ë²„íŠ¼ ì¶”ê°€ 
 		
 		memberPanel.add(memberBtnPanel, BorderLayout.SOUTH);
 		
@@ -174,13 +177,13 @@ public class Member implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		
-		if(actionCommand.equals("Ãß°¡")) {
+		if(actionCommand.equals("ì¶”ê°€")) {
 			if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
-				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ÀÏ¹İ"});
+				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ì¼ë°˜"});
 			
 				sql = sqlMent;
 				sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\", \"" + memberPhoneTextField.getText()
-				+ "\"," + memberMileageTextField.getText() + ", \"ÀÏ¹İ\");";
+				+ "\"," + memberMileageTextField.getText() + ", \"ì¼ë°˜\");";
 				
 				try {
 					Class.forName(className);
@@ -193,11 +196,11 @@ public class Member implements ActionListener {
 			}
 			
 			else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
-				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "°ñµå"});
+				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ê³¨ë“œ"});
 			
 				sql =sqlMent;
 				sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\",\"" + memberPhoneTextField.getText()
-				+ "\"," + memberMileageTextField.getText() + ", \"°ñµå\");";
+				+ "\"," + memberMileageTextField.getText() + ", \"ê³¨ë“œ\");";
 				
 				try {
 					Class.forName(className);
@@ -210,11 +213,11 @@ public class Member implements ActionListener {
 			}
 			
 			else {
-				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ÇÃ·¡Æ¼³Ñ"});
+				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "í”Œë˜í‹°ë„˜"});
 			
 				sql = sqlMent;
 				sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\",\"" + memberPhoneTextField.getText()
-				+ "\"," + memberMileageTextField.getText() + ", \"ÇÃ·¡Æ¼³Ñ\");";
+				+ "\"," + memberMileageTextField.getText() + ", \"í”Œë˜í‹°ë„˜\");";
 				
 				try {
 					Class.forName(className);
@@ -232,7 +235,7 @@ public class Member implements ActionListener {
 			memberMileageTextField.setText("");
 		}
 		
-		else if(actionCommand.equals("»èÁ¦")) {
+		else if(actionCommand.equals("ì‚­ì œ")) {
 			int i = memberTable.getSelectedRow();
 			
 			sql = "DELETE FROM Member WHERE Mcontact =\"" + memberTableModel.getValueAt(i, 2) + "\"";
@@ -249,7 +252,7 @@ public class Member implements ActionListener {
 			
 		}
 		
-		else if(actionCommand.equals("ÆíÁı")) {
+		else if(actionCommand.equals("í¸ì§‘")) {
 			int row = memberTable.getSelectedRow();
 			memberTable.setValueAt(memberNumberTextField.getText(), row, 0);
 			memberTable.setValueAt(memberNameTextField.getText(), row, 1);
@@ -257,15 +260,15 @@ public class Member implements ActionListener {
 			memberTable.setValueAt(memberMileageTextField.getText(), row, 3);
 			
 			if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
-				memberTable.setValueAt("ÀÏ¹İ", row, 4);
+				memberTable.setValueAt("ì¼ë°˜", row, 4);
 			}
 			
 			else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
-				memberTable.setValueAt("°ñµå", row, 4);
+				memberTable.setValueAt("ê³¨ë“œ", row, 4);
 			}
 			
 			else {
-				memberTable.setValueAt("ÇÃ·¡Æ¼³Ñ", row, 4);
+				memberTable.setValueAt("í”Œë˜í‹°ë„˜", row, 4);
 			}
 			
 			memberNumberTextField.setText("");

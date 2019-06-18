@@ -106,7 +106,7 @@ public class Menu implements ActionListener {
 	JButton menuFrameEdit;
 	// 메뉴 추가 삭제 버튼 
 	
-	public Menu() {
+	public Menu() throws IOException {
 		
 		menuPanel = new JPanel();
 		menuPanel.setLayout(new BorderLayout());
@@ -121,9 +121,11 @@ public class Menu implements ActionListener {
 		unvisibleTable = new JTable();
 		// 텍스트필드에 넣을 안보이는 테이블 
 		
+		ObjectInputStream inputStream = null;
+		ObjectInputStream inputStream2 = null;
 		try {
-			ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("MenuTable"));
-			ObjectInputStream inputStream2 = new ObjectInputStream(new FileInputStream("unvisibleMenuTable"));
+			inputStream = new ObjectInputStream(new FileInputStream("MenuTable"));
+			inputStream2 = new ObjectInputStream(new FileInputStream("unvisibleMenuTable"));
 			
 			Vector rowData = (Vector)inputStream.readObject();
 			Vector columnNames = (Vector)inputStream.readObject();
@@ -179,6 +181,9 @@ public class Menu implements ActionListener {
 			unvisibleTableModel = new DefaultTableModel(userColumnUnvisible, 0);
 
 			e.printStackTrace();
+		} finally {
+			inputStream.close();
+			inputStream2.close();
 		}
 
 		menuTable = new JTable(menuTableModel);
