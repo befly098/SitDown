@@ -1,69 +1,46 @@
 package SitDown;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Base64;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class AES128 {
-	private String ips;
-	private Key keySpec;
-
-	public AES128(String key) {
+	
+	public static String encrypt(String input, String key) {
+		byte[] crypted = null;
 		try {
-			byte[] keyBytes = new byte[50];
-			byte[] b = key.getBytes("UTF-8");
-			System.arraycopy(keyBytes, 0, keyBytes, 0, keyBytes.length);
-			SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
-			this.ips = key.substring(0,50);
-			this.keySpec = keySpec;
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			SecretKeySpec skey = new SecretKeySpec(key.getBytes(), "AES");
+			
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			cipher.init(Cipher.ENCRYPT_MODE, skey);
+			crypted = cipher.doFinal(input.getBytes());
+		} catch(Exception e) {
+			System.out.println(e.toString());
 		}
+		
+		BASE64Encoder encoder = new BASE64Encoder();
+		
+		String str = encoder.encode(crypted);
+		
+		return new String(str);
 	}
 	
-	public String encrypt(String str) {
-		Cipher cipher;
+	public static String decrypt(String input, String key) {
+		byte[] output = null;
 		try {
-			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(ips.getBytes()));
+			BASE64Decoder decoder = new BASE64Decoder();
 			
-			byte[] encrypted = cipher.doFinal(str.getBytes("UTF-8"));
-			String Str = new String(Base64.encodeBase64(encrypted));
+			SecretKeySpec skey = new SecretKeySpec(key.getBytes(), "AES");
 			
-			return str;
-		}catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
-				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException
-				| UnsupportedEncodingException e) {
-			e.printStackTrace();
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			cipher.init(Cipher.DECRYPT_MODE, skey);
+			output = cipher.doFinal(decoder.decodeBuffer(input));
+		} catch(Exception e) {
+			System.out.println(e.toString());
 		}
-		return null;
-	}
-	
-	public String decrypt(String str) {
-		try {
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.DECRYPT_MODE, keySpec, new IvParameterSpec(ips.getBytes("UTF-8")));
-			
-			byte[] byteStr = Base64.decodeBase64(str.getBytes());
-			String Str = new String(cipher.doFinal(byteStr), "UTF-8");
-			
-			return Str;
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
-				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException
-				| UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return new String(output);
 	}
 }
 
