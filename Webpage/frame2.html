@@ -1,25 +1,65 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 <head>
-    <title>앉자</title>
+    <title id = "title">앉자</title>
 <style>
     ul { list-style : none }
+    body { background-color : #359099; }
     a:link, a:hover, a:visited { color : black; text-decoration : none; font-style : bold; font-size : 15pt; }
-    #list { width : 130px; height : 60px; background-color : #359099; border : solid 1px #359099; padding-top : 2%; padding-left : 1%; float : left; }
+    input { font-size : 12pt; background-color : #359099; cursor : pointer; border : none; outline : none; color : white; }
+    #list { width : 130px; height : 60px; background-color : #359099; border : solid 1px #359099; padding-top : 2%; padding-left : 1%; float : left; margin-left : 4.5%; }
+    #ext { height : 540px; width : 1100px; background-color : white; margin-left : 7%; margin-top : 1.5%; }
+    #title { height : 70px; width : 100px; color: #359099; font-size : 30pt; font-weight : bold; float : left; margin-top : 0.5%; margin-left : 7%; padding-top : 1%; }
+    .info { height : 40px; width : 300px; color: #525757; font-size : 20pt; font-weight : bold; float : right; margin-right : 10%; text-align : right; margin-top : 2%; padding-top : 1%; }
 </style>
 <meta charset="UTF-8">
+<script>
+var temp = decodeURI(window.location.href);
+
+window.onload = function print() {
+    var input = temp.split("?");
+    input = input[1].split("=");
+
+    var res = input[1];
+    for (var i = 0; i < res.length; i++) {
+        res = res.replace("+", " ");
+    }
+
+    var name = document.getElementById("name");
+    name.innerHTML = res;
+
+    var title = document.getElementById("title");
+    title.innerHTML += " | " + res;
+}
+
+function btn_click(str) {
+    if (str == "seats") {
+        frm.action = "./seats.php";
+    }
+    else if (str == "menu") {
+        frm.action = "./showMenu.php";
+    }
+}
+</script>
 </head>
 
 <body>
-<div id = "list">
-    <a href = "" target = "restaurant" style = "color : white; font-size : 12pt;">자리 현황</a><br>
-    <a href = "" target = "restaurant" style = "color : white; font-size : 12pt;">식당 메뉴 조회</a>
-</div>
+<div id = "ext">
+    <div><a href = "./main.html" id = "title">앉 자</a></div>
+
+    <div id = "name" class = "info"></div>
+
+    <br><br><br><br><br>
+    <div id = "list">
+        <form name = "frm" method = "get" target = "restaurant">
+        <input type = "submit" value = "자리 현황" onclick = "btn_click('seats');"><br>
+        <input type = "submit" value = "메뉴 조회" onclick = "btn_click('menu');">
+        </form>
+    </div>
     &nbsp;
-<iframe src = "restaurants.html" name = "restaurant" width = "823" height = "410"></iframe>
-<script>
-</script>
+    <iframe src = "./restaurants.html" name = "restaurant" width = "823" height = "410"></iframe>
+</div>
 </body>
 
 </html>
