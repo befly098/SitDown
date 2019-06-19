@@ -262,23 +262,4 @@ public class Member implements ActionListener {
 		}
 		
 	}
-	
-	void grade(String gradeName)
-	{
-		memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "¿œπ›"});
-		
-		sql = SQLMent;
-		sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\", \"" + memberPhoneTextField.getText()
-		+ "\"," + memberMileageTextField.getText() + ", \"" + gradeName + "\");";
-		
-		try {
-			Class.forName(className);
-			con = DriverManager.getConnection(url, user, passwd); 
-			stmt = (Statement) con.createStatement();
-			stmt.executeUpdate(sql);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-	}
-
 }
