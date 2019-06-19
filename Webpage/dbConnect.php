@@ -21,27 +21,25 @@ $noty->attach($email);
 $noty->attach($slack);
 $noty->attach($dashboard);
 
-$noty->setEvent("server LNX109 is going down");
+$noty->setEvent("");
 
 
 function totalTable() {
     global $conn, $tables;
 
-    $sql = "SELECT * FROM Otable WHERE Tnum == -1";
+    $sql = "SELECT * FROM Otable WHERE Tnum = -1";
     $result = mysqli_query($conn, $sql);
-    if ($result === false) {
-        return mysqli_error($conn);
-    }
     
     $row = mysqli_fetch_assoc($result);
-    if ($row['Tquant'] != count($tables)) {
-        if ($row['Tquant'] > count($tables)) {
-            for ($i = 0; $i < $row['Tquant'] - count($tables); $i++) {
+    if ($row[Tquant] != count($tables)) {
+        $bound = count($tables);
+        if ($row[Tquant] > count($tables)) {
+            for ($i = 0; $i < $row[Tquant] - $bound; $i++) {
                 array_push($tables, '-1');
             }
         }
         else {
-            for ($i = 0; $i < count($tables) - $row['Tquant']; $i++) {
+            for ($i = 0; $i < $bound - $row[Tquant]; $i++) {
                 $tables = array_pop($tables);
             }
         }
@@ -57,35 +55,35 @@ function seats() {
 
     totalTable();
 
-    $sql = "SELECT * FROM Otable WHERE Tnum != -1";
+    $sql = "SELECT * FROM Otable WHERE Tnum > -1";
     if (!$result = mysqli_query($conn, $sql)) {
         echo "Otable query fail...\n";
     }
 
     while ($row = mysqli_fetch_assoc($result)) {
-        $tables[$row['Tnum']] = 1;
+        $tables[$row[Tnum]] = 1;
     }
 
+    echo "<div align = 'center'>";
     for ($i = 0; $i < count($tables); $i++) {
         $j = $i + 1;
         if ($tables[$i] == 1) {
-            echo "<script>var table = document.getElementById('numTable');
-            table.innerHTML += '<input type = 'button' value = '테이블\"($j)\"' id = 'occupied'>'</script>";
+            echo "<input type = 'button' value = '테이블$j' id = 'occupied'>&nbsp;";
         }
         else {
-            echo "<script>var table = document.getElementById('numTable');
-            table.innerHTML += '<input type = 'button' value = '테이블\"($j)\"' id = 'empty'>'</script>";
+            echo "<input type = 'button' value = '테이블$j' id = 'empty'>&nbsp;";
         }
 
-        if ($j % 3 == 0) {
-            echo "<script>var table = document.getElementById('numTable');
-            table.innerHTML += '<br>'";
+        if ($j % 4 == 0) {
+            echo "<br><br>";
         }
     }
+    echo "</div>";
 }
 
 function showMenu() {
     global $conn;
+    $cnt = 0;
 
     $sql = "SELECT * FROM Menu";
     if (!$result = mysqli_query($conn, $sql)) {
@@ -93,9 +91,19 @@ function showMenu() {
     }
 
     while ($row = mysqli_fetch_assoc($result)) {
-        echo "<script>var list = document.getElementById('menulist');
-        list.innerHTML += '<table> <tr class = 'foodName'><td>.$row[Fname].</td></tr>
-        <tr class = 'foodPrice'><td id = 'fprice'>.$row[Fprice].원 </td></tr></table>";
+        if ($cnt % 2 == 0) {
+            echo "<div id = 'left'>";
+            echo "<table> <tr><td id = 'foodName'>$row[Fname]</td></tr>
+            <tr><td id = 'foodPrice'>$row[Fprice]원 </td></tr></table>";
+            echo "</div>";
+        }
+        else {
+            echo "<div id = 'right'>";
+            echo "<table> <tr><td id = 'foodName'>$row[Fname]</td></tr>
+            <tr><td id = 'foodPrice'>$row[Fprice]원 </td></tr></table>";
+            echo "</div><br>";
+        }
+        $cnt++;
     }
 }
 ?>

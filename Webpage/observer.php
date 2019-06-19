@@ -61,7 +61,7 @@ class Observer implements SplObserver
  
     public function update(SplSubject $publisher){
  
-        print_r($this->name.': '. $publisher->getEvent(). PHP_EOL);
+        //print_r($this->name.': '. $publisher->getEvent(). PHP_EOL);
  
     }
  

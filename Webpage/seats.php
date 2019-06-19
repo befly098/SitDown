@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>앉자</title>
 <meta charset="UTF-8">
 <style>
     #info { font-size : 9pt; }
@@ -12,20 +11,16 @@
 </head>
 
 <body>
-<?php include("./dbConnect.php"); ?>
+
 <div id = "info" align = "center">
     <img src = "./빈테이블.PNG" width = "30" height = "30"> 빈 테이블&nbsp;&nbsp;&nbsp;&nbsp;
     <img src = "./손님이 있는 테이블.PNG" width = "30" height = "30"> 손님이 있는 테이블
 </div>
-
 <br><br>
-<div id = "numTable" align = "center">
-    <?php seats(); ?>
-</div>
-
-
-<br> <br>
-<script>
-</script>
 </body>
 </html>
+
+<?php 
+include("./dbConnect.php"); 
+seats();
+?>
