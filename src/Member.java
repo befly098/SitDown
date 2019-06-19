@@ -182,17 +182,20 @@ public class Member implements ActionListener {
       String actionCommand = e.getActionCommand();
       
       if(actionCommand.equals("추가")) {
-         if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
-            grade("일반");
-         }
-         
-         else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
-            grade("골드");
-         }
-         
-         else {
-            grade("플래티넘");
-         }
+         memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "일반"});
+
+         sql = SQLMent;
+         sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\", \"" + memberPhoneTextField.getText()
+         + "\"," + memberMileageTextField.getText() + ", \"일반\");";
+
+         try {
+            Class.forName(className);
+            con = DriverManager.getConnection(url, user, passwd); 
+            stmt = (Statement) con.createStatement();
+            stmt.executeUpdate(sql);
+         } catch (Exception e1) {
+            e1.printStackTrace();
+         }         
          
          memberNumberTextField.setText("");
          memberNameTextField.setText("");
