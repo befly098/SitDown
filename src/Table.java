@@ -35,8 +35,12 @@ public class Table implements ActionListener {
 	
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
+	AES128 aes = new AES128();
+	String key = "0123456789abcdef";
 	String user = "root";
+	String encode_user = aes.encrypt(user, key);
 	String passwd = "123456";
+	String encode_passwd = aes.encrypt(passwd, key);
 	String sql = "INSERT INTO Storage(Iname, Iprice, Iseller, Icontact, Iquant, Iorder) VALUES";
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
@@ -578,7 +582,7 @@ public class Table implements ActionListener {
 							sql = "DELETE FROM Otable WHERE Tnum=" + clickedTableBtn + " AND Tmenu=\"" + Menu.menuTable.getValueAt(selectedMenu, 0) + "\";";
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, user, passwd); 
+								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -590,7 +594,7 @@ public class Table implements ActionListener {
 							System.out.println(sql);
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, user, passwd); 
+								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key)); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -601,7 +605,7 @@ public class Table implements ActionListener {
 							
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, user, passwd); 
+								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -635,7 +639,7 @@ public class Table implements ActionListener {
 							sql = "DELETE FROM Otable WHERE Tnum=" + clickedTableBtn + " AND Tmenu=\"" + Menu.menuTable.getValueAt(selectedMenu, 0) + "\";";
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, user, passwd); 
+								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -646,7 +650,7 @@ public class Table implements ActionListener {
 									"\", " + Menu.unvisibleTable.getValueAt(selectedMenu, 0) + ", " + count[clickedTableBtn][selectedMenu] + ");";
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, user, passwd); 
+								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key)); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -658,7 +662,7 @@ public class Table implements ActionListener {
 							
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, user, passwd); 
+								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key)); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {

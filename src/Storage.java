@@ -38,8 +38,12 @@ public class Storage implements ActionListener{
 	
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
+	AES128 aes = new AES128();
+	String key = "0123456789abcdef";
 	String user = "root";
+	String encode_user = aes.encrypt(user, key);
 	String passwd = "123456";
+	String encode_passwd = aes.encrypt(passwd, key);
 	String sql = "INSERT INTO Storage(Iname, Iprice, Iseller, Icontact, Iquant, Iorder) VALUES";
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
@@ -299,7 +303,7 @@ public class Storage implements ActionListener{
 				sql = "UPDATE Storage SET Iorder =" + orderQ + " WHERE Iname=" + s1 +";";
 						try {
 							Class.forName(className);
-							con = DriverManager.getConnection(url, user, passwd);
+							con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 							stmt = (Statement) con.createStatement();
 							stmt.executeUpdate(sql);
 						} catch (Exception e1) {
@@ -398,7 +402,7 @@ public class Storage implements ActionListener{
 					s1 + " AND Iprice=" + s2 + " AND Iseller=" + s3 + " AND Icontact=" + s4 + ";";
 					try {
 						Class.forName(className);
-						con = DriverManager.getConnection(url, user, passwd);
+						con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 						stmt = (Statement) con.createStatement();
 						stmt.executeUpdate(sql);
 					} catch (Exception e1) {
@@ -425,7 +429,7 @@ public class Storage implements ActionListener{
 				
 				try {
 					Class.forName(className);
-					con = DriverManager.getConnection(url, user, passwd); 
+					con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 					stmt = (Statement) con.createStatement();
 					stmt.executeUpdate(sql);
 				} catch (Exception e1) {
@@ -440,7 +444,7 @@ public class Storage implements ActionListener{
 			sql = "DELETE FROM Storage WHERE Iname=\"" + iName + "\";";
 			try {
 				Class.forName(className);
-				con = DriverManager.getConnection(url, user, passwd);
+				con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 				stmt = (Statement) con.createStatement();
 				stmt.executeUpdate(sql);
 			} catch (Exception e1) {
