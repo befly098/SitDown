@@ -38,8 +38,12 @@ public class Menu implements ActionListener {
 	
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
+	AES128 aes = new AES128();
+	String key = "0123456789abcdef";
 	String user = "root";
+	String encode_user = aes.encrypt(user, key);
 	String passwd = "123456";
+	String encode_passwd = aes.encrypt(passwd, key);
 	String sql = "INSERT INTO Menu(Fname, Fprice, Fbase) VALUES";
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
@@ -47,19 +51,19 @@ public class Menu implements ActionListener {
 	JPanel menuPanel;
 	static JTable menuTable;
 	
-	JPanel menuTablePanel; // Å×ÀÌºí+¹öÆ° ´ãÀ» ÆĞ³Î 
-	JPanel menuInfoPanel; // ¸Ş´º Á¤º¸ ´ãÀ» ÆĞ³Î (±×¸®µå 3,4)
-	JPanel menuTableBtnPanel;  // ÅØ½ºÆ® ÇÊµå¿Í ¹öÆ° ´ãÀ» ÆĞ³Î 
+	JPanel menuTablePanel; // í…Œì´ë¸”+ë²„íŠ¼ ë‹´ì„ íŒ¨ë„ 
+	JPanel menuInfoPanel; // ë©”ë‰´ ì •ë³´ ë‹´ì„ íŒ¨ë„ (ê·¸ë¦¬ë“œ 3,4)
+	JPanel menuTableBtnPanel;  // í…ìŠ¤íŠ¸ í•„ë“œì™€ ë²„íŠ¼ ë‹´ì„ íŒ¨ë„ 
 	
 	JLabel menuNameInfo2;
 	JLabel menuPriceInfo2;
 	JLabel menuOriginalPriceInfo2;
 	JLabel menuIngredientInfo2;
-	// ¸Ş´º ÀÎÆ÷ Å×ÀÌºí¿¡ µé¾î°¥ ¶óº§ 
+	// ë©”ë‰´ ì¸í¬ í…Œì´ë¸”ì— ë“¤ì–´ê°ˆ ë¼ë²¨ 
 	
 	static DefaultTableModel menuTableModel;
 	
-	// ¿©±â¼­ºÎÅÍ 
+	// ì—¬ê¸°ì„œë¶€í„° 
 	static DefaultTableModel unvisibleTableModel;
 	static JTable unvisibleTable;
 	Frame addDialog;
@@ -73,9 +77,9 @@ public class Menu implements ActionListener {
 	JLabel menuPriceInfo;
 	JLabel menuOriginalPriceInfo;
 	JLabel menuIngredientInfo;
-	// ¿©±â±îÁö ¸Ş´º Ãß°¡ ´ÙÀÌ¾ó·Î±×¿¡ »ç¿ëÇÑ º¯¼ö 
+	// ì—¬ê¸°ê¹Œì§€ ë©”ë‰´ ì¶”ê°€ ë‹¤ì´ì–¼ë¡œê·¸ì— ì‚¬ìš©í•œ ë³€ìˆ˜ 
 	
-	// ¿©±â¼­ºÎÅÍ 
+	// ì—¬ê¸°ì„œë¶€í„° 
 	Frame editDialog;
 	JTextField menuFrameName3;
 	JTextField menuFramePrice3;
@@ -86,16 +90,16 @@ public class Menu implements ActionListener {
 	JLabel menuPriceInfo3;
 	JLabel menuOriginalPriceInfo3;
 	JLabel menuIngredientInfo3;
-	// ¿©±â±îÁö ¸Ş´º ÆíÁı ´ÙÀÌ¾ó·Î±×¿¡ »ç¿ëÇÑ º¯¼ö 
+	// ì—¬ê¸°ê¹Œì§€ ë©”ë‰´ í¸ì§‘ ë‹¤ì´ì–¼ë¡œê·¸ì— ì‚¬ìš©í•œ ë³€ìˆ˜ 
 	
 	JTextField menuName;
-	// ¸Ş´º Å×ÀÌºí¿¡ µé¾î°¥ ÅØ½ºÆ®ÇÊµå 
+	// ë©”ë‰´ í…Œì´ë¸”ì— ë“¤ì–´ê°ˆ í…ìŠ¤íŠ¸í•„ë“œ 
 	
 	JTextField menuInfoName;
 	JTextField menuInfoPrice;
 	JTextField menuInfoOriginalPrice;
 	JTextArea menuInfoIngredients;
-	// ¸Ş´º ÀÎÆ÷ Å×ÀÌºí¿¡ µé¾î°¥ ÅØ½ºÆ® ÇÊµå 
+	// ë©”ë‰´ ì¸í¬ í…Œì´ë¸”ì— ë“¤ì–´ê°ˆ í…ìŠ¤íŠ¸ í•„ë“œ 
 	
 	JButton menuAdd;
 	JButton menuEdit;
@@ -103,11 +107,12 @@ public class Menu implements ActionListener {
 	JButton menuInfo;
 	JButton menuFrameAdd;
 	JButton menuFrameEdit;
-	// ¸Ş´º Ãß°¡ »èÁ¦ ¹öÆ° 
-	public static final String name = "ÀÌ¸§";
-	public static final String price = "°¡°İ";
-	public static final String productionPrice = "»ı»ê´Ü°¡";
-	public static final String used = "»ç¿ëµÈ Àç·á";
+	// ë©”ë‰´ ì¶”ê°€ ì‚­ì œ ë²„íŠ¼ 
+	
+	public static final String name = "ì´ë¦„";
+	public static final String price = "ê°€ê²©";
+	public static final String productionPrice = "ìƒì‚°ë‹¨ê°€";
+	public static final String used = "ì‚¬ìš©ëœ ì¬ë£Œ";
 	
 	public Menu() throws IOException {
 		
@@ -119,9 +124,10 @@ public class Menu implements ActionListener {
 		menuTableBtnPanel.setLayout(new GridLayout(1,2));
 		menuInfoPanel = new JPanel();
 		menuInfoPanel.setLayout(new GridLayout(5,2));
-
+		
+		//
 		unvisibleTable = new JTable();
-		// ÅØ½ºÆ®ÇÊµå¿¡ ³ÖÀ» ¾Èº¸ÀÌ´Â Å×ÀÌºí 	
+		// í…ìŠ¤íŠ¸í•„ë“œì— ë„£ì„ ì•ˆë³´ì´ëŠ” í…Œì´ë¸” 
 		
 		ObjectInputStream inputStream = null;
 		ObjectInputStream inputStream2 = null;
@@ -158,7 +164,7 @@ public class Menu implements ActionListener {
 				Vector<String> userColumnUnvisible = new Vector<> ();
 				userColumnUnvisible.addElement(price);
 				userColumnUnvisible.addElement(productionPrice);
-				userColumnUnvisible.addElement("Àç·á");
+				userColumnUnvisible.addElement(used);
 				unvisibleTableModel = new DefaultTableModel(userColumnUnvisible, 0);
 			}
 			
@@ -179,7 +185,7 @@ public class Menu implements ActionListener {
 			Vector<String> userColumnUnvisible = new Vector<> ();
 			userColumnUnvisible.addElement(price);
 			userColumnUnvisible.addElement(productionPrice);
-			userColumnUnvisible.addElement("Àç·á");
+			userColumnUnvisible.addElement(used);
 			unvisibleTableModel = new DefaultTableModel(userColumnUnvisible, 0);
 
 			e.printStackTrace();
@@ -239,11 +245,11 @@ public class Menu implements ActionListener {
 		menuIngredientInfo3 = new JLabel(used);
 		menuIngredientInfo3.setHorizontalAlignment(JLabel.CENTER);
 		
-		menuAdd = new JButton("Ãß°¡");
+		menuAdd = new JButton("ì¶”ê°€");
 		menuAdd.addActionListener(this);
-		menuEdit = new JButton("ÆíÁı");
+		menuEdit = new JButton("í¸ì§‘");
 		menuEdit.addActionListener(this);
-		menuDelete = new JButton("»èÁ¦");
+		menuDelete = new JButton("ì‚­ì œ");
 		menuDelete.addActionListener(this);
 		
 		menuTableBtnPanel.add(menuAdd);
@@ -271,9 +277,9 @@ public class Menu implements ActionListener {
 		menuPanel.add(menuTablePanel);
 	}
 
-	void frameOpen() {
+	void FrameOpen() {
 		
-		addDialog = new Frame("¸Ş´º Á¤º¸ ÀÔ·Â");
+		addDialog = new Frame("ë©”ë‰´ ì •ë³´ ì…ë ¥");
 		addDialog.setSize(300, 300);
 		addDialog.setLayout(new BorderLayout());
 		addDialog.addWindowListener(new WindowAdapter() {
@@ -283,7 +289,7 @@ public class Menu implements ActionListener {
 			}
 		});
 		
-		menuFrameAdd = new JButton("³»¿ë Ãß°¡");
+		menuFrameAdd = new JButton("ë‚´ìš© ì¶”ê°€");
 		menuFrameAdd.addActionListener(this);
 		
 		menuFrameName = new JTextField(10);
@@ -309,9 +315,9 @@ public class Menu implements ActionListener {
 		addDialog.setVisible(true);
 	}
 	
-	void frameEdit() {
+	void FrameEdit() {
 		
-		editDialog = new Frame("¸Ş´º Á¤º¸ ÀÔ·Â");
+		editDialog = new Frame("ë©”ë‰´ ì •ë³´ ì…ë ¥");
 		editDialog.setSize(300, 300);
 		editDialog.setLayout(new BorderLayout());
 		editDialog.addWindowListener(new WindowAdapter() {
@@ -321,7 +327,7 @@ public class Menu implements ActionListener {
 			}
 		});
 		
-		menuFrameEdit = new JButton("ÆíÁı ¿Ï·á");
+		menuFrameEdit = new JButton("í¸ì§‘ ì™„ë£Œ");
 		menuFrameEdit.addActionListener(this);
 		
 		menuFrameName3 = new JTextField(10);
@@ -361,11 +367,11 @@ public class Menu implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		
-		if(actionCommand.equals("Ãß°¡")) {
-			frameOpen();
+		if(actionCommand.equals("ì¶”ê°€")) {
+			FrameOpen();
 		}
 		
-		else if(actionCommand.equals("³»¿ë Ãß°¡")) {
+		else if(actionCommand.equals("ë‚´ìš© ì¶”ê°€")) {
 			menuTableModel.addRow(new Object[] {menuFrameName.getText()});
 			unvisibleTableModel.addRow(new Object[] {menuFramePrice.getText(), menuFrameOriginalPrice.getText(), menuFrameIngredients.getText()});
 			
@@ -375,7 +381,7 @@ public class Menu implements ActionListener {
 			
 			try {
 				Class.forName(className);
-				con = DriverManager.getConnection(url, user, passwd); 
+				con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 				stmt = (Statement) con.createStatement();
 				stmt.executeUpdate(sql);
 			} catch (Exception e1) {
@@ -390,10 +396,11 @@ public class Menu implements ActionListener {
 				
 				sql = "INSERT INTO Recipe(Food, Ing, Needs) VALUES";
 				sql += "(\"" + menuFrameName.getText() + "\"," + "\"" + changeIngredients2[0] + "\"" + "," + changeIngredients2[1] + ");";
-			
+				
+				
 				try {
 					Class.forName(className);
-					con = DriverManager.getConnection(url, user, passwd); 
+					con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 					stmt = (Statement) con.createStatement();
 					stmt.executeUpdate(sql);
 				} catch (Exception e1) {
@@ -404,18 +411,18 @@ public class Menu implements ActionListener {
 			addDialog.setVisible(false);
 		}
 		
-		else if(actionCommand.equals("ÆíÁı")) {
-			frameEdit();
+		else if(actionCommand.equals("í¸ì§‘")) {
+			FrameEdit();
 		}
 		
-		else if(actionCommand.equals("»èÁ¦")) {
+		else if(actionCommand.equals("ì‚­ì œ")) {
 			int row = menuTable.getSelectedRow();
 			
 			String DBName = String.valueOf(menuTable.getValueAt(row, 0));
 			sql = "DELETE FROM Recipe WHERE Food=\"" + DBName + "\";";
 			try {
 				Class.forName(className);
-				con = DriverManager.getConnection(url, user, passwd);
+				con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 				stmt = (Statement) con.createStatement();
 				stmt.executeUpdate(sql);
 			} catch (Exception e1) {
@@ -425,7 +432,7 @@ public class Menu implements ActionListener {
 			sql = "DELETE FROM Menu WHERE Fname=\"" + DBName + "\";";
 			try {
 				Class.forName(className);
-				con = DriverManager.getConnection(url, user, passwd);
+				con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
 				stmt = (Statement) con.createStatement();
 				stmt.executeUpdate(sql);
 			} catch (Exception e1) {
@@ -441,7 +448,7 @@ public class Menu implements ActionListener {
 			menuInfoIngredients.setText("");
 		}
 		
-		else if(actionCommand.equals("ÆíÁı ¿Ï·á")) {
+		else if(actionCommand.equals("í¸ì§‘ ì™„ë£Œ")) {
 			int row = menuTable.getSelectedRow();
 			menuTable.setValueAt(menuFrameName3.getText(), row, 0);
 			unvisibleTable.setValueAt(menuFramePrice3.getText(), row, 0);
