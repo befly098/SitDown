@@ -93,13 +93,20 @@ public class Storage implements ActionListener{
 	JLabel frameQuantity;
 	JLabel frameOrderquantity;
 	
-	int orderquantity; // ì£¼ë¬¸ëŸ‰ ë‹´ì„ ë³€ìˆ˜ 
-	Frame orderDialog; // ì£¼ë¬¸ëŸ‰ ì ì„ ë‹¤ì´ì–¼ë¡œê·¸  
+	int orderquantity; // ÁÖ¹®·® ´ãÀ» º¯¼ö 
+	Frame orderDialog; // ÁÖ¹®·® ÀûÀ» ´ÙÀÌ¾ó·Î±×  
 	
 	static DefaultTableModel storageTableModel;
 	static DefaultTableModel unvisibleTableModel;
 	
 	Frame addDialog;
+	
+	public static final String name = "ÀÌ¸§";
+	public static final String inventory = "Àç°í";
+	public static final String order = "ÁÖ¹®";
+	public static final String price = "°¡°İ";
+	public static final String saleAgent = "ÆÇ¸ÅÃ³";
+	public static final String phoneNumber = "¿¬¶ôÃ³";
 	
 	public Storage() throws IOException {
 		
@@ -113,7 +120,7 @@ public class Storage implements ActionListener{
 		storageInfoPanel.setLayout(new GridLayout(7,2));
 		
 		
-		// ë°ì´í„° ë‹¤ ì…ë ¥ë°›ì•„ì„œ ì¶œë ¥ í…Œì´ë¸”ì— ë³´ì—¬ì£¼ê³  ì‹¶ì§€ ì•Šì€ ë¶€ë¶„ì€ ì•ˆ ë³´ì´ëŠ” í…Œì´ë¸”ì— ë”°ë¡œ ì €ì¥ 
+		// µ¥ÀÌÅÍ ´Ù ÀÔ·Â¹Ş¾Æ¼­ Ãâ·Â Å×ÀÌºí¿¡ º¸¿©ÁÖ°í ½ÍÁö ¾ÊÀº ºÎºĞÀº ¾È º¸ÀÌ´Â Å×ÀÌºí¿¡ µû·Î ÀúÀå 
 		ObjectInputStream inputStream = null;
 		ObjectInputStream inputStream2 = null;
 		
@@ -126,10 +133,10 @@ public class Storage implements ActionListener{
 			
 			if(rowData.isEmpty()) {
 				Vector<String> userColumn = new Vector<> ();
-				userColumn.addElement("ì´ë¦„");
-				userColumn.addElement("ì¬ê³ ");
-				userColumn.addElement("ì£¼ë¬¸");
-				userColumn.addElement("ê°€ê²©");
+				userColumn.addElement(name);
+				userColumn.addElement(inventory);
+				userColumn.addElement(order);
+				userColumn.addElement(price);
 				storageTableModel = new DefaultTableModel(userColumn, 0){
 					@Override
 					public boolean isCellEditable(int i, int c) {
@@ -152,8 +159,8 @@ public class Storage implements ActionListener{
 			
 			if(rowData2.isEmpty()) {
 				Vector<String> unvisibleUserColumn = new Vector<> ();
-				unvisibleUserColumn.addElement("íŒë§¤ì²˜");
-				unvisibleUserColumn.addElement("ì—°ë½ì²˜");
+				unvisibleUserColumn.addElement(saleAgent);
+				unvisibleUserColumn.addElement(phoneNumber);
 				unvisibleTableModel = new DefaultTableModel(unvisibleUserColumn, 0);
 			}
 			else {
@@ -167,15 +174,15 @@ public class Storage implements ActionListener{
 		} catch(ClassNotFoundException | IOException e) {
 			Vector<String> userColumn = new 
 					Vector<> ();
-			userColumn.addElement("ì´ë¦„");
-			userColumn.addElement("ì¬ê³ ");
-			userColumn.addElement("ì£¼ë¬¸");
-			userColumn.addElement("ê°€ê²©");
+			userColumn.addElement(name);
+			userColumn.addElement(inventory);
+			userColumn.addElement(order);
+			userColumn.addElement(price);
 			storageTableModel = new DefaultTableModel(userColumn, 0);
 			
 			Vector<String> unvisibleUserColumn = new Vector<> ();
-			unvisibleUserColumn.addElement("íŒë§¤ì²˜");
-			unvisibleUserColumn.addElement("ì—°ë½ì²˜");
+			unvisibleUserColumn.addElement(saleAgent);
+			unvisibleUserColumn.addElement(phoneNumber);
 			unvisibleTableModel = new DefaultTableModel(unvisibleUserColumn, 0);
 			
 			e.printStackTrace();
@@ -218,26 +225,26 @@ public class Storage implements ActionListener{
 		storageQuantity = new JTextField(10);
 		storageOrderquantity = new JTextField(10);
 		
-		nameStorage = new JLabel("ì´ë¦„");
+		nameStorage = new JLabel(name);
 		nameStorage.setHorizontalAlignment(JLabel.CENTER);
-		namePrice = new JLabel("ê°€ê²©");
+		namePrice = new JLabel(price);
 		namePrice.setHorizontalAlignment(JLabel.CENTER);
-		nameSelling = new JLabel("íŒë§¤ì²˜");
+		nameSelling = new JLabel(saleAgent);
 		nameSelling.setHorizontalAlignment(JLabel.CENTER);
-		namePhone = new JLabel("ì—°ë½ì²˜");
+		namePhone = new JLabel(phoneNumber);
 		namePhone.setHorizontalAlignment(JLabel.CENTER);
-		nameQuantity = new JLabel("ìˆ˜ëŸ‰");
+		nameQuantity = new JLabel("¼ö·®");
 		nameQuantity.setHorizontalAlignment(JLabel.CENTER);
-		nameOrderquantity = new JLabel("ì£¼ë¬¸ëŸ‰");
+		nameOrderquantity = new JLabel("ÁÖ¹®·®");
 		nameOrderquantity.setHorizontalAlignment(JLabel.CENTER);
 		
-		storageAdd = new JButton("ì¶”ê°€");
+		storageAdd = new JButton("Ãß°¡");
 		storageAdd.addActionListener(this);
-		storageDelete = new JButton("ì‚­ì œ");
+		storageDelete = new JButton("»èÁ¦");
 		storageDelete.addActionListener(this);
-		storageOrder = new JButton("ì£¼ë¬¸");
+		storageOrder = new JButton(order);
 		storageOrder.addActionListener(this);
-		storageCancel = new JButton("ì£¼ë¬¸ ì·¨ì†Œ");
+		storageCancel = new JButton("ÁÖ¹® Ãë¼Ò");
 		storageCancel.addActionListener(this);
 
 		storageBtnPanel.add(storageAdd);
@@ -271,8 +278,8 @@ public class Storage implements ActionListener{
 		storagePanel.add(storageTablePanel);
 	}
 	
-	void FrameOrderBox() {
-		orderDialog = new Frame("ì£¼ë¬¸ ìˆ˜ëŸ‰ ì…ë ¥");
+	void frameOrderBox() {
+		orderDialog = new Frame("ÁÖ¹® ¼ö·® ÀÔ·Â");
 		orderDialog.setSize(300, 300);
 		orderDialog.setLayout(new GridLayout(3,1));
 		orderDialog.addWindowListener(new WindowAdapter() {
@@ -282,11 +289,11 @@ public class Storage implements ActionListener{
 			}
 		});
 		
-		JTextField orderInput = new JTextField(15); // ì£¼ë¬¸ëŸ‰ ì ì„ í…ìŠ¤íŠ¸ í•„ë“œ 
-		JLabel order = new JLabel("ì£¼ë¬¸í•  ìˆ˜ëŸ‰ì„ ì…ë ¥í•˜ì„¸ìš”."); // ì„¤ëª… ë„£ì„ ë¼ë²¨
+		JTextField orderInput = new JTextField(15); // ÁÖ¹®·® ÀûÀ» ÅØ½ºÆ® ÇÊµå 
+		JLabel order = new JLabel("ÁÖ¹®ÇÒ ¼ö·®À» ÀÔ·ÂÇÏ¼¼¿ä."); // ¼³¸í ³ÖÀ» ¶óº§
 		order.setHorizontalAlignment(JLabel.CENTER);
 		
-		JButton orderFrameAdd = new JButton("ì£¼ë¬¸ ì™„ë£Œ");
+		JButton orderFrameAdd = new JButton("ÁÖ¹® ¿Ï·á");
 		orderFrameAdd.addActionListener(new ActionListener() {
 
 			@Override
@@ -317,9 +324,9 @@ public class Storage implements ActionListener{
 		orderDialog.add(orderFrameAdd);
 		orderDialog.setVisible(true);
 	}
-	void FrameOpen() { // ì¶”ê°€ ë²„íŠ¼ ëˆ„ë¥¼ë•Œ ì‘ë™í•  ì…ë ¥í•˜ëŠ” ë‹¤ì´ì–¼ë¡œê·¸ í”„ë ˆì„ ì˜¤í”ˆ 
+	void frameOpen() { // Ãß°¡ ¹öÆ° ´©¸¦¶§ ÀÛµ¿ÇÒ ÀÔ·ÂÇÏ´Â ´ÙÀÌ¾ó·Î±× ÇÁ·¹ÀÓ ¿ÀÇÂ 
 		
-		addDialog = new Frame("ì¬ë£Œ ì •ë³´ ì…ë ¥");
+		addDialog = new Frame("Àç·á Á¤º¸ ÀÔ·Â");
 		addDialog.setSize(300, 300);
 		addDialog.setLayout(new BorderLayout());
 		addDialog.addWindowListener(new WindowAdapter() {
@@ -329,7 +336,7 @@ public class Storage implements ActionListener{
 			}
 		});
 		
-		storageFrameAdd = new JButton("ë‚´ìš© ì¶”ê°€");
+		storageFrameAdd = new JButton("³»¿ë Ãß°¡");
 		storageFrameAdd.addActionListener(this);
 		
 		storageTablename = new JTextField(10);
@@ -338,15 +345,15 @@ public class Storage implements ActionListener{
 		storageTableselling = new JTextField(10);
 		storageTablephone = new JTextField(10);
 		
-		frameStorage = new JLabel("ì´ë¦„");
+		frameStorage = new JLabel(name);
 		frameStorage.setHorizontalAlignment(JLabel.CENTER);
-		frameOrderquantity = new JLabel("ì¬ê³ ");
+		frameOrderquantity = new JLabel(inventory);
 		frameOrderquantity.setHorizontalAlignment(JLabel.CENTER);
-		framePrice = new JLabel("ê°€ê²©");
+		framePrice = new JLabel(price);
 		framePrice.setHorizontalAlignment(JLabel.CENTER);
-		frameSelling = new JLabel("íŒë§¤ì²˜");
+		frameSelling = new JLabel(saleAgent);
 		frameSelling.setHorizontalAlignment(JLabel.CENTER);
-		framePhone = new JLabel("ì—°ë½ì²˜");
+		framePhone = new JLabel(phoneNumber);
 		framePhone.setHorizontalAlignment(JLabel.CENTER);
 		
 		dialogPanel = new JPanel();
@@ -372,11 +379,11 @@ public class Storage implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		
-		if(actionCommand.equals("ì¶”ê°€")) {
-			FrameOpen();
+		if(actionCommand.equals("Ãß°¡")) {
+			frameOpen();
 		}
 		
-		else if(actionCommand.equals("ë‚´ìš© ì¶”ê°€")) {// ë‹¤ì´ì–¼ë¡œê·¸ì— ì •ë³´ ì…ë ¥ í•˜ê³  í…Œì´ë¸”ì— ì €ì¥
+		else if(actionCommand.equals("³»¿ë Ãß°¡")) {// ´ÙÀÌ¾ó·Î±×¿¡ Á¤º¸ ÀÔ·Â ÇÏ°í Å×ÀÌºí¿¡ ÀúÀå
 			boolean check = false;
 			int count = storageTable.getRowCount();
 			for (int i = 0; i < count; i++) {
@@ -394,7 +401,7 @@ public class Storage implements ActionListener{
 					int preStock = Integer.parseInt(String.valueOf(storageTable.getValueAt(i, 1))); 
 					preStock += stockCount;
 					storageTable.setValueAt(preStock, i, 1);
-					JOptionPane.showMessageDialog(null, "ì´ë¯¸ ì°½ê³ ì— ìˆëŠ” ì¬ë£Œì…ë‹ˆë‹¤\n ì…ë ¥í•œ ì¬ê³ ëŸ‰ ë§Œí¼ ì¬ë£Œê°€ ì¶”ê°€ë˜ì—ˆìŠµë‹ˆë‹¤.");
+					JOptionPane.showMessageDialog(null, "ÀÌ¹Ì Ã¢°í¿¡ ÀÖ´Â Àç·áÀÔ´Ï´Ù\n ÀÔ·ÂÇÑ Àç°í·® ¸¸Å­ Àç·á°¡ Ãß°¡µÇ¾ú½À´Ï´Ù.");
 					check = true;
 					addDialog.setVisible(false);
 					
@@ -413,7 +420,7 @@ public class Storage implements ActionListener{
 				}
 				
 				else if (s1.contentEquals(storageTablename.getText())) {
-					JOptionPane.showMessageDialog(null, "ë™ì¼í•œ ì´ë¦„ì˜ ì¬ë£Œê°€ ì¡´ì¬í•©ë‹ˆë‹¤.\n ì¬ë£Œ ì´ë¦„ì„ ë³€ê²½í•´ì£¼ì‹­ì‹œì˜¤.");
+					JOptionPane.showMessageDialog(null, "µ¿ÀÏÇÑ ÀÌ¸§ÀÇ Àç·á°¡ Á¸ÀçÇÕ´Ï´Ù.\n Àç·á ÀÌ¸§À» º¯°æÇØÁÖ½Ê½Ã¿À.");
 					check = true;
 					break;
 				}
@@ -438,7 +445,7 @@ public class Storage implements ActionListener{
 			}
 		}
 		
-		else if(actionCommand.equals("ì‚­ì œ")) {
+		else if(actionCommand.equals("»èÁ¦")) {
 			int row = storageTable.getSelectedRow();
 			String iName = String.valueOf(storageTable.getValueAt(row, 0));
 			sql = "DELETE FROM Storage WHERE Iname=\"" + iName + "\";";
@@ -460,11 +467,11 @@ public class Storage implements ActionListener{
 			storagePhone.setText("");
 		}
 		
-		else if(actionCommand.equals("ì£¼ë¬¸")) {
-			FrameOrderBox();
+		else if(actionCommand.equals(order)) {
+			frameOrderBox();
 		}
 		
-		else if(actionCommand.equals("ì£¼ë¬¸ ì·¨ì†Œ")) {
+		else if(actionCommand.equals("ÁÖ¹® Ãë¼Ò")) {
 			int x = storageTable.getSelectedRow();
 			storageTable.setValueAt(0, x, 2);
 			storageOrderquantity.setText("0");
