@@ -10,9 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -27,239 +24,223 @@ import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
 
 public class Member implements ActionListener {
-	
-	Connection con = null;
-	
-	String className = "org.gjt.mm.mysql.Driver";
-	String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
-	String user = "root";
-	String passwd = "123456";
-	String sql = "INSERT INTO Storage(Iname, Iprice, Iseller, Icontact, Iquant, Iorder) VALUES";
-	Statement stmt = null;
-	PreparedStatement pstmt = null;
-	
-	
-	JPanel memberPanel; // ∏‚πˆ ∆–≥Œ
-	JPanel memberBtnPanel; // ≈ÿΩ∫∆Æ« µÂøÕ πˆ∆∞ ¥„¿ª ∆–≥Œ 
-	JPanel textfieldPanel; // ≈ÿΩ∫∆Æ« µÂ ∆–≥Œ 
-	JPanel btnPanel; // πˆ∆∞ ∆–≥Œ 
-	static JTable memberTable; // ∏‚πˆ ≈◊¿Ã∫Ì
-	static DefaultTableModel memberTableModel;
-	
-	JTextField memberNameTextField;
-	JTextField memberNumberTextField;
-	JTextField memberMileageTextField;
-	JTextField memberPhoneTextField;
-	// ≈◊¿Ã∫Ìø° ¿‘∑¬«“ ≈ÿΩ∫∆Æ ¥„¥¬ « µÂ
-	
-	JLabel memberName;
-	JLabel memberNumber;
-	JLabel memberMileage;
-	JLabel memberPhone;
-	
-	JButton addMember;
-	JButton deleteMember;
-	JButton editMember;
-	// ≈◊¿Ã∫Ì ∞¸∑√ πˆ∆∞ 
-	
-	private static final String NUMBER = "π¯»£";  
-	private static final String NAME = "¿Ã∏ß";  
-	private static final String PHONENUMBER = "ø¨∂Ù√≥";
-	private static final String MILEAGE = "∏∂¿œ∏Æ¡ˆ";
-	private static final String LEVEL = "»∏ø¯µÓ±ﬁ";
-	private static final String SQLMent = "INSERT INTO Member(Mnum, Mname, Mcontact, Mmileage, Mlevel) VALUES";
-	
-	public Member() throws IOException {
-		memberPanel = new JPanel();
-		memberPanel.setLayout(new BorderLayout());
-		
-		ObjectInputStream inputStream = null;
-		try {
-			inputStream = new ObjectInputStream(new FileInputStream("MemberTable"));
-			
-			Vector rowData = (Vector)inputStream.readObject();
-			Vector columnNames = (Vector)inputStream.readObject();
-			
-			if(rowData.isEmpty()) {
-				Vector<String> userColumn = new Vector<> ();
-				userColumn.addElement(NUMBER);
-				userColumn.addElement(NAME);
-				userColumn.addElement(PHONENUMBER);
-				userColumn.addElement(MILEAGE);
-				userColumn.addElement(LEVEL);
-				memberTableModel = new DefaultTableModel(userColumn, 0);
-			}
-			else {
-				memberTableModel = new DefaultTableModel();
-				memberTableModel.setDataVector(rowData, columnNames);
-			}
-			
-			inputStream.close();
-			
-		} catch(FileNotFoundException e) {
-			Vector<String> userColumn = new Vector<> ();
-			userColumn.addElement(NUMBER);
-			userColumn.addElement(NAME);
-			userColumn.addElement(PHONENUMBER);
-			userColumn.addElement(MILEAGE);
-			userColumn.addElement(LEVEL);
-			memberTableModel = new DefaultTableModel(userColumn, 0);
-		} catch (ClassNotFoundException | IOException e) {
-			Vector<String> userColumn = new Vector<> ();
-			userColumn.addElement(NUMBER);
-			userColumn.addElement(NAME);
-			userColumn.addElement(PHONENUMBER);
-			userColumn.addElement(MILEAGE);
-			userColumn.addElement(LEVEL);
-			memberTableModel = new DefaultTableModel(userColumn, 0);
-			e.printStackTrace();
-		} finally {
-			inputStream.close();
-		}
-		
-		memberTable = new JTable(memberTableModel);
-		JScrollPane scrollpane = new JScrollPane(memberTable);
-		memberPanel.add(scrollpane, BorderLayout.CENTER);
-		
-		memberName = new JLabel(NAME);
-		memberName.setHorizontalAlignment(JLabel.CENTER);
+   
+   Connection con = null;
+   
+   String className = "org.gjt.mm.mysql.Driver";
+   String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
+   AES128 aes = new AES128();
+   String key = "0123456789abcdef";
+   String user = "root";
+   String encode_user = aes.encrypt(user, key);
+   String passwd = "123456";
+   String encode_passwd = aes.encrypt(passwd, key);
+   String sql = "INSERT INTO Storage(Iname, Iprice, Iseller, Icontact, Iquant, Iorder) VALUES";
+   Statement stmt = null;
+   PreparedStatement pstmt = null;
+   
+   
+   JPanel memberPanel; // Î©§Î≤Ñ Ìå®ÎÑê
+   JPanel memberBtnPanel; // ÌÖçÏä§Ìä∏ÌïÑÎìúÏôÄ Î≤ÑÌäº Îã¥ÏùÑ Ìå®ÎÑê 
+   JPanel textfieldPanel; // ÌÖçÏä§Ìä∏ÌïÑÎìú Ìå®ÎÑê 
+   JPanel btnPanel; // Î≤ÑÌäº Ìå®ÎÑê 
+   static JTable memberTable; // Î©§Î≤Ñ ÌÖåÏù¥Î∏î
+   static DefaultTableModel memberTableModel;
+   
+   JTextField memberNameTextField;
+   JTextField memberNumberTextField;
+   JTextField memberMileageTextField;
+   JTextField memberPhoneTextField;
+   // ÌÖåÏù¥Î∏îÏóê ÏûÖÎ†•Ìï† ÌÖçÏä§Ìä∏ Îã¥Îäî ÌïÑÎìú
+   
+   JLabel memberName;
+   JLabel memberNumber;
+   JLabel memberMileage;
+   JLabel memberPhone;
+   
+   JButton addMember;
+   JButton deleteMember;
+   JButton editMember;
+   // ÌÖåÏù¥Î∏î Í¥ÄÎ†® Î≤ÑÌäº 
+   
+   private static final String NUMBER = "Î≤àÌò∏";  
+   private static final String NAME = "Ïù¥Î¶Ñ";  
+   private static final String PHONENUMBER = "Ïó∞ÎùΩÏ≤ò";
+   private static final String MILEAGE = "ÎßàÏùºÎ¶¨ÏßÄ";
+   private static final String LEVEL = "ÌöåÏõêÎì±Í∏â";
+   private static final String SQLMent = "INSERT INTO Member(Mnum, Mname, Mcontact, Mmileage, Mlevel) VALUES";
+   
+   public Member() throws IOException {
+      memberPanel = new JPanel();
+      memberPanel.setLayout(new BorderLayout());
+      
+      ObjectInputStream inputStream = null;
+      try {
+         inputStream = new ObjectInputStream(new FileInputStream("MemberTable"));
+         
+         Vector rowData = (Vector)inputStream.readObject();
+         Vector columnNames = (Vector)inputStream.readObject();
+         
+         if(rowData.isEmpty()) {
+            Vector<String> userColumn = new Vector<> ();
+            userColumn.addElement(NUMBER);
+            userColumn.addElement(NAME);
+            userColumn.addElement(PHONENUMBER);
+            userColumn.addElement(MILEAGE);
+            userColumn.addElement(LEVEL);
+            memberTableModel = new DefaultTableModel(userColumn, 0);
+         }
+         else {
+            memberTableModel = new DefaultTableModel();
+            memberTableModel.setDataVector(rowData, columnNames);
+         }
+         
+         inputStream.close();
+         
+      } catch(FileNotFoundException e) {
+         Vector<String> userColumn = new Vector<> ();
+         userColumn.addElement(NUMBER);
+         userColumn.addElement(NAME);
+         userColumn.addElement(PHONENUMBER);
+         userColumn.addElement(MILEAGE);
+         userColumn.addElement(LEVEL);
+         memberTableModel = new DefaultTableModel(userColumn, 0);
+      } catch (ClassNotFoundException | IOException e) {
+         Vector<String> userColumn = new Vector<> ();
+         userColumn.addElement(NUMBER);
+         userColumn.addElement(NAME);
+         userColumn.addElement(PHONENUMBER);
+         userColumn.addElement(MILEAGE);
+         userColumn.addElement(LEVEL);
+         memberTableModel = new DefaultTableModel(userColumn, 0);
+         e.printStackTrace();
+      } finally {
+         inputStream.close();
+      }
+      
+      memberTable = new JTable(memberTableModel);
+      JScrollPane scrollpane = new JScrollPane(memberTable);
+      memberPanel.add(scrollpane, BorderLayout.CENTER);
+      
+      memberName = new JLabel(NAME);
+      memberName.setHorizontalAlignment(JLabel.CENTER);
 
-		memberNumber = new JLabel(NUMBER);
-		memberNumber.setHorizontalAlignment(JLabel.CENTER);
-		
-		memberMileage = new JLabel(MILEAGE);
-		memberMileage.setHorizontalAlignment(JLabel.CENTER);
-		
-		memberPhone = new JLabel(PHONENUMBER);
-		memberPhone.setHorizontalAlignment(JLabel.CENTER);
-		
-		memberNameTextField = new JTextField(10);
-		memberNumberTextField = new JTextField(10);
-		memberMileageTextField = new JTextField(10);
-		memberPhoneTextField = new JTextField(10);
-		
-		addMember = new JButton("√ﬂ∞°");
-		addMember.addActionListener(this);
-		
-		deleteMember = new JButton("ªË¡¶");
-		deleteMember.addActionListener(this);
-		
-		editMember = new JButton("∆Ì¡˝");
-		editMember.addActionListener(this);
-		// ≈ÿΩ∫∆Æ« µÂøÕ πˆ∆∞ ª˝º∫ 
-		
-		memberBtnPanel = new JPanel();
-		memberBtnPanel.setLayout(new GridLayout(2,1));
-		btnPanel = new JPanel();
-		btnPanel.setLayout(new GridLayout(1,3));
-		textfieldPanel = new JPanel();
-		textfieldPanel.setLayout(new GridLayout(2,4));
-		
-		textfieldPanel.add(memberNumber);
-		textfieldPanel.add(memberName);
-		textfieldPanel.add(memberPhone);
-		textfieldPanel.add(memberMileage);
-		textfieldPanel.add(memberNumberTextField);
-		textfieldPanel.add(memberNameTextField);
-		textfieldPanel.add(memberPhoneTextField);
-		textfieldPanel.add(memberMileageTextField);
-		
-		btnPanel.add(addMember);
-		btnPanel.add(deleteMember);
-		btnPanel.add(editMember);
-		
-		memberBtnPanel.add(textfieldPanel);
-		memberBtnPanel.add(btnPanel);
-		// ∆–≥Œø° ≈ÿΩ∫∆Æ« µÂøÕ πˆ∆∞ √ﬂ∞° 
-		
-		memberPanel.add(memberBtnPanel, BorderLayout.SOUTH);
-		
-		memberTable.addMouseListener((MouseListener) new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int row = memberTable.getSelectedRow();
-				String data = (String) memberTable.getValueAt(row, 0);
-				memberNumberTextField.setText(data);
-				data = (String) memberTable.getValueAt(row, 1);
-				memberNameTextField.setText(data);
-				data = (String) memberTable.getValueAt(row, 2);
-				memberPhoneTextField.setText(data);
-				data = (String) memberTable.getValueAt(row, 3);
-				memberMileageTextField.setText(data);
-			}
-		});
-		
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String actionCommand = e.getActionCommand();
-		
-		if(actionCommand.equals("√ﬂ∞°")) {
-		
-			memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "¿œπ›"});
-				
-				sql = SQLMent;
-				sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\", \"" + memberPhoneTextField.getText()
-				+ "\"," + memberMileageTextField.getText() + ", \"¿œπ›\");";
-				
-				try {
-					Class.forName(className);
-					con = DriverManager.getConnection(url, user, passwd); 
-					stmt = (Statement) con.createStatement();
-					stmt.executeUpdate(sql);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}			
-			
-			memberNumberTextField.setText("");
-			memberNameTextField.setText("");
-			memberPhoneTextField.setText("");
-			memberMileageTextField.setText("");
-		}
-		
-		else if(actionCommand.equals("ªË¡¶")) {
-			int row = memberTable.getSelectedRow();
-			
-			sql = "DELETE FROM Member WHERE Mcontact =\"" + memberTableModel.getValueAt(row, 2) + "\"";
-			memberTableModel.removeRow(row);
-			
-			try {
-				Class.forName(className);
-				con = DriverManager.getConnection(url, user, passwd); 
-				stmt = (Statement) con.createStatement();
-				stmt.executeUpdate(sql);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			
-		}
-		
-		else if(actionCommand.equals("∆Ì¡˝")) {
-			int row = memberTable.getSelectedRow();
-			
-			memberTable.setValueAt(memberNumberTextField.getText(), row, 0);
-			memberTable.setValueAt(memberNameTextField.getText(), row, 1);
-			memberTable.setValueAt(memberPhoneTextField.getText(), row, 2);
-			memberTable.setValueAt(memberMileageTextField.getText(), row, 3);
-			
-			if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
-				memberTable.setValueAt("¿œπ›", row, 4);
-			}
-			
-			else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
-				memberTable.setValueAt("∞ÒµÂ", row, 4);
-			}
-			
-			else {
-				memberTable.setValueAt("«√∑°∆º≥—", row, 4);
-			}
-			
-			memberNumberTextField.setText("");
-			memberNameTextField.setText("");
-			memberPhoneTextField.setText("");
-			memberMileageTextField.setText("");
-		}
-		
-	}
+      memberNumber = new JLabel(NUMBER);
+      memberNumber.setHorizontalAlignment(JLabel.CENTER);
+      
+      memberMileage = new JLabel(MILEAGE);
+      memberMileage.setHorizontalAlignment(JLabel.CENTER);
+      
+      memberPhone = new JLabel(PHONENUMBER);
+      memberPhone.setHorizontalAlignment(JLabel.CENTER);
+      
+      memberNameTextField = new JTextField(10);
+      memberNumberTextField = new JTextField(10);
+      memberMileageTextField = new JTextField(10);
+      memberPhoneTextField = new JTextField(10);
+      
+      addMember = new JButton("Ï∂îÍ∞Ä");
+      addMember.addActionListener(this);
+      
+      deleteMember = new JButton("ÏÇ≠Ï†ú");
+      deleteMember.addActionListener(this);
+      
+      editMember = new JButton("Ìé∏Ïßë");
+      editMember.addActionListener(this);
+      // ÌÖçÏä§Ìä∏ÌïÑÎìúÏôÄ Î≤ÑÌäº ÏÉùÏÑ± 
+      
+      memberBtnPanel = new JPanel();
+      memberBtnPanel.setLayout(new GridLayout(2,1));
+      btnPanel = new JPanel();
+      btnPanel.setLayout(new GridLayout(1,3));
+      textfieldPanel = new JPanel();
+      textfieldPanel.setLayout(new GridLayout(2,4));
+      
+      textfieldPanel.add(memberNumber);
+      textfieldPanel.add(memberName);
+      textfieldPanel.add(memberPhone);
+      textfieldPanel.add(memberMileage);
+      textfieldPanel.add(memberNumberTextField);
+      textfieldPanel.add(memberNameTextField);
+      textfieldPanel.add(memberPhoneTextField);
+      textfieldPanel.add(memberMileageTextField);
+      
+      btnPanel.add(addMember);
+      btnPanel.add(deleteMember);
+      btnPanel.add(editMember);
+      
+      memberBtnPanel.add(textfieldPanel);
+      memberBtnPanel.add(btnPanel);
+      // Ìå®ÎÑêÏóê ÌÖçÏä§Ìä∏ÌïÑÎìúÏôÄ Î≤ÑÌäº Ï∂îÍ∞Ä 
+      
+      memberPanel.add(memberBtnPanel, BorderLayout.SOUTH);
+      
+   }
+   
+   @Override
+   public void actionPerformed(ActionEvent e) {
+      String actionCommand = e.getActionCommand();
+      
+      if(actionCommand.equals("Ï∂îÍ∞Ä")) {
+         if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
+            grade("ÏùºÎ∞ò");
+         }
+         
+         else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
+            grade("Í≥®Îìú");
+         }
+         
+         else {
+            grade("ÌîåÎûòÌã∞ÎÑò");
+         }
+         
+         memberNumberTextField.setText("");
+         memberNameTextField.setText("");
+         memberPhoneTextField.setText("");
+         memberMileageTextField.setText("");
+      }
+      
+      else if(actionCommand.equals("ÏÇ≠Ï†ú")) {
+         int i = memberTable.getSelectedRow();
+         
+         sql = "DELETE FROM Member WHERE Mcontact =\"" + memberTableModel.getValueAt(i, 2) + "\"";
+         memberTableModel.removeRow(i);
+         
+         try {
+            Class.forName(className);
+            con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
+            stmt = (Statement) con.createStatement();
+            stmt.executeUpdate(sql);
+         } catch (Exception e1) {
+            e1.printStackTrace();
+         }
+         
+      }
+      
+      else if(actionCommand.equals("Ìé∏Ïßë")) {
+         int row = memberTable.getSelectedRow();
+         memberTable.setValueAt(memberNumberTextField.getText(), row, 0);
+         memberTable.setValueAt(memberNameTextField.getText(), row, 1);
+         memberTable.setValueAt(memberPhoneTextField.getText(), row, 2);
+         memberTable.setValueAt(memberMileageTextField.getText(), row, 3);
+         
+         if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
+            memberTable.setValueAt("ÏùºÎ∞ò", row, 4);
+         }
+         
+         else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
+            memberTable.setValueAt("Í≥®Îìú", row, 4);
+         }
+         
+         else {
+            memberTable.setValueAt("ÌîåÎûòÌã∞ÎÑò", row, 4);
+         }
+         
+         memberNumberTextField.setText("");
+         memberNameTextField.setText("");
+         memberPhoneTextField.setText("");
+         memberMileageTextField.setText("");
+      }
+      
+   }
 }
