@@ -35,12 +35,8 @@ public class Table implements ActionListener {
 	
 	String className = "org.gjt.mm.mysql.Driver";
 	String url = "jdbc:mysql://localhost:3306/SitDown?useSSL=false&useUnicode=true&characterEncoding=euckr";
-	AES128 aes = new AES128();
-	String key = "0123456789abcdef";
 	String user = "root";
-	String encode_user = aes.encrypt(user, key);
 	String passwd = "123456";
-	String encode_passwd = aes.encrypt(passwd, key);
 	String sql = "INSERT INTO Storage(Iname, Iprice, Iseller, Icontact, Iquant, Iorder) VALUES";
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
@@ -59,15 +55,15 @@ public class Table implements ActionListener {
 	JButton tableDelete;
 
 	JPanel[] tableNum = new JPanel[50];
-	// í…Œì´ë¸” + í† íƒˆ ê°’ ë„£ì„ íŒ¨ë„
+	// Å×ÀÌºí + ÅäÅ» °ª ³ÖÀ» ÆĞ³Î
 	JPanel[] table = new JPanel[50];
 
 	JToggleButton[] tableBtn = new JToggleButton[50];
 	ButtonGroup tableBtnGroup = new ButtonGroup();
-	// ë‹¤ì´ì–¼ë¡œê·¸ì™€ ì—°ê²°ëœ í…Œì´ë¸” ë²„íŠ¼
+	// ´ÙÀÌ¾ó·Î±×¿Í ¿¬°áµÈ Å×ÀÌºí ¹öÆ°
 
 	JTextField[] tableTotal = new JTextField[50];
-	// í…Œì´ë¸” ì´ì•¡ ë„ìš¸ í…ìŠ¤íŠ¸ í•„ë“œ
+	// Å×ÀÌºí ÃÑ¾× ¶ç¿ï ÅØ½ºÆ® ÇÊµå
 
 	Frame cash;
 
@@ -77,15 +73,16 @@ public class Table implements ActionListener {
 	DefaultTableModel[] modelT = new DefaultTableModel[50];
 	DefaultTableModel modelOrder;
 	DefaultTableModel modelMem;
+	DefaultTableModel modelHow;
 
 	JScrollPane[] scrollpane = new JScrollPane[50];
 	JScrollPane scrollpaneOrder;
-	// JTable ë°›ì„ JScrollPane
+	// JTable ¹ŞÀ» JScrollPane
 	JScrollPane scrollpaneMem;
 
 	JComboBox menuList;
 	JTextField menuQuantity;
-	// ë©”ë‰´ ì„ íƒ ë°•ìŠ¤
+	// ¸Ş´º ¼±ÅÃ ¹Ú½º
 
 	int tables = 6;
 	int[][] count = new int[50][100];
@@ -103,7 +100,7 @@ public class Table implements ActionListener {
 			tableNum[i].setBackground(Color.WHITE);
 		}
 
-		String name = new String("í…Œì´ë¸” 1");
+		String name = new String("Å×ÀÌºí 1");
 		for (int i = 0; i < tableBtn.length; i++) {
 			tableBtn[i] = new JToggleButton(name);
 			tableBtnGroup.add(tableBtn[i]);
@@ -112,23 +109,28 @@ public class Table implements ActionListener {
 
 		for (int i = 0; i < tableTotal.length; i++)
 			tableTotal[i] = new JTextField(10);
-		String tableColumn[] = { "ì´ë¦„", "ê°€ê²©", "ìˆ˜ëŸ‰" };
+		String tableColumn[] = { "ÀÌ¸§", "°¡°İ", "¼ö·®" };
 		for (int i = 0; i < T.length; i++) {
 			Vector[] userColumn = new Vector[50];
 			userColumn[i] = new Vector<String>();
-			userColumn[i].addElement("ì´ë¦„");
-			userColumn[i].addElement("ê°€ê²©");
-			userColumn[i].addElement("ìˆ˜ëŸ‰");
+			userColumn[i].addElement("ÀÌ¸§");
+			userColumn[i].addElement("°¡°İ");
+			userColumn[i].addElement("¼ö·®");
 			modelT[i] = new DefaultTableModel(userColumn[i], 0);
 			T[i] = new JTable(modelT[i]);
 			scrollpane[i] = new JScrollPane(T[i]);
 		}
+		
+		Vector<String> howManyOrdered = new Vector<>();
+		howManyOrdered.addElement("ÀÌ¸§");
+		howManyOrdered.addElement("¼ö·®");
+		modelHow = new DefaultTableModel(howManyOrdered, 0);
 
 		Vector<String> userColumnMem = new Vector<>();
-		userColumnMem.addElement("ì´ë¦„");
-		userColumnMem.addElement("ì—°ë½ì²˜");
-		userColumnMem.addElement("ë§ˆì¼ë¦¬ì§€");
-		userColumnMem.addElement("ë“±ê¸‰");
+		userColumnMem.addElement("ÀÌ¸§");
+		userColumnMem.addElement("¿¬¶ôÃ³");
+		userColumnMem.addElement("¸¶ÀÏ¸®Áö");
+		userColumnMem.addElement("µî±Ş");
 		modelMem = new DefaultTableModel(userColumnMem, 0);
 		MEM = new JTable(modelMem);
 		scrollpaneMem = new JScrollPane(MEM);
@@ -146,9 +148,9 @@ public class Table implements ActionListener {
 
 		tableTotalPanel = new JPanel(new BorderLayout());
 		tableEditPanel = new JPanel(new GridLayout(1, 2));
-		tableAdd = new JButton("í…Œì´ë¸” ì¶”ê°€");
+		tableAdd = new JButton("Å×ÀÌºí Ãß°¡");
 		tableAdd.addActionListener(this);
-		tableDelete = new JButton("í…Œì´ë¸” ì‚­ì œ");
+		tableDelete = new JButton("Å×ÀÌºí »èÁ¦");
 		tableDelete.addActionListener(this);
 
 		tableEditPanel.add(tableAdd);
@@ -156,15 +158,15 @@ public class Table implements ActionListener {
 		tableTotalPanel.add(tableListPanel);
 		tableTotalPanel.add(tableEditPanel, BorderLayout.SOUTH);
 
-		/////////// ì•„ë˜ë¶€í„° ì£¼ë¬¸ ì •ë³´ë¥¼ ë³´ì—¬ì£¼ëŠ” íŒ¨ë„ ë””ìì¸ ////////////////
+		/////////// ¾Æ·¡ºÎÅÍ ÁÖ¹® Á¤º¸¸¦ º¸¿©ÁÖ´Â ÆĞ³Î µğÀÚÀÎ ////////////////
 		orderPanel = new JPanel();
 		orderPanel.setLayout(new BorderLayout());
 		BtnPanel = new JPanel(new GridLayout(1, 3));
 
 		Vector<String> userColumnOrder = new Vector<>();
-		userColumnOrder.addElement("ì´ë¦„");
-		userColumnOrder.addElement("ê°€ê²©");
-		userColumnOrder.addElement("ìˆ˜ëŸ‰");
+		userColumnOrder.addElement("ÀÌ¸§");
+		userColumnOrder.addElement("°¡°İ");
+		userColumnOrder.addElement("¼ö·®");
 		modelOrder = new DefaultTableModel(userColumnOrder, 0);
 		order = new JTable(modelOrder);
 		scrollpaneOrder = new JScrollPane(order);
@@ -173,9 +175,9 @@ public class Table implements ActionListener {
 		menuList.addActionListener(this);
 		menuQuantity=new JTextField(100);
 		menuQuantity.setText("1");
-		menuAdd = new JButton("ì¶”ê°€");
+		menuAdd = new JButton("Ãß°¡");
 		menuAdd.addActionListener(this);
-		menuPay = new JButton("ê²°ì œ");
+		menuPay = new JButton("°áÁ¦");
 		menuPay.addActionListener(this);
 
 		BtnPanel.add(menuList);
@@ -191,7 +193,7 @@ public class Table implements ActionListener {
 	}
 
 	void Payment(int data) {
-		cash = new Frame("ê²°ì œì°½");
+		cash = new Frame("°áÁ¦Ã¢");
 		cash.setSize(450, 500);
 		cash.setLayout(new BorderLayout());
 		cash.addWindowListener(new WindowAdapter() {
@@ -203,10 +205,10 @@ public class Table implements ActionListener {
 		});
 
 		JPanel p = new JPanel();
-		p.add(new JLabel("ë²ˆí˜¸ ë’·ìë¦¬"));
-		JTextField textfield = new JTextField("4ìë¦¬", 10);
+		p.add(new JLabel("¹øÈ£ µŞÀÚ¸®"));
+		JTextField textfield = new JTextField("4ÀÚ¸®", 10);
 		p.add(textfield);
-		JButton search = new JButton("ê²€ìƒ‰");
+		JButton search = new JButton("°Ë»ö");
 		p.add(search);
 		search.addActionListener(new ActionListener() {
 			@Override
@@ -229,7 +231,7 @@ public class Table implements ActionListener {
 		p.add(scrollpaneMem, BorderLayout.CENTER);
 
 		JPanel paypanel = new JPanel();
-		JButton cashBtn = new JButton("í˜„ê¸ˆê²°ì œ");
+		JButton cashBtn = new JButton("Çö±İ°áÁ¦");
 		paypanel.add(cashBtn);
 		cashBtn.addActionListener(new ActionListener() {
 			@Override
@@ -244,7 +246,7 @@ public class Table implements ActionListener {
 						if (name.equals(Member.memberTable.getValueAt(i, 1))) {
 							String rating = (String) Member.memberTable.getValueAt(i, 4);
 
-							if (rating.equals("ì¼ë°˜")) {
+							if (rating.equals("ÀÏ¹İ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -254,7 +256,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.todayMoney += data * 0.98;
-							} else if (rating.compareTo("ê³¨ë“œ") == 0) {
+							} else if (rating.compareTo("°ñµå") == 0) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -264,7 +266,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.todayMoney += data * 0.95;
-							} else if (rating.equals("í”Œë˜í‹°ë„˜")) {
+							} else if (rating.equals("ÇÃ·¡Æ¼³Ñ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -278,17 +280,17 @@ public class Table implements ActionListener {
 
 							int mileage = (int) Member.memberTable.getValueAt(i, 3);
 							if (mileage >= 500 && mileage < 1000)
-								Member.memberTable.setValueAt("ê³¨ë“œ", i, 4);
+								Member.memberTable.setValueAt("°ñµå", i, 4);
 							else if (mileage > 1000) {
-								Member.memberTable.setValueAt("í”Œë˜í‹°ë„˜", i, 4);
+								Member.memberTable.setValueAt("ÇÃ·¡Æ¼³Ñ", i, 4);
 							} else {
-								Member.memberTable.setValueAt("ì¼ë°˜", i, 4);
+								Member.memberTable.setValueAt("ÀÏ¹İ", i, 4);
 							}
 							break;
 						}
 					}
 				}
-				String str = "ì˜¤ëŠ˜ ë§¤ì¶œ : " + Final.todayMoney + "     ì „ì²´ ì”ê³  : " + Final.totalMoney;
+				String str = "¿À´Ã ¸ÅÃâ : " + Final.todayMoney + "     ÀüÃ¼ ÀÜ°í : " + Final.totalMoney;
 				Final.priceLabel.setText(str);
 
 				for (int i = 0; i < modelMem.getRowCount(); i++) {
@@ -308,7 +310,7 @@ public class Table implements ActionListener {
 			}
 		});
 
-		JButton cardBtn = new JButton("ì¹´ë“œê²°ì œ");
+		JButton cardBtn = new JButton("Ä«µå°áÁ¦");
 		paypanel.add(cardBtn);
 		cardBtn.addActionListener(new ActionListener() {
 			@Override
@@ -323,7 +325,7 @@ public class Table implements ActionListener {
 						if (name.equals(Member.memberTable.getValueAt(i, 1))) {
 							String rating = (String) Member.memberTable.getValueAt(i, 4);
 
-							if (rating.equals("ì¼ë°˜")) {
+							if (rating.equals("ÀÏ¹İ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -333,7 +335,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.todayMoney += data * 0.98;
-							} else if (rating.compareTo("ê³¨ë“œ") == 0) {
+							} else if (rating.compareTo("°ñµå") == 0) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -343,7 +345,7 @@ public class Table implements ActionListener {
 								mileage += data * 0.02;
 								Member.memberTable.setValueAt(mileage, i, 3);
 								Final.todayMoney += data * 0.95;
-							} else if (rating.equals("í”Œë˜í‹°ë„˜")) {
+							} else if (rating.equals("ÇÃ·¡Æ¼³Ñ")) {
 								int mileage = 0;
 								try {
 									mileage = (int) Member.memberTable.getValueAt(i, 3);
@@ -357,17 +359,17 @@ public class Table implements ActionListener {
 
 							int mileage = (int) Member.memberTable.getValueAt(i, 3);
 							if (mileage >= 500 && mileage < 1000)
-								Member.memberTable.setValueAt("ê³¨ë“œ", i, 4);
+								Member.memberTable.setValueAt("°ñµå", i, 4);
 							else if (mileage > 1000) {
-								Member.memberTable.setValueAt("í”Œë˜í‹°ë„˜", i, 4);
+								Member.memberTable.setValueAt("ÇÃ·¡Æ¼³Ñ", i, 4);
 							} else {
-								Member.memberTable.setValueAt("ì¼ë°˜", i, 4);
+								Member.memberTable.setValueAt("ÀÏ¹İ", i, 4);
 							}
 							break;
 						}
 					}
 				}
-				String str = "ì˜¤ëŠ˜ ë§¤ì¶œ : " + Final.todayMoney + "     ì „ì²´ ì”ê³  : " + Final.totalMoney;
+				String str = "¿À´Ã ¸ÅÃâ : " + Final.todayMoney + "     ÀüÃ¼ ÀÜ°í : " + Final.totalMoney;
 				Final.priceLabel.setText(str);
 
 				for (int i = 0; i < modelMem.getRowCount(); i++) {
@@ -414,7 +416,7 @@ public class Table implements ActionListener {
 		String[] name = new String[50];
 
 		for (int i = 0; i < 50; i++) {
-			name[i] = new String("í…Œì´ë¸” ");
+			name[i] = new String("Å×ÀÌºí ");
 			name[i] = name[i].concat(Integer.toString(i + 1));
 		}
 
@@ -431,13 +433,27 @@ public class Table implements ActionListener {
 			}
 		}
 
-		if (actionCommand.compareTo("í…Œì´ë¸” ì¶”ê°€") == 0) {
+		if (actionCommand.compareTo("Å×ÀÌºí Ãß°¡") == 0) {
 			tableNum[tables].add(tableBtn[tables]);
 			tableNum[tables].add(tableTotal[tables], BorderLayout.SOUTH);
 
 			tableListPanel.add(tableNum[tables]);
 			tables++;
-		} else if (actionCommand.compareTo("í…Œì´ë¸” ì‚­ì œ") == 0) {
+			
+			for(int i=0;i<tables;i++){
+			
+			sql = "Update Otable SET Tquant='" + tables + "'WHERE Tnum=\"" + i + "\";";
+			System.out.println(sql);
+							try {
+								Class.forName(className);
+								con = DriverManager.getConnection(url, user, passwd); 
+								stmt = (Statement) con.createStatement();
+								stmt.executeUpdate(sql);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+			}
+		} else if (actionCommand.compareTo("Å×ÀÌºí »èÁ¦") == 0) {
 			if (tables > 1) {
 				if (tableTotal[tables - 1].getText().equals("")) {
 					tableListPanel.remove(tableNum[tables - 1]);
@@ -449,11 +465,35 @@ public class Table implements ActionListener {
 					tableListPanel.setVisible(true);
 					tables--;
 					clickedTableBtn = -1;
+					
+					for(int i=0;i<tables;i++){
+			
+							sql = "Update Otable SET Tquant='" + tables + "'WHERE Tnum=\"" + i + "\";";
+							System.out.println(sql);
+							try {
+								Class.forName(className);
+								con = DriverManager.getConnection(url, user, passwd); 
+								stmt = (Statement) con.createStatement();
+								stmt.executeUpdate(sql);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+					}
+					
+					sql = "DELETE FROM Otable WHERE Tnum=" + tables + ";";
+							try {
+								Class.forName(className);
+								con = DriverManager.getConnection(url, user, passwd); 
+								stmt = (Statement) con.createStatement();
+								stmt.executeUpdate(sql);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
 				}
 
 				else if (!tableTotal[tables - 1].getText().equals("")) {
-					String notificationStr = "í…Œì´ë¸”" + String.valueOf(tables) + "ì„ ë¨¼ì € ê²°ì œí•´ì£¼ì„¸ìš”";
-					JOptionPane.showMessageDialog(null, notificationStr, "ë¯¸ê²°ì œ í…Œì´ë¸”", JOptionPane.INFORMATION_MESSAGE);
+					String notificationStr = "Å×ÀÌºí" + String.valueOf(tables) + "À» ¸ÕÀú °áÁ¦ÇØÁÖ¼¼¿ä";
+					JOptionPane.showMessageDialog(null, notificationStr, "¹Ì°áÁ¦ Å×ÀÌºí", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 
@@ -462,7 +502,7 @@ public class Table implements ActionListener {
 		tableListPanel.revalidate();
 		tableListPanel.repaint();
 
-		if (actionCommand.compareTo("ì¶”ê°€") == 0) {
+		if (actionCommand.compareTo("Ãß°¡") == 0) {
 			int selectedMenu = menuList.getSelectedIndex();
 			int cannotOrderFlag = 0;
 			String emptyIngredient = "";
@@ -475,12 +515,12 @@ public class Table implements ActionListener {
 			{
 				if(ingredientArr[i].split("[ ]+").length<2)
 				{
-					JOptionPane.showMessageDialog(null, "ì¬ë£Œ ì…ë ¥ì„ (ì¬ë£Œì´ë¦„) (ìˆ˜ëŸ‰)ìœ¼ë¡œ ë°”ê¿”ì£¼ì„¸ìš”.", "ì¬ë£Œ ì…ë ¥ ì˜¤ë¥˜", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Àç·á ÀÔ·ÂÀ» (Àç·áÀÌ¸§) (¼ö·®)À¸·Î ¹Ù²ãÁÖ¼¼¿ä.", "Àç·á ÀÔ·Â ¿À·ù", JOptionPane.INFORMATION_MESSAGE);
 			        return; 
 				}
 				else if(ingredientArr[i].split("[ ]+").length>2)
 				{
-					JOptionPane.showMessageDialog(null, "ì¬ë£Œì´ë¦„ì—ëŠ” ê³µë°±ì´ ë“¤ì–´ê°ˆ ìˆ˜ ì—†ìŠµë‹ˆë‹¤", "ì¬ë£Œ ì…ë ¥ ì˜¤ë¥˜", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Àç·áÀÌ¸§¿¡´Â °ø¹éÀÌ µé¾î°¥ ¼ö ¾ø½À´Ï´Ù", "Àç·á ÀÔ·Â ¿À·ù", JOptionPane.INFORMATION_MESSAGE);
 			        return; 
 				}
 				ingredientNameArr[i]=ingredientArr[i].split("[ ]+")[0];
@@ -492,22 +532,22 @@ public class Table implements ActionListener {
 
 			if(clickedTableBtn!=-1) {
 				
-				//ìˆ˜ëŸ‰ ì…ë ¥ë¬¸ì´ ì •ìˆ˜ì¸ì§€ í™•ì¸
+				//¼ö·® ÀÔ·Â¹®ÀÌ Á¤¼öÀÎÁö È®ÀÎ
 				try {
 					Integer.parseInt(menuQuantity.getText());
 				} catch(NumberFormatException error) { 
-					JOptionPane.showMessageDialog(null, "ìˆ˜ëŸ‰ì€ ì •ìˆ˜ë¡œë§Œ ì…ë ¥í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤!", "ì…ë ¥ ì˜¤ë¥˜", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "¼ö·®Àº Á¤¼ö·Î¸¸ ÀÔ·ÂÇÒ ¼ö ÀÖ½À´Ï´Ù!", "ÀÔ·Â ¿À·ù", JOptionPane.INFORMATION_MESSAGE);
 			        return; 
 			    } catch(NullPointerException error) {
-			    	JOptionPane.showMessageDialog(null, "ìˆ˜ëŸ‰ì„ ì…ë ¥í•´ì£¼ì„¸ìš”!", "ì…ë ¥ ì˜¤ë¥˜", JOptionPane.INFORMATION_MESSAGE);
+			    	JOptionPane.showMessageDialog(null, "¼ö·®À» ÀÔ·ÂÇØÁÖ¼¼¿ä!", "ÀÔ·Â ¿À·ù", JOptionPane.INFORMATION_MESSAGE);
 			        return;
 			    }
 				
-				//ë©”ë‰´ ìˆ˜ëŸ‰ quantity ë³€ìˆ˜ì— ì €ì¥
+				//¸Ş´º ¼ö·® quantity º¯¼ö¿¡ ÀúÀå
 				mQuantity=Integer.parseInt(menuQuantity.getText());
 				if(mQuantity<1) {
 					mQuantity=-1;
-					JOptionPane.showMessageDialog(null, "1 ì´ìƒì˜ ìˆ˜ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”!", "ì…ë ¥ ì˜¤ë¥˜", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "1 ÀÌ»óÀÇ ¼ö¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä!", "ÀÔ·Â ¿À·ù", JOptionPane.INFORMATION_MESSAGE);
 			        return;
 				}
 				
@@ -516,7 +556,7 @@ public class Table implements ActionListener {
 			for (int i = 0; i < Storage.storageTable.getRowCount(); i++) {
 				storageIngredient[i] = String.valueOf(Storage.storageTable.getValueAt(i, 0));
 			}
-			// ëª¨ë“  ì¬ë£Œê°€ ìˆëŠ”ì§€ í™•ì¸
+			// ¸ğµç Àç·á°¡ ÀÖ´ÂÁö È®ÀÎ
 			for (int sIndex = 0; sIndex < ingredientArr.length; sIndex++) {
 				//System.out.println(ingredientArr[sIndex].split("[ ]+")[0]);
 				boolean ingredientContains = Arrays.stream(storageIngredient)
@@ -529,7 +569,7 @@ public class Table implements ActionListener {
 			}
 
 
-			// ì¬ë£Œ ê°œìˆ˜ê°€ 0ê°œ ì´ìƒì¸ì§€ í™•ì¸
+			// Àç·á °³¼ö°¡ 0°³ ÀÌ»óÀÎÁö È®ÀÎ
 			if (cannotOrderFlag != 1) {
 				for (int sIndex = 0; sIndex < Storage.storageTable.getRowCount(); sIndex++) {
 					boolean ingredientContains = Arrays.stream(ingredientNameArr)
@@ -546,7 +586,7 @@ public class Table implements ActionListener {
 				}
 			}
 			
-			// ë§Œì•½ì— ëª¨ë“  ì¬ë£Œê°€ ì¡´ì¬í•œë‹¤ë©´
+			// ¸¸¾à¿¡ ¸ğµç Àç·á°¡ Á¸ÀçÇÑ´Ù¸é
 			if (cannotOrderFlag == 0) {
 				count[clickedTableBtn][selectedMenu] += mQuantity;
 				
@@ -566,6 +606,59 @@ public class Table implements ActionListener {
 					modelT[clickedTableBtn].addRow(new Object[] { Menu.menuTable.getValueAt(selectedMenu, 0),
 							Menu.unvisibleTable.getValueAt(selectedMenu, 0),
 							count[clickedTableBtn][selectedMenu] });
+							
+					//how many ordered?
+					
+					boolean isOrder=false;
+					for(int j=0;j<modelHow.getRowCount();j++)
+					{
+						if((modelHow.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(selectedMenu, 0))){
+							isOrder=true;
+							
+						}
+					}
+					
+					if(!isOrder)
+					{
+							modelHow.addRow(new Object[] {Menu.menuTable.getValueAt(selectedMenu, 0),count[clickedTableBtn][selectedMenu] });
+							System.out.printf("how many?: %d\n",count[clickedTableBtn][selectedMenu]);
+							sql = "Insert INTO Pmenu(Pqunt,Pname)VALUES(" + count[clickedTableBtn][selectedMenu] + ", \"" + Menu.menuTable.getValueAt(selectedMenu, 0) +"\");";
+							System.out.println(sql);
+							try {
+								Class.forName(className);
+								con = DriverManager.getConnection(url, user, passwd); 
+								stmt = (Statement) con.createStatement();
+								stmt.executeUpdate(sql);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+					}
+					
+					else
+					{
+						for (int k = 0; k < modelHow.getRowCount(); k++) {
+							if ((modelHow.getValueAt(k, 0))
+									.equals(Menu.menuTable.getValueAt(selectedMenu, 0))) {
+								int sum_of_menu=0;
+								for(int i=0;i<tables;i++)
+									sum_of_menu+=count[i][selectedMenu];
+								modelHow.setValueAt(sum_of_menu, k, 1);
+								System.out.printf("how many?: %d\n",sum_of_menu);
+								sql = "Update Pmenu SET Pqunt='" + sum_of_menu + "'WHERE Pname=\"" + Menu.menuTable.getValueAt(selectedMenu, 0) + "\";";
+								System.out.println(sql);
+								try {
+									Class.forName(className);
+									con = DriverManager.getConnection(url, user, passwd); 
+									stmt = (Statement) con.createStatement();
+									stmt.executeUpdate(sql);
+								} catch (Exception e1) {
+									e1.printStackTrace();
+								}
+								break;
+							}
+						}
+						
+					}
 
 					for (int sIndex = 0; sIndex < Storage.storageTable.getRowCount(); sIndex++) {
 						boolean ingredientContains = Arrays.stream(ingredientNameArr)
@@ -582,7 +675,7 @@ public class Table implements ActionListener {
 							sql = "DELETE FROM Otable WHERE Tnum=" + clickedTableBtn + " AND Tmenu=\"" + Menu.menuTable.getValueAt(selectedMenu, 0) + "\";";
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
+								con = DriverManager.getConnection(url, user, passwd); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -590,11 +683,11 @@ public class Table implements ActionListener {
 							}
 							
 							sql = "Insert INTO Otable(Tnum, Tmenu, Tprice, Tquant)VALUES(" + clickedTableBtn + ", \"" + Menu.menuTable.getValueAt(selectedMenu, 0) +
-									"\", " + Menu.unvisibleTable.getValueAt(selectedMenu, 0) + ", " + count[clickedTableBtn][selectedMenu] + ");";
+									"\", " + Menu.unvisibleTable.getValueAt(selectedMenu, 0) + ", " + tables + ");";
 							System.out.println(sql);
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key)); 
+								con = DriverManager.getConnection(url, user, passwd); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -605,7 +698,7 @@ public class Table implements ActionListener {
 							
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
+								con = DriverManager.getConnection(url, user, passwd); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -624,6 +717,58 @@ public class Table implements ActionListener {
 							modelT[clickedTableBtn].setValueAt(count[clickedTableBtn][selectedMenu], j, 2);
 							break;
 						}
+						
+					}
+					
+					boolean isOrder=false;
+
+					for(int j=0;j<modelHow.getRowCount();j++)
+					{
+						if((modelHow.getValueAt(j,0)).equals(Menu.menuTable.getValueAt(selectedMenu, 0))){
+							isOrder=true;
+							
+						}
+					}
+					
+					if(!isOrder)
+					{
+							modelHow.addRow(new Object[] {Menu.menuTable.getValueAt(selectedMenu, 0),count[clickedTableBtn][selectedMenu] });
+							System.out.printf("how many?: %d\n",count[clickedTableBtn][selectedMenu]);
+							sql = "Insert INTO Pmenu(Pqunt,Pname)VALUES(" + count[clickedTableBtn][selectedMenu] + ", \"" + Menu.menuTable.getValueAt(selectedMenu, 0) +"\");";
+							System.out.println(sql);
+							try {
+								Class.forName(className);
+								con = DriverManager.getConnection(url, user, passwd); 
+								stmt = (Statement) con.createStatement();
+								stmt.executeUpdate(sql);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+					}
+					
+					else
+					{
+						for (int k = 0; k < modelHow.getRowCount(); k++) {
+							if ((modelHow.getValueAt(k, 0))
+									.equals(Menu.menuTable.getValueAt(selectedMenu, 0))) {
+								int sum_of_menu=0;
+								for(int i=0;i<tables;i++)
+									sum_of_menu+=count[i][selectedMenu];
+								modelHow.setValueAt(sum_of_menu, k, 1);
+								System.out.printf("how many?: %d\n",sum_of_menu);
+								sql = "Update Pmenu SET Pqunt='" + sum_of_menu + "'WHERE Pname=\"" + Menu.menuTable.getValueAt(selectedMenu, 0) + "\";";
+								System.out.println(sql);
+								try {
+									Class.forName(className);
+									con = DriverManager.getConnection(url, user, passwd); 
+									stmt = (Statement) con.createStatement();
+									stmt.executeUpdate(sql);
+								} catch (Exception e1) {
+									e1.printStackTrace();
+								}
+								break;
+							}
+						}
 					}
 
 					for (int sIndex = 0; sIndex < Storage.storageTable.getRowCount(); sIndex++) {
@@ -639,7 +784,7 @@ public class Table implements ActionListener {
 							sql = "DELETE FROM Otable WHERE Tnum=" + clickedTableBtn + " AND Tmenu=\"" + Menu.menuTable.getValueAt(selectedMenu, 0) + "\";";
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key));
+								con = DriverManager.getConnection(url, user, passwd); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -647,10 +792,10 @@ public class Table implements ActionListener {
 							}
 							
 							sql = "Insert INTO Otable(Tnum, Tmenu, Tprice, Tquant)VALUES(" + clickedTableBtn + ", \"" + Menu.menuTable.getValueAt(selectedMenu, 0) +
-									"\", " + Menu.unvisibleTable.getValueAt(selectedMenu, 0) + ", " + count[clickedTableBtn][selectedMenu] + ");";
+									"\", " + Menu.unvisibleTable.getValueAt(selectedMenu, 0) + ", " + tables + ");";
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key)); 
+								con = DriverManager.getConnection(url, user, passwd); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -662,7 +807,7 @@ public class Table implements ActionListener {
 							
 							try {
 								Class.forName(className);
-								con = DriverManager.getConnection(url, aes.decrypt(encode_user, key), aes.decrypt(encode_passwd, key)); 
+								con = DriverManager.getConnection(url, user, passwd); 
 								stmt = (Statement) con.createStatement();
 								stmt.executeUpdate(sql);
 							} catch (Exception e1) {
@@ -685,21 +830,21 @@ public class Table implements ActionListener {
 				order.setModel(modelT[clickedTableBtn]);//
 				mQuantity=-1;
 			}
-			// ëª¨ë“  ì¬ë£Œê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ”ë‹¤ë©´
+			// ¸ğµç Àç·á°¡ Á¸ÀçÇÏÁö ¾Ê´Â´Ù¸é
 
 			else if (cannotOrderFlag == 1) {
-				String notificationStr = String.valueOf(Menu.menuTable.getValueAt(selectedMenu, 0)) + "ì˜ '"
-						+ emptyIngredient + "'ì´/ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤!";
-				JOptionPane.showMessageDialog(null, notificationStr, "ì¬ë£Œ ì†Œì§„", JOptionPane.INFORMATION_MESSAGE);
+				String notificationStr = String.valueOf(Menu.menuTable.getValueAt(selectedMenu, 0)) + "ÀÇ '"
+						+ emptyIngredient + "'ÀÌ/°¡ ºÎÁ·ÇÕ´Ï´Ù!";
+				JOptionPane.showMessageDialog(null, notificationStr, "Àç·á ¼ÒÁø", JOptionPane.INFORMATION_MESSAGE);
 			}
 
 		}
 			else {
-				JOptionPane.showMessageDialog(null, "ë©”ë‰´ë¥¼ ì£¼ë¬¸í•  í…Œì´ë¸”ì„ ì„ íƒí•´ì£¼ì„¸ìš”!", "í…Œì´ë¸” ë¯¸ì„ íƒ", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "¸Ş´º¸¦ ÁÖ¹®ÇÒ Å×ÀÌºíÀ» ¼±ÅÃÇØÁÖ¼¼¿ä!", "Å×ÀÌºí ¹Ì¼±ÅÃ", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 
-		if (actionCommand.compareTo("ê²°ì œ") == 0) {
+		if (actionCommand.compareTo("°áÁ¦") == 0) {
 			if (clickedTableBtn != -1) {
 				tableNum[clickedTableBtn].setBackground(Color.WHITE);
 				int data = Integer.parseInt(tableTotal[clickedTableBtn].getText());
@@ -707,7 +852,7 @@ public class Table implements ActionListener {
 			}
 			
 			else
-				JOptionPane.showMessageDialog(null, "ê²°ì œí•˜ì‹¤ í…Œì´ë¸”ì„ ì„ íƒí•´ì£¼ì„¸ìš”!", "í…Œì´ë¸” ë¯¸ì„ íƒ", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "°áÁ¦ÇÏ½Ç Å×ÀÌºíÀ» ¼±ÅÃÇØÁÖ¼¼¿ä!", "Å×ÀÌºí ¹Ì¼±ÅÃ", JOptionPane.INFORMATION_MESSAGE);
 		}
 
 	}
