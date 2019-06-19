@@ -21,6 +21,10 @@ window.onload = function print() {
     var input = temp.split("?");
     input = input[1].split("=");
 
+    var code = "<input type = 'hidden' name = 'sname' value = '"+ input[0] + "'>";
+    var form = document.getElementById("frm");
+    form.innerHTML = code + form.innerHTML;
+
     var res = input[1];
     for (var i = 0; i < res.length; i++) {
         res = res.replace("+", " ");
@@ -52,7 +56,7 @@ function btn_click(str) {
 
     <br><br><br><br><br>
     <div id = "list">
-        <form name = "frm" method = "get" target = "restaurant">
+        <form id = "frm" method = "get" target = "restaurant">
         <input type = "submit" value = "자리 현황" onclick = "btn_click('seats');"><br>
         <input type = "submit" value = "메뉴 조회" onclick = "btn_click('menu');">
         </form>
@@ -61,5 +65,4 @@ function btn_click(str) {
     <iframe src = "./restaurants.html" name = "restaurant" width = "823" height = "410"></iframe>
 </div>
 </body>
-
 </html>

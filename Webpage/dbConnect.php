@@ -4,12 +4,12 @@ include("./observer.php");
 $host = "localhost";
 $user = "root";
 $password = "123456";
-$dbName = "sitdown";
+$dbName = $_GET['sname'];
 $tables = array();
 
 $conn = new mysqli($host, $user, $password, $dbName);
 if (!$conn) {
-    echo "mysql 연결실패<br />";
+    echo "mysql 연결실패\n";
 }
 
 $noty = new Publisher('NotificationPublisher');
@@ -22,7 +22,6 @@ $noty->attach($slack);
 $noty->attach($dashboard);
 
 $noty->setEvent("");
-
 
 function totalTable() {
     global $conn, $tables;
