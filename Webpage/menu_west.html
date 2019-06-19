@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 <head>
@@ -6,22 +6,27 @@
 <style>
     a:link, a:hover, a:visited { color : #000000; text-decoration : none; font-style : bold; font-size : 15pt; }
     ul { list-style : none }
+    input { font-size : 15pt; background-color : white; cursor : pointer; border : none; }
 </style>
 <meta charset="UTF-8">
 </head>
 
 <body>
     <ul>
-        <li><a href = "frame2.html" target = "section" id = "W001">고기 한마당</a></li>
-        <li><a href = "frame2.html" target = "section" id = "W002">기분조은맛집</a></li>
-        <li><a href = "frame2.html" target = "section" id = "W003">수연</a></li>
-        <li><a href = "frame2.html" target = "section" id = "W004">김밥천국</a></li>
-        <li><a href = "frame2.html" target = "section" id = "W005">자매분식</a></li>
-        <li><a href = "frame2.html" target = "section" id = "W006">왕추찜닭</a></li>
-        <li><a href = "frame2.html" target = "section" id = "W007">학산국수</a></li>
+        <form name = "west" method = "get" action = "./frame2.html" target = "_top">
+        <li><input type = "submit" name = "W001" value = "고기한마당"></li>
+        <li><input type = "submit" name = "W002" value = "기분조은맛집"></li>
+        <li><input type = "submit" name = "W003" value = "수연"></li>
+        <li><input type = "submit" name = "W004" value = "김밥천국"></li>
+        <li><input type = "submit" name = "W005" value = "자매분식"></li>
+        <li><input type = "submit" name = "W006" value = "왕추찜닭"></li>
+        <li><input type = "submit" name = "W007" value = "학산국수"></li>
+        </form>
     </ul>
 <script>
 </script>
 </body>
-
 </html>
+
+
+
