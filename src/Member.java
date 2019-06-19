@@ -10,6 +10,9 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -36,18 +39,18 @@ public class Member implements ActionListener {
 	PreparedStatement pstmt = null;
 	
 	
-	JPanel memberPanel; // ë©¤ë²„ íŒ¨ë„
-	JPanel memberBtnPanel; // í…ìŠ¤íŠ¸í•„ë“œì™€ ë²„íŠ¼ ë‹´ì„ íŒ¨ë„ 
-	JPanel textfieldPanel; // í…ìŠ¤íŠ¸í•„ë“œ íŒ¨ë„ 
-	JPanel btnPanel; // ë²„íŠ¼ íŒ¨ë„ 
-	static JTable memberTable; // ë©¤ë²„ í…Œì´ë¸”
+	JPanel memberPanel; // ¸â¹ö ÆĞ³Î
+	JPanel memberBtnPanel; // ÅØ½ºÆ®ÇÊµå¿Í ¹öÆ° ´ãÀ» ÆĞ³Î 
+	JPanel textfieldPanel; // ÅØ½ºÆ®ÇÊµå ÆĞ³Î 
+	JPanel btnPanel; // ¹öÆ° ÆĞ³Î 
+	static JTable memberTable; // ¸â¹ö Å×ÀÌºí
 	static DefaultTableModel memberTableModel;
 	
 	JTextField memberNameTextField;
 	JTextField memberNumberTextField;
 	JTextField memberMileageTextField;
 	JTextField memberPhoneTextField;
-	// í…Œì´ë¸”ì— ì…ë ¥í•  í…ìŠ¤íŠ¸ ë‹´ëŠ” í•„ë“œ
+	// Å×ÀÌºí¿¡ ÀÔ·ÂÇÒ ÅØ½ºÆ® ´ã´Â ÇÊµå
 	
 	JLabel memberName;
 	JLabel memberNumber;
@@ -57,14 +60,14 @@ public class Member implements ActionListener {
 	JButton addMember;
 	JButton deleteMember;
 	JButton editMember;
-	// í…Œì´ë¸” ê´€ë ¨ ë²„íŠ¼ 
+	// Å×ÀÌºí °ü·Ã ¹öÆ° 
 	
-	private static final String NUMBER = "ë²ˆí˜¸";  
-	private static final String NAME = "ì´ë¦„";  
-	private static final String PHONENUMBER = "ì—°ë½ì²˜";
-	private static final String MILEAGE = "ë§ˆì¼ë¦¬ì§€";
-	private static final String LEVEL = "íšŒì›ë“±ê¸‰";
-	private static final String sqlMent = "INSERT INTO Member(Mnum, Mname, Mcontact, Mmileage, Mlevel) VALUES";
+	private static final String NUMBER = "¹øÈ£";  
+	private static final String NAME = "ÀÌ¸§";  
+	private static final String PHONENUMBER = "¿¬¶ôÃ³";
+	private static final String MILEAGE = "¸¶ÀÏ¸®Áö";
+	private static final String LEVEL = "È¸¿øµî±Ş";
+	private static final String SQLMent = "INSERT INTO Member(Mnum, Mname, Mcontact, Mmileage, Mlevel) VALUES";
 	
 	public Member() throws IOException {
 		memberPanel = new JPanel();
@@ -135,15 +138,15 @@ public class Member implements ActionListener {
 		memberMileageTextField = new JTextField(10);
 		memberPhoneTextField = new JTextField(10);
 		
-		addMember = new JButton("ì¶”ê°€");
+		addMember = new JButton("Ãß°¡");
 		addMember.addActionListener(this);
 		
-		deleteMember = new JButton("ì‚­ì œ");
+		deleteMember = new JButton("»èÁ¦");
 		deleteMember.addActionListener(this);
 		
-		editMember = new JButton("í¸ì§‘");
+		editMember = new JButton("ÆíÁı");
 		editMember.addActionListener(this);
-		// í…ìŠ¤íŠ¸í•„ë“œì™€ ë²„íŠ¼ ìƒì„± 
+		// ÅØ½ºÆ®ÇÊµå¿Í ¹öÆ° »ı¼º 
 		
 		memberBtnPanel = new JPanel();
 		memberBtnPanel.setLayout(new GridLayout(2,1));
@@ -167,9 +170,24 @@ public class Member implements ActionListener {
 		
 		memberBtnPanel.add(textfieldPanel);
 		memberBtnPanel.add(btnPanel);
-		// íŒ¨ë„ì— í…ìŠ¤íŠ¸í•„ë“œì™€ ë²„íŠ¼ ì¶”ê°€ 
+		// ÆĞ³Î¿¡ ÅØ½ºÆ®ÇÊµå¿Í ¹öÆ° Ãß°¡ 
 		
 		memberPanel.add(memberBtnPanel, BorderLayout.SOUTH);
+		
+		memberTable.addMouseListener((MouseListener) new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = memberTable.getSelectedRow();
+				String data = (String) memberTable.getValueAt(row, 0);
+				memberNumberTextField.setText(data);
+				data = (String) memberTable.getValueAt(row, 1);
+				memberNameTextField.setText(data);
+				data = (String) memberTable.getValueAt(row, 2);
+				memberPhoneTextField.setText(data);
+				data = (String) memberTable.getValueAt(row, 3);
+				memberMileageTextField.setText(data);
+			}
+		});
 		
 	}
 	
@@ -177,13 +195,13 @@ public class Member implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		
-		if(actionCommand.equals("ì¶”ê°€")) {
-			if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
-				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ì¼ë°˜"});
-			
-				sql = sqlMent;
+		if(actionCommand.equals("Ãß°¡")) {
+		
+			memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ÀÏ¹İ"});
+				
+				sql = SQLMent;
 				sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\", \"" + memberPhoneTextField.getText()
-				+ "\"," + memberMileageTextField.getText() + ", \"ì¼ë°˜\");";
+				+ "\"," + memberMileageTextField.getText() + ", \"ÀÏ¹İ\");";
 				
 				try {
 					Class.forName(className);
@@ -192,42 +210,7 @@ public class Member implements ActionListener {
 					stmt.executeUpdate(sql);
 				} catch (Exception e1) {
 					e1.printStackTrace();
-				}
-			}
-			
-			else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
-				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ê³¨ë“œ"});
-			
-				sql =sqlMent;
-				sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\",\"" + memberPhoneTextField.getText()
-				+ "\"," + memberMileageTextField.getText() + ", \"ê³¨ë“œ\");";
-				
-				try {
-					Class.forName(className);
-					con = DriverManager.getConnection(url, user, passwd); 
-					stmt = (Statement) con.createStatement();
-					stmt.executeUpdate(sql);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-			
-			else {
-				memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "í”Œë˜í‹°ë„˜"});
-			
-				sql = sqlMent;
-				sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\",\"" + memberPhoneTextField.getText()
-				+ "\"," + memberMileageTextField.getText() + ", \"í”Œë˜í‹°ë„˜\");";
-				
-				try {
-					Class.forName(className);
-					con = DriverManager.getConnection(url, user, passwd); 
-					stmt = (Statement) con.createStatement();
-					stmt.executeUpdate(sql);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
+				}			
 			
 			memberNumberTextField.setText("");
 			memberNameTextField.setText("");
@@ -235,11 +218,11 @@ public class Member implements ActionListener {
 			memberMileageTextField.setText("");
 		}
 		
-		else if(actionCommand.equals("ì‚­ì œ")) {
-			int i = memberTable.getSelectedRow();
+		else if(actionCommand.equals("»èÁ¦")) {
+			int row = memberTable.getSelectedRow();
 			
-			sql = "DELETE FROM Member WHERE Mcontact =\"" + memberTableModel.getValueAt(i, 2) + "\"";
-			memberTableModel.removeRow(i);
+			sql = "DELETE FROM Member WHERE Mcontact =\"" + memberTableModel.getValueAt(row, 2) + "\"";
+			memberTableModel.removeRow(row);
 			
 			try {
 				Class.forName(className);
@@ -252,23 +235,24 @@ public class Member implements ActionListener {
 			
 		}
 		
-		else if(actionCommand.equals("í¸ì§‘")) {
+		else if(actionCommand.equals("ÆíÁı")) {
 			int row = memberTable.getSelectedRow();
+			
 			memberTable.setValueAt(memberNumberTextField.getText(), row, 0);
 			memberTable.setValueAt(memberNameTextField.getText(), row, 1);
 			memberTable.setValueAt(memberPhoneTextField.getText(), row, 2);
 			memberTable.setValueAt(memberMileageTextField.getText(), row, 3);
 			
 			if(Integer.parseInt(memberMileageTextField.getText()) <= 500) {
-				memberTable.setValueAt("ì¼ë°˜", row, 4);
+				memberTable.setValueAt("ÀÏ¹İ", row, 4);
 			}
 			
 			else if(Integer.parseInt(memberMileageTextField.getText()) > 500 && Integer.parseInt(memberMileageTextField.getText()) <= 1000) {
-				memberTable.setValueAt("ê³¨ë“œ", row, 4);
+				memberTable.setValueAt("°ñµå", row, 4);
 			}
 			
 			else {
-				memberTable.setValueAt("í”Œë˜í‹°ë„˜", row, 4);
+				memberTable.setValueAt("ÇÃ·¡Æ¼³Ñ", row, 4);
 			}
 			
 			memberNumberTextField.setText("");
@@ -277,6 +261,24 @@ public class Member implements ActionListener {
 			memberMileageTextField.setText("");
 		}
 		
+	}
+	
+	void grade(String gradeName)
+	{
+		memberTableModel.addRow(new Object[] {memberNumberTextField.getText(), memberNameTextField.getText(), memberPhoneTextField.getText(), memberMileageTextField.getText(), "ÀÏ¹İ"});
+		
+		sql = SQLMent;
+		sql += "(" + memberNumberTextField.getText() + ",\"" + memberNameTextField.getText() + "\", \"" + memberPhoneTextField.getText()
+		+ "\"," + memberMileageTextField.getText() + ", \"" + gradeName + "\");";
+		
+		try {
+			Class.forName(className);
+			con = DriverManager.getConnection(url, user, passwd); 
+			stmt = (Statement) con.createStatement();
+			stmt.executeUpdate(sql);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 
 }
