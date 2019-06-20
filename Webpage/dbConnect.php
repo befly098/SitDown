@@ -9,7 +9,7 @@ $tables = array();
 
 $conn = new mysqli($host, $user, $password, $dbName);
 if (!$conn) {
-    echo "mysql 연결실패\n";
+    echo "mysql connect fail..\n";
 }
 
 $noty = new Publisher('NotificationPublisher');
@@ -30,10 +30,10 @@ function totalTable() {
     $result = mysqli_query($conn, $sql);
     
     $row = mysqli_fetch_assoc($result);
-    if ($row[Tquant] != count($tables)) {
+    if ($row['Tquant'] != count($tables)) {
         $bound = count($tables);
-        if ($row[Tquant] > count($tables)) {
-            for ($i = 0; $i < $row[Tquant] - $bound; $i++) {
+        if ($row['Tquant'] > count($tables)) {
+            for ($i = 0; $i < $row['Tquant'] - $bound; $i++) {
                 array_push($tables, '-1');
             }
         }
@@ -60,17 +60,17 @@ function seats() {
     }
 
     while ($row = mysqli_fetch_assoc($result)) {
-        $tables[$row[Tnum]] = 1;
+        $tables[$row['Tnum']] = 1;
     }
 
     echo "<div align = 'center'>";
     for ($i = 0; $i < count($tables); $i++) {
         $j = $i + 1;
         if ($tables[$i] == 1) {
-            echo "<input type = 'button' value = '테이블$j' id = 'occupied'>&nbsp;";
+            echo "<input type = 'button' value = 'Table$j' id = 'occupied'>&nbsp;";
         }
         else {
-            echo "<input type = 'button' value = '테이블$j' id = 'empty'>&nbsp;";
+            echo "<input type = 'button' value = 'Table$j' id = 'empty'>&nbsp;";
         }
 
         if ($j % 4 == 0) {
@@ -93,13 +93,13 @@ function showMenu() {
         if ($cnt % 2 == 0) {
             echo "<div id = 'left'>";
             echo "<table> <tr><td id = 'foodName'>$row[Fname]</td></tr>
-            <tr><td id = 'foodPrice'>$row[Fprice]원 </td></tr></table>";
+            <tr><td id = 'foodPrice'>$row[Fprice].won</td></tr></table>";
             echo "</div>";
         }
         else {
             echo "<div id = 'right'>";
             echo "<table> <tr><td id = 'foodName'>$row[Fname]</td></tr>
-            <tr><td id = 'foodPrice'>$row[Fprice]원 </td></tr></table>";
+            <tr><td id = 'foodPrice'>$row[Fprice].won </td></tr></table>";
             echo "</div><br>";
         }
         $cnt++;
