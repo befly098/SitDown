@@ -307,6 +307,16 @@ public class Table implements ActionListener {
 				for (int i = 0; i < 100; i++) {
 					count[clickedTableBtn][i] = 0;
 				}
+				
+				sql = "DELETE FROM Otable WHERE Tnum=" + clickedTableBtn + ";";
+							try {
+								Class.forName(className);
+								con = DriverManager.getConnection(url, user, passwd); 
+								stmt = (Statement) con.createStatement();
+								stmt.executeUpdate(sql);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
 			}
 		});
 
@@ -386,6 +396,16 @@ public class Table implements ActionListener {
 				for (int i = 0; i < 100; i++) {
 					count[clickedTableBtn][i] = 0;
 				}
+				
+				sql = "DELETE FROM Otable WHERE Tnum=" + clickedTableBtn + ";";
+				try {
+					Class.forName(className);
+					con = DriverManager.getConnection(url, user, passwd); 
+						stmt = (Statement) con.createStatement();
+						stmt.executeUpdate(sql);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
 			}
 		});
 
@@ -440,9 +460,8 @@ public class Table implements ActionListener {
 			tableListPanel.add(tableNum[tables]);
 			tables++;
 			
-			for(int i=0;i<tables;i++){
 			
-			sql = "Update Otable SET Tquant='" + tables + "'WHERE Tnum=\"" + i + "\";";
+			sql = "Update Otable SET Tquant='" + tables + "'WHERE Tnum=\"" + -1 + "\";";
 			System.out.println(sql);
 							try {
 								Class.forName(className);
@@ -452,8 +471,9 @@ public class Table implements ActionListener {
 							} catch (Exception e1) {
 								e1.printStackTrace();
 							}
-			}
-		} else if (actionCommand.compareTo("테이블 삭제") == 0) {
+							
+		 }
+		 else if (actionCommand.compareTo("테이블 삭제") == 0) {
 			if (tables > 1) {
 				if (tableTotal[tables - 1].getText().equals("")) {
 					tableListPanel.remove(tableNum[tables - 1]);
@@ -466,9 +486,8 @@ public class Table implements ActionListener {
 					tables--;
 					clickedTableBtn = -1;
 					
-					for(int i=0;i<tables;i++){
 			
-							sql = "Update Otable SET Tquant='" + tables + "'WHERE Tnum=\"" + i + "\";";
+							sql = "Update Otable SET Tquant='" + tables + "'WHERE Tnum=\"" + -1 + "\";";
 							System.out.println(sql);
 							try {
 								Class.forName(className);
@@ -478,7 +497,6 @@ public class Table implements ActionListener {
 							} catch (Exception e1) {
 								e1.printStackTrace();
 							}
-					}
 					
 					sql = "DELETE FROM Otable WHERE Tnum=" + tables + ";";
 							try {
