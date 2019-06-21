@@ -17,13 +17,16 @@
 <script>
 var temp = decodeURI(window.location.href);
 
-window.onload = function print() {
+window.onload = function parsing() {
     var input = temp.split("?");
     input = input[1].split("=");
 
     var code = "<input type = 'hidden' name = 'sname' value = '"+ input[0] + "'>";
     var form = document.getElementById("frm");
     form.innerHTML = code + form.innerHTML;
+
+    frm.action = "./seats.php";
+    frm.submit();
 
     var res = input[1];
     for (var i = 0; i < res.length; i++) {
@@ -45,6 +48,10 @@ function btn_click(str) {
         frm.action = "./showMenu.php";
     }
 }
+
+function first() {
+
+}
 </script>
 </head>
 
@@ -62,7 +69,7 @@ function btn_click(str) {
         </form>
     </div>
     &nbsp;
-    <iframe src = "./restaurants.html" name = "restaurant" width = "823" height = "410"></iframe>
+    <iframe name = "restaurant" width = "823" height = "410"></iframe>
 </div>
 </body>
 </html>
